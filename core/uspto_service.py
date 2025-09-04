@@ -119,3 +119,12 @@ class USPTOClient:
         if not params:
             raise ValueError('Provide serial_number or registration_number')
         return self.get(path, params, expect_json=True)
+
+    def last_update_info(self, serial: str) -> Dict[str, Any]:
+        """GET https://tsdrapi.uspto.gov/last-update/info.json?sn={serial}
+        Public endpoint; no api_key required; absolute URL to avoid api.uspto.gov base.
+        """
+        serial_clean = self._clean_identifier(serial) or serial
+        url = f"https://tsdrapi.uspto.gov/last-update/info.json?sn={serial_clean}"
+        # Use absolute URL and expect JSON
+        return self.get(url, params=None, expect_json=True)

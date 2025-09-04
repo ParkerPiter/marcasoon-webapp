@@ -90,15 +90,10 @@ DATABASES = {
 
 
 # USPTO / api.data.gov configuration
-USPTO_API_BASE = 'https://api.uspto.gov'
+USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'
+USPTO_API_BASE = 'https://api.uspto.gov'  # JSON (via api.data.gov)
 USPTO_API_KEY = 'QXgzhuXSPtgK8HtgExR75qmSQqhrpNWN'
 # Optional specific endpoints (set them in your environment once you pick endpoints from docs)
-# Example values (adjust to real documented paths):
-# JSON API endpoints (avoid HTML/PDF paths)
-USPTO_TSDR_CASE_STATUS_PATH = '/trademark/v1/tsdr/casestatus/{case.id}/content.html'
-USPTO_TRADEMARK_SEARCH_PATH = '/trademark/v1/search'
-# Optional: case multi-status (set if used)
-USPTO_CASE_MULTI_STATUS_PATH = '/trademark/v1/tsdr/case-multi-status'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
