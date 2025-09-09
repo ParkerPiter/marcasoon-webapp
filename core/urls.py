@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import TestViewSet, TaskView, RegisterView, MeView, tasks_page, trademark_classification_search, trademark_name_search, trademark_availability, trademark_logo_search
+from .views import TestViewSet, TaskView, RegisterView, MeView, tasks_page, trademark_classification_search, trademark_name_search, trademark_availability, trademark_logo_search, trademark_serial_search, trademark_registration_search
 from django.urls import path, include
 
 
@@ -17,4 +17,6 @@ urlpatterns = [
     path('trademark/name-search/', trademark_name_search, name='trademark-name-search'),
     path('trademark/availability/', trademark_availability, name='trademark-availability'),
     path('trademark/logo-search/', trademark_logo_search, name='trademark-logo-search'),
+    path('trademark/serial-search/', trademark_serial_search, name='trademark-serial-search'),
+    path('trademark/registration-search/', trademark_registration_search, name='trademark-registration-search'),
 ]
