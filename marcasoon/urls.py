@@ -25,6 +25,8 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('core.urls')),
+    # DRF auth (login/logout) for Browsable API session authentication
+    path('api-auth/', include('rest_framework.urls')),
     # OpenAPI schema (public)
     path('openapi/', get_schema_view(
         title="Marcasoon API",
