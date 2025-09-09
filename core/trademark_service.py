@@ -147,7 +147,7 @@ class TrademarkLookupClient:
         if page_size < 1:
             raise ValueError('page_size must be >= 1')
         encoded = quote(safe_name)
-        path = f"/{encoded}/transaction/{page}/{page_size}"
+        path = f"/{encoded}/transactionsearch/{page}/{page_size}"
         return self.get(path)
 
     def filing_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
