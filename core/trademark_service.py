@@ -59,3 +59,23 @@ class TrademarkLookupClient:
             raise ValueError('count must be >= 1')
         path = f"/{safe_name}/namesearch/{page}/{count}"
         return self.get(path)
+
+    def availability(self, name: str) -> str:
+        """Pattern: /{name}/availablity (note: API spelling)
+        Returns plain text like: failed:"google is Not Available to Register"
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        encoded = quote(safe_name)
+        url = f"{self.base_url}/{encoded}/availablity"
+        headers = {
+            'x-rapidapi-key': self.api_key,
+            'x-rapidapi-host': 'trademark-lookup-api.p.rapidapi.com',
+            # Accept anything; API returns text/plain for this endpoint
+            'Accept': '*/*',
+            'User-Agent': 'marcasoon/1.0'
+        }
+        resp = requests.get(url, headers=headers, timeout=self.timeout)
+        resp.raise_for_status()
+        return resp.text.strip()

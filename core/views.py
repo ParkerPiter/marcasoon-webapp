@@ -72,4 +72,24 @@ def trademark_name_search(request):
     except requests.HTTPError as e:
         resp = e.response
         return Response({'detail': 'Upstream error', 'status': getattr(resp, 'status_code', 502), 'url': getattr(resp, 'url', None), 'body': getattr(resp, 'text', '')[:500]}, status=getattr(resp, 'status_code', 502))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def trademark_availability(request):
+    name = request.query_params.get('name')
+    if not name:
+        return Response({'detail': 'Missing name'}, status=400)
+    client = TrademarkLookupClient()
+    try:
+        text = client.availability(name)
+        # Normalize to requested response. If the API returns exactly the text
+        # `failed:"google is Not Available to Register"` we pass-as is.
+        # Wrap into a simple JSON with a `result` field for frontend simplicity.
+        return Response({'result': text})
+    except ValueError as ve:
+        return Response({'detail': str(ve)}, status=400)
+    except requests.HTTPError as e:
+        resp = e.response
+        return Response({'detail': 'Upstream error', 'status': getattr(resp, 'status_code', 502), 'url': getattr(resp, 'url', None), 'body': getattr(resp, 'text', '')[:500]}, status=getattr(resp, 'status_code', 502))
     
