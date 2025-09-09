@@ -105,6 +105,81 @@ class TrademarkLookupClient:
         path = f"/{encoded}/registrationsearch/{page}/{page_size}"
         return self.get(path)
 
+    def owners_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/ownerssearch/{page}/{page_size}
+        Returns owner search results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/ownerssearch/{page}/{page_size}"
+        return self.get(path)
+
+    def status_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/statussearch/{page}/{page_size}
+        Returns status search results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/statussearch/{page}/{page_size}"
+        return self.get(path)
+
+    def transaction(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/transaction/{page}/{page_size}
+        Returns transaction history results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/transaction/{page}/{page_size}"
+        return self.get(path)
+
+    def filing_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/filingsearch/{page}/{page_size}
+        Returns filing search results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/filingsearch/{page}/{page_size}"
+        return self.get(path)
+
+    def event_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/eventsearch/{page}/{page_size}
+        Returns event search results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/eventssearch/{page}/{page_size}"
+        return self.get(path)
+
     def availability(self, name: str) -> str:
         """Pattern: /{name}/availablity (note: API spelling)
         Returns plain text like: failed:"google is Not Available to Register"
