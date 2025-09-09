@@ -60,6 +60,21 @@ class TrademarkLookupClient:
         path = f"/{safe_name}/namesearch/{page}/{count}"
         return self.get(path)
 
+    def logo_search(self, name: str, page: int = 1, page_size: int = 10) -> Any:
+        """Pattern: /{name}/logosearch/{page}/{page_size}
+        Returns logo search results for the given trademark name.
+        """
+        safe_name = name.strip()
+        if not safe_name:
+            raise ValueError('Empty name')
+        if page < 1:
+            raise ValueError('page must be >= 1')
+        if page_size < 1:
+            raise ValueError('page_size must be >= 1')
+        encoded = quote(safe_name)
+        path = f"/{encoded}/logosearch/{page}/{page_size}"
+        return self.get(path)
+
     def availability(self, name: str) -> str:
         """Pattern: /{name}/availablity (note: API spelling)
         Returns plain text like: failed:"google is Not Available to Register"

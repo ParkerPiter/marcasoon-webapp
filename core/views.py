@@ -76,6 +76,25 @@ def trademark_name_search(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
+def trademark_logo_search(request):
+    name = request.query_params.get('name')
+    if not name:
+        return Response({'detail': 'Missing name'}, status=400)
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 10))
+    client = TrademarkLookupClient()
+    try:
+        data = client.logo_search(name, page=page, page_size=page_size)
+        return Response(data)
+    except ValueError as ve:
+        return Response({'detail': str(ve)}, status=400)
+    except requests.HTTPError as e:
+        resp = e.response
+        return Response({'detail': 'Upstream error', 'status': getattr(resp, 'status_code', 502), 'url': getattr(resp, 'url', None), 'body': getattr(resp, 'text', '')[:500]}, status=getattr(resp, 'status_code', 502))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def trademark_availability(request):
     name = request.query_params.get('name')
     if not name:
