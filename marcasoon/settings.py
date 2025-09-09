@@ -95,6 +95,11 @@ USPTO_API_BASE = 'https://api.uspto.gov'  # JSON (via api.data.gov)
 USPTO_API_KEY = 'QXgzhuXSPtgK8HtgExR75qmSQqhrpNWN'
 # Optional specific endpoints (set them in your environment once you pick endpoints from docs)
 
+# Trademark Lookup (RapidAPI)
+TRADEMARK_LOOKUP_API_BASE = 'https://trademark-lookup-api.p.rapidapi.com'
+# Move this key to environment var in production: os.getenv('TRADEMARK_LOOKUP_API_KEY')
+TRADEMARK_LOOKUP_API_KEY = os.getenv('TRADEMARK_LOOKUP_API_KEY', 'd6fcdfa339msh1a194af78607448p1b4d40jsnbb363c803a05')
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
