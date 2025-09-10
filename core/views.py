@@ -4,18 +4,10 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
-from .models import TestModel, Task
-from .serializers import TestSerializer, TaskSerializer, RegisterSerializer, UserSerializer
+from .models import Trademark, TrademarkAsset, User
+from .serializers import RegisterSerializer, UserSerializer
 from .trademark_service import TrademarkLookupClient
 
-class TestViewSet(viewsets.ModelViewSet):
-    queryset = TestModel.objects.all()
-    serializer_class = TestSerializer
-    
-class TaskView(viewsets.ModelViewSet):
-    serializer_class = TaskSerializer
-    queryset = Task.objects.all()
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 User = get_user_model()

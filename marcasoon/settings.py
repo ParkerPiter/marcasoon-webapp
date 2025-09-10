@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'core'
 ]
 
+# Use custom user model from core app
+AUTH_USER_MODEL = 'core.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,6 +139,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_MEDIA_ROOT = BASE_DIR / 'static'
+
+# Media files (for uploads like logos and sounds)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
