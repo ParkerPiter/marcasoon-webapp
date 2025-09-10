@@ -16,6 +16,7 @@ from .views import (
     trademark_event_search,
 )
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 router = routers.DefaultRouter()
@@ -23,8 +24,13 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('v1/', include(router.urls)),
+    # DRF browsable API login/logout under /api/auth/
+    path('auth/', include('rest_framework.urls')),
     path('auth/register/', RegisterView.as_view(), name='auth-register'),
     path('auth/me/', MeView.as_view(), name='auth-me'),
+    # JWT token endpoints moved from root
+    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('tasks/', tasks_page, name='tasks-page'),
     # Trademark lookup endpoints
     path('trademark/classification-search/', trademark_classification_search, name='trademark-classification-search'),
