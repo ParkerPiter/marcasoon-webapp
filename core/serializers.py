@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
 from .models import  Trademark, TrademarkAsset
 
@@ -8,7 +8,9 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-    fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number')
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number'
+        )
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -26,6 +28,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+class MeView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 class TrademarkAssetSerializer(serializers.ModelSerializer):
     class Meta:
