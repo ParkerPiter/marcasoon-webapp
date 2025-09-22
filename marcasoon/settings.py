@@ -62,7 +62,7 @@ ROOT_URLCONF = 'marcasoon.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,6 +153,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+# Stripe configuration
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51S8p3XEFgyjc4v6CdzEMiHG8eMHtXOXS7LQRlkb91vekNukpOQXOdU2DmmD1CHIGYh1yc41RPBCr1YkiCLhjspBg00i2I5k38P')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51S8p3XEFgyjc4v6C18WJ6LjD27d3kwfpcA6cCil5BoD1zqLq9skGrCb6C0lnnWaJuxv49KmXHFpfwL0XKXYQHT3J004GrRxuTu')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',

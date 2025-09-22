@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Checkout | Marcasoon{% endblock %}
+{% block head %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+// Obtiene cookie por nombre (para CSRF fallback)
+function getCookie(name){
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if(parts.length === 2) return parts.pop().split(';').shift();
+}
+
+async function createSession(e){
+  e.preventDefault();
+  const amount = document.getElementById('amount').value;
+  const jwt = localStorage.getItem('jwt');
+  const headers = { 'Content-Type':'application/json' };
+  const body = JSON.stringify({ amount: parseInt(amount,10) });
+
+  // Si hay JWT lo usamos; si no, intentamos sesión con CSRF
+  if (jwt) {
+    headers['Authorization'] = 'Bearer ' + jwt;
+  } else {
+    // Fallback a autenticación de sesión (debes haber iniciado sesión vía /api/auth/login/)
+    // Necesitamos CSRF token: preferimos el input insertado por {% csrf_token %}
+    const csrfInput = document.querySelector('input[name=csrfmiddlewaretoken]');
+    const csrf = csrfInput ? csrfInput.value : (getCookie('csrftoken') || '');
+    if(!csrf){
+      alert('No se encontró CSRF token. Inicia sesión o refresca la página.');
+      return;
+    }
+    headers['X-CSRFToken'] = csrf;
+  }
+
+  const res = await fetch('/api/stripe/create-checkout-session/', {
+    method: 'POST',
+    headers,
+    credentials: 'include', // asegura envío de cookies de sesión
+    body
+  });
+
+  if(!res.ok){
+    let msg = res.status + ' error';
+    try { const err = await res.json(); if(err.detail) msg = err.detail; } catch(_e) {}
+    alert('Error creando sesión: ' + msg);
+    return;
+  }
+  const data = await res.json();
+  if (data.url){
+    window.location = data.url;
+  } else {
+    alert('Respuesta inesperada del servidor');
+  }
+}
+</script>
+{% endblock %}
+{% block content %}
+<h2>Checkout</h2>
+<p>Introduce un monto de prueba en centavos (por ejemplo 1500 = 15.00 USD) y presiona Pagar.</p>
+<form onsubmit="createSession(event)">
+  {% csrf_token %}
+  <label>Monto (centavos): <input id="amount" type="number" min="100" step="50" value="1500" required></label>
+  <button type="submit">Pagar</button>
+</form>
+<p class="muted">Autenticación: si guardas tu JWT en localStorage se usará; si no, y has iniciado sesión vía sesión (DRF login), se enviará con cookies + CSRF.</p>
+<p class="muted">Tarjeta de prueba: 4242 4242 4242 4242 / fecha futura / CVC 123.</p>
+{% endblock %}
