@@ -1,13 +1,14 @@
 import Image from "next/image";
 import NavComponent from "./components/NavComponent";
+import Cards from "./components/packages/Cards";
 
 export default function Home() {
   return (
-    <div className="font-sans min-h-screen p-8 pb-20 flex flex-col gap-16 items-center">
+    <div className="font-sans min-h-screen  pb-20 flex flex-col gap-16 items-center">
       <NavComponent />
       {/* Hero */}
       <section className="w-full py-16 text-black">
-        <h1 className="text-4xl font-bold text-center mb-4">Bienvenido a Marcasoon</h1>
+        <h1 className="text-4xl font-bold text-center mb-4">Bienvenido a <span className="text-[#192A56]">Marca</span><span className="text-[#FF6B6B]">soon</span></h1>
         <p className="text-center text-lg">Protege tu marca de forma fácil y rápida.</p>
       </section>
 
@@ -18,9 +19,9 @@ export default function Home() {
       </section>
 
       {/* Precios */}
-      <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Precios</h2>
-        <p className="text-center">Planes accesibles para emprendedores y empresas.</p>
+      <section className="w-5/6 py-12 text-black">
+        <h3 className="text-2xl font-medium text-center mb-4 uppercase">Paquetes</h3>
+        <Cards></Cards>
       </section>
 
       {/* Otros servicios */}
