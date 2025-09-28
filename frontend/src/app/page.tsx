@@ -1,11 +1,33 @@
+"use client";
 import Image from "next/image";
 import NavComponent from "./components/NavComponent";
+import NavMobileComponent from "./components/NavMobileComponent";
 import Cards from "./components/packages/Cards";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div className="font-sans min-h-screen  pb-20 flex flex-col gap-16 items-center">
+      {isMobile &&
+      <NavMobileComponent />
+       } {!isMobile &&
       <NavComponent />
+       }
       {/* Hero */}
       <section className="w-full py-16 text-black">
         <h1 className="text-4xl font-bold text-center mb-4">Bienvenido a <span className="text-[#192A56]">Marca</span><span className="text-[#FF6B6B]">soon</span></h1>
