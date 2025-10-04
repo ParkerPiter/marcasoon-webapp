@@ -3,6 +3,8 @@ import Image from "next/image";
 import NavComponent from "./components/NavComponent";
 import NavMobileComponent from "./components/NavMobileComponent";
 import Cards from "./components/packages/Cards";
+import CardsTestimonial from "./components/testimonials/Cards";
+import SliderTestimonial from "./components/testimonials/SliderTestimonial";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -52,10 +54,10 @@ export default function Home() {
         <p className="text-center">Consultoría, vigilancia de marcas y más soluciones legales.</p>
       </section>
 
-      {/* Testimoniales */}
+      {/* Testimonios de nuestros clientes */}
       <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Testimoniales</h2>
-        <p className="text-center">"Excelente servicio, rápido y confiable." - Cliente satisfecho</p>
+        <h2 className="text-2xl font-semibold text-center mb-4">Testimonios de nuestros clientes</h2>
+        <SliderTestimonial />
       </section>
     </div>
   );

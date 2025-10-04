@@ -42,3 +42,26 @@ export const paquetes = [
         price: 990
     }
 ];
+
+export const testimonials = [ 
+    {
+        id: 1,
+        name: "Miami Emprendedores",
+        quote: 'Como CEO y fundadora, sabía que registrar mi marca era crucial, pero me preocupaba encontrar al profesional adecuado para un proceso tan importante. Fue fundamental para mi decisión que Marcasoon viniera con excelentes referencias.\nEl proceso superó mis expectativas: fue completamente sin esfuerzo de mi parte. No tuve que hacer nada; simplemente dejé que los expertos hicieran su trabajo.\nAhora que la marca de Miami Emprendedores está registrada, la sensación de tranquilidad es total. Es un alivio enorme tener este activo protegido, lo cual me permite enfocarme en lo que realmente importa: hacer crecer mi negocio. Si tuviera que dar un consejo, sería este: no intenten hacerlo todo. Dejen que los expertos se encarguen y obtengan la paz mental que solo ellos pueden ofrecer.'
+    },
+    {
+        id: 2,
+        name: "El Truck de las Flores",
+        quote: 'Antes de empezar, mi mayor preocupación era la falta de información y no saber a quién acudir para registrar mi marca. Es un proceso legal que me generaba muchas dudas.\nLa decisión de trabajar con MarcaSoon fue gracias a la recomendación de una amiga, que me dijo con total seguridad: “Ricardo es el indicado”. Y no se equivocó. Desde el principio, me impresionó la claridad, la cercanía y el gran profesionalismo. Todo se manejó exactamente como me lo explicaron en nuestra primera reunión, y en los tiempos acordados.\nAhora que mi marca está registrada, me siento completamente segura. Si tuviera que recomendar sus servicios, le diría a cualquiera lo mismo que me dijo mi amiga: háganlo con Ricardo a ojos cerrados, porque lo explica todo con total claridad y los tiempos son impecables.'
+    },
+    {
+        id: 3,
+        name: "Zona Fit",
+        quote: 'Antes de iniciar el proceso de registro, mi mayor preocupación era que alguien más tomara la marca que había elegido para mi negocio. Fue entonces cuando encontré a Marcasoon, y supe que ellos eran la opción correcta. \nEl proceso fue sorprendentemente fácil y claro. Me explicaron cada paso, lo cual me dio mucha confianza. Ahora que mi marca Zona Fit está en proceso de registro, me siento mucho más tranquila. Sé que mi marca está en manos de profesionales que saben lo que hacen. \nLa tranquilidad no tiene precio, y Marcasoon me la ha dado. Recomendaría sus servicios a cualquiera que busque una gestión profesional y sin preocupaciones para el registro de su marca.'
+    },
+    {
+        id: 4,
+        name: "Creetelo",
+        quote: 'Trabajar con Ricardo / Entra Consulting ha sido una decisión no sólo muy acertada, sino también una muy grata sorpresa por su cercanía y su disposición de ayudar siempre de una manera tan entregada.\nDefinitivamente tener a alguien de confianza y tan profesional nos ha quitado un peso enorme de encima al estar protegidos como negocio y atendidos por Ricardo.'
+    }
+];

@@ -6,3 +6,9 @@ export interface CardPrice {
     includes: string[];
     price:number;
 }
+
+export interface CardTestimonial {
+    id:number,
+    name: string;
+    testimonial: string;
+}
