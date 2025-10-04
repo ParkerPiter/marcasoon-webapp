@@ -3,7 +3,6 @@ import Image from "next/image";
 import NavComponent from "./components/NavComponent";
 import NavMobileComponent from "./components/NavMobileComponent";
 import Cards from "./components/packages/Cards";
-import CardsTestimonial from "./components/testimonials/Cards";
 import SliderTestimonial from "./components/testimonials/SliderTestimonial";
 import { useState, useEffect } from "react";
 
