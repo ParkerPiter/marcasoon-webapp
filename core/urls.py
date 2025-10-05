@@ -16,7 +16,10 @@ from .views import (
     trademark_event_search,
 )
 from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
+from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.shortcuts import render
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -46,16 +49,27 @@ urlpatterns = [
     path('trademark/transaction/', trademark_transaction_search, name='trademark-transaction-search'),
     path('trademark/filing-search/', trademark_filing_search, name='trademark-filing-search'),
     path('trademark/event-search/', trademark_event_search, name='trademark-event-search'),
+    
     # Stripe endpoints
     path('stripe/config/', stripe_config, name='stripe-config'),
     path('stripe/create-checkout-session/', create_checkout_session, name='stripe-create-checkout-session'),
     path('stripe/create-payment-intent/', create_payment_intent, name='stripe-create-payment-intent'),
     path('stripe/webhook/', stripe_webhook, name='stripe-webhook'),
+    
+    # Paypal endpoints
+    path('paypal/create-order/', create_paypal_order, name='paypal-create-order'),
+    path('paypal/capture-order/', capture_paypal_order, name='paypal-capture-order'),
+    path('paypal/return/', paypal_return, name='paypal-return'),
+    path('payments/success', paypal_success, name='paypal-success'),
+    path('payments/cancel', paypal_cancel, name='paypal-cancel'),
+    
     # No-trailing-slash aliases to avoid POST -> GET redirect via APPEND_SLASH
     path('stripe/create-checkout-session', create_checkout_session, name='stripe-create-checkout-session-noslash'),
     path('stripe/create-payment-intent', create_payment_intent, name='stripe-create-payment-intent-noslash'),
+    
     # Template pages for checkout flow
     path('checkout/', TemplateView.as_view(template_name='payments/checkout.html'), name='checkout-page'),
+    path('paypal/checkout/', lambda request: render(request, 'payments/paypal_checkout.html', { 'paypal_client_id': settings.PAYPAL_CLIENT_ID }), name='paypal-checkout-page'),
     path('payments/success', TemplateView.as_view(template_name='payments/success.html'), name='payment-success'),
     path('payments/cancel', TemplateView.as_view(template_name='payments/cancel.html'), name='payment-cancel'),
 ]

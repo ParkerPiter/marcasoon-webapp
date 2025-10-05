@@ -28,7 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CSRF_COOKIE_SECURE= True
+SESSION_COOKIE_SAMESITE='None'
+CSRF_COOKIE_SAMESITE='None'
 # Application definition
 
 INSTALLED_APPS = [
@@ -155,11 +157,17 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Stripe configuration
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51S8p3XEFgyjc4v6CdzEMiHG8eMHtXOXS7LQRlkb91vekNukpOQXOdU2DmmD1CHIGYh1yc41RPBCr1YkiCLhjspBg00i2I5k38P')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51S8p3XEFgyjc4v6C18WJ6LjD27d3kwfpcA6cCil5BoD1zqLq9skGrCb6C0lnnWaJuxv49KmXHFpfwL0XKXYQHT3J004GrRxuTu')
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51LGXhpAvrGiOE7p8aV2OsAxNyW30bMbmv3s1f5k9n0lp4zjzvXKmtgOhKLUyO7lhRhMDPBzcvGYDeUr41tbNutRu00IOFFL9Zx')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
 STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+
+# Paypal configuration
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'ASyLovLj_GW6wQ6iM4WawLy0u9miHa5_69nMSaYmniyY5MOl65tw125cp72oKq1At5fsMyq7QCWpF23y')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-z7HxCFcyiDKN0N6A9WfDvh3K1TpI23vPDVPP0eG0V64LJvLY_HN1Mrzfmp')
+PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
+
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
