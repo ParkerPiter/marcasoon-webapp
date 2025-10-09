@@ -69,7 +69,7 @@ const SliderTestimonial = ({ intervalMs = 8000 }: SliderTestimonialProps) => {
               <div key={idx} className="w-full flex-shrink-0 flex justify-center">
                 <div className={gridClass + " justify-items-center"}>
                   {group.map((t) => (
-                    <Card key={t.id} id={t.id} name={t.name} testimonial={t.quote} />
+                    <Card key={t.id} id={t.id} name={t.name} testimonial={t.quote} logo={t.logo} />
                   ))}
                 </div>
               </div>

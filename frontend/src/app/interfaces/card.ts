@@ -11,4 +11,5 @@ export interface CardTestimonial {
     id:number,
     name: string;
     testimonial: string;
+    logo?: string;
 }
