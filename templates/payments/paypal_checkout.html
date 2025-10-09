@@ -1,9 +1,8 @@
 <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD&locale=es_ES"></script>
 <form id="paypal-form">
   {% csrf_token %}
-  <div id="paypal-button-container"></div>
-  <p class="muted">Si no usas JWT y estás logueado por sesión, se enviará CSRF automáticamente.</p>
-  <button type="button" id="paypal-same-window" style="margin-top:12px">Pagar en esta ventana (sin popup)</button>
+  <button type="button" id="paypal-same-window" style="margin-top:12px">Pagar en esta ventana</button>
+  <span id="paypal-loading" style="display:none;margin-left:8px;">Creando orden…</span>
 </form>
 <script>
 function getCookie(name){
@@ -12,74 +11,10 @@ function getCookie(name){
   if(parts.length === 2) return parts.pop().split(';').shift();
 }
 
-paypal.Buttons({
-  createOrder: function(data, actions) {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + (localStorage.getItem('jwt') || '')
-    };
-    if (!localStorage.getItem('jwt')){
-      // Fallback a sesión: añade CSRF también en create-order
-      const csrfInput = document.querySelector('input[name=csrfmiddlewaretoken]');
-      const csrf = csrfInput ? csrfInput.value : (getCookie('csrftoken') || '');
-      if (csrf) headers['X-CSRFToken'] = csrf;
-    }
-    return fetch('/api/paypal/create-order/', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ amount: 15.00, currency: 'USD' })
-    })
-    .then(res => {
-      if(!res.ok) throw res;
-      return res.json();
-    })
-    .then(data => {
-      if(!data.orderID){ throw new Error('Missing orderID'); }
-      return data.orderID;
-    })
-    .catch(async err => {
-      let msg = 'Error creando la orden de PayPal';
-      try { const j = await err.json(); if (j.detail) msg = j.detail; } catch(_) {}
-      alert(msg);
-      throw err;
-    });
-  },
-  onApprove: function(data, actions) {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + (localStorage.getItem('jwt') || '')
-    };
-    if (!localStorage.getItem('jwt')){
-      // Fallback a sesión: añade CSRF
-      const csrfInput = document.querySelector('input[name=csrfmiddlewaretoken]');
-      const csrf = csrfInput ? csrfInput.value : (getCookie('csrftoken') || '');
-      if (csrf) headers['X-CSRFToken'] = csrf;
-    }
-    return fetch('/api/paypal/capture-order/', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ orderID: data.orderID })
-    }).then(res => {
-      if(!res.ok) throw res;
-      return res.json();
-    }).then(result => {
-      window.location.href = '/api/payments/success?orderID=' + encodeURIComponent(data.orderID);
-    }).catch(async err => {
-      let msg = 'Error capturando la orden de PayPal';
-      try { const j = await err.json(); if (j.detail) msg = j.detail; } catch(_) {}
-      alert(msg);
-      window.location.href = '/api/payments/cancel';
-    });
-  },
-  onCancel: function(data) {
-    window.location.href = '/api/payments/cancel';
-  }
-}).render('#paypal-button-container');
-
 // Opción sin popup: redirigir al approveUrl en la misma ventana
 document.getElementById('paypal-same-window').addEventListener('click', async () => {
+  const btn = document.getElementById('paypal-same-window');
+  const loading = document.getElementById('paypal-loading');
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + (localStorage.getItem('jwt') || '')
@@ -90,6 +25,7 @@ document.getElementById('paypal-same-window').addEventListener('click', async ()
     if (csrf) headers['X-CSRFToken'] = csrf;
   }
   try {
+    btn.disabled = true; loading.style.display = 'inline';
     const res = await fetch('/api/paypal/create-order/', {
       method: 'POST',
       credentials: 'include',
@@ -107,6 +43,8 @@ document.getElementById('paypal-same-window').addEventListener('click', async ()
     let msg = 'Error creando la orden de PayPal';
     try { const j = await err.json(); if (j.detail) msg = j.detail; } catch(_) {}
     alert(msg);
+  } finally {
+    btn.disabled = false; loading.style.display = 'none';
   }
 });
 </script>
