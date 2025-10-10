@@ -1,6 +1,6 @@
 from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
-from .models import  Trademark, TrademarkAsset
+from .models import  Trademark, TrademarkAsset, Plan
 
 
 User = get_user_model()
@@ -47,3 +47,20 @@ class TrademarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trademark
         fields = ('id', 'user', 'assets', 'created_at', 'updated_at')
+
+
+class PlanSerializer(serializers.ModelSerializer):
+    price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Plan
+        fields = (
+            'id', 'title', 'description', 'client_objective', 'includes',
+            'price_cents', 'currency', 'price', 'is_active'
+        )
+
+    def get_price(self, obj):
+        return {
+            'amount': obj.price_cents / 100.0,
+            'currency': obj.currency,
+        }

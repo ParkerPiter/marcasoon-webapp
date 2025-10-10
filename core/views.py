@@ -4,8 +4,8 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
-from .models import Trademark, TrademarkAsset, User
-from .serializers import RegisterSerializer, UserSerializer
+from .models import Trademark, TrademarkAsset, User, Plan
+from .serializers import RegisterSerializer, UserSerializer, PlanSerializer
 from .trademark_service import TrademarkLookupClient
 
 
@@ -236,4 +236,21 @@ def trademark_availability(request):
     except requests.HTTPError as e:
         resp = e.response
         return Response({'detail': 'Upstream error', 'status': getattr(resp, 'status_code', 502), 'url': getattr(resp, 'url', None), 'body': getattr(resp, 'text', '')[:500]}, status=getattr(resp, 'status_code', 502))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def plans_list(request):
+    qs = Plan.objects.filter(is_active=True).order_by('price_cents')
+    return Response(PlanSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def plan_detail(request, pk: int):
+    try:
+        plan = Plan.objects.get(pk=pk, is_active=True)
+    except Plan.DoesNotExist:
+        return Response({'detail': 'Plan not found'}, status=404)
+    return Response(PlanSerializer(plan).data)
     

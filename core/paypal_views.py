@@ -11,11 +11,23 @@ def create_paypal_order(request):
     try:
         client = get_paypal_client()
         data = request.data or {}
+        plan_id = data.get('plan_id')
         amount = data.get('amount')
         currency = data.get('currency', 'USD')
         redirect_mode = bool(data.get('redirect'))
-        if amount is None:
-            return JsonResponse({'detail': 'Amount is required'}, status=400)
+        if plan_id:
+            from .models import Plan
+            try:
+                plan = Plan.objects.get(pk=plan_id, is_active=True)
+            except Plan.DoesNotExist:
+                return JsonResponse({'detail': 'Invalid plan_id'}, status=400)
+            amount = plan.price_cents / 100.0
+            currency = plan.currency
+            purchase_desc = plan.title
+        else:
+            purchase_desc = 'Custom payment'
+            if amount is None:
+                return JsonResponse({'detail': 'Amount is required'}, status=400)
         # Normaliza a 2 decimales por requisitos de PayPal
         try:
             amount_value = f"{float(amount):.2f}"
@@ -30,7 +42,8 @@ def create_paypal_order(request):
                 "amount": {
                     "currency_code": currency,
                     "value": amount_value
-                }
+                },
+                "description": purchase_desc
             }]
         }
         if redirect_mode:

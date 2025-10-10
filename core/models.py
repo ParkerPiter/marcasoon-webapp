@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 class User(AbstractUser):
@@ -49,4 +50,19 @@ class TrademarkAsset(models.Model):
         elif self.kind == self.Kind.SOUND:
             if not self.sound:
                 raise ValidationError({'sound': 'Debes subir un archivo de audio para Sonido.'})
+
+
+class Plan(models.Model):
+    """Planes vendibles para checkout (Stripe/PayPal)."""
+    title = models.CharField(max_length=120)
+    description = models.TextField()
+    client_objective = models.CharField(max_length=255)
+    includes = models.JSONField(default=list, help_text="Lista de elementos incluidos en el plan")
+    # Guardamos precio en centavos para precisión
+    price_cents = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    currency = models.CharField(max_length=10, default='USD')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.currency} {self.price_cents/100:.2f})"
 

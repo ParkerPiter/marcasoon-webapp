@@ -22,6 +22,7 @@ def create_checkout_session(request):
     try:
         s = init_stripe()
         data = request.data or {}
+        plan_id = data.get('plan_id')
         price_id = data.get('price_id')
         amount = data.get('amount')  # in cents
         currency = data.get('currency', settings.STRIPE_CURRENCY)
@@ -51,7 +52,28 @@ def create_checkout_session(request):
             backend_cancel = '/api/payments/cancel'
             cancel_url = request.build_absolute_uri(backend_cancel)
 
-        if price_id:
+        if plan_id:
+            from .models import Plan
+            try:
+                plan = Plan.objects.get(pk=plan_id, is_active=True)
+            except Plan.DoesNotExist:
+                return JsonResponse({'detail': 'Invalid plan_id'}, status=400)
+            session = s.checkout.Session.create(
+                mode=mode,
+                line_items=[{
+                    'price_data': {
+                        'currency': plan.currency,
+                        'product_data': {'name': plan.title, 'description': plan.description[:500]},
+                        'unit_amount': int(plan.price_cents),
+                    },
+                    'quantity': 1,
+                }],
+                metadata={'plan_id': str(plan.id), 'user_id': str(request.user.id)},
+                success_url=success_url,
+                cancel_url=cancel_url,
+                customer_email=request.user.email or None,
+            )
+        elif price_id:
             session = s.checkout.Session.create(
                 mode=mode,
                 line_items=[{
