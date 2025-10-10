@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Card = ({ name, testimonial, logo }: CardTestimonial) => {
     return (
-        <div className="group border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-white overflow-hidden">
+    <div className="group border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-white overflow-hidden w-full">
             <div className="border-t-4 border-[#FF6B6B] group-hover:border-[#192A56] transition-colors duration-300" />
             <div className="p-6 flex flex-col h-full">
                 <blockquote className="text-gray-700 italic leading-relaxed text-center mb-4">
@@ -19,7 +19,7 @@ const Card = ({ name, testimonial, logo }: CardTestimonial) => {
                             
                         </div>
                     )}
-                    <p className="text-sm font-semibold text-center text-[#192A56] tracking-wide">
+                    <p className="text-lg font-semibold text-center text-[#192A56] tracking-wide">
                         {name}
                     </p>
                 </div>

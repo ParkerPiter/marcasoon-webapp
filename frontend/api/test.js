@@ -68,3 +68,21 @@ export const testimonials = [
         quote: 'Trabajar con Ricardo / Entra Consulting ha sido una decisión no sólo muy acertada, sino también una muy grata sorpresa por su cercanía y su disposición de ayudar siempre de una manera tan entregada.\nDefinitivamente tener a alguien de confianza y tan profesional nos ha quitado un peso enorme de encima al estar protegidos como negocio y atendidos por Ricardo.'
     }
 ];
+
+export const carrusel = [
+    { id: 1, url: "/Alibombo.png" },
+    { id: 2, url: "/anabel-logo.png" },
+    { id: 3, url: "/arepa-station-logo.png" },
+    { id: 4, url: "/avo-salsa-logo.png" },
+    { id: 5, url: "/balance-logo.png" },
+    { id: 6, url: "/barbera-logo.png" },
+    { id: 7, url: "/empanadas-grill-logo.png" },
+    { id: 8, url: "/global-tax-logo.png" },
+    { id: 9, url: "/gotitas-logo.png" },
+    { id: 10, url: "/hound-logo.png" },
+    { id: 11, url: "/iuska-logo.png" },
+    { id: 12, url: "/la-nota-logo.png" },
+    { id: 13, url: "/Miami Emprendedores.jpeg" },
+    { id: 14, url: "/logo truck de las flores.png" },
+    { id: 15, url: "/Zona fit.jpeg" },
+];

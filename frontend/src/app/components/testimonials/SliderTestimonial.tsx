@@ -53,7 +53,7 @@ const SliderTestimonial = ({ intervalMs = 8000 }: SliderTestimonialProps) => {
   return (
     <div className="relative w-full py-6">
       {/* Contenedor principal del carrusel */}
-      <div className="overflow-hidden w-full max-w-6xl mx-auto px-2">
+  <div className="overflow-hidden w-full max-w-screen-2xl mx-auto px-2">
         <div
           className="flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${page * 100}%)` }}
@@ -61,10 +61,10 @@ const SliderTestimonial = ({ intervalMs = 8000 }: SliderTestimonialProps) => {
           {pages.map((group, idx) => {
             const isSingleInDouble = pageSize === 2 && group.length === 1;
             const gridClass = pageSize === 1
-              ? "grid grid-cols-1 gap-6 max-w-md mx-auto"
+              ? "grid grid-cols-1 gap-10 max-w-4xl mx-auto"
               : isSingleInDouble
-                ? "grid grid-cols-1 gap-6 max-w-md sm:max-w-lg mx-auto"
-                : "grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto";
+                ? "grid grid-cols-1 gap-10 max-w-4xl sm:max-w-5xl mx-auto"
+                : "grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-5xl mx-auto";
             return (
               <div key={idx} className="w-full flex-shrink-0 flex justify-center">
                 <div className={gridClass + " justify-items-center"}>

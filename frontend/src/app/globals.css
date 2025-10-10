@@ -27,3 +27,24 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Marquee horizontal infinito */
+@keyframes marquee-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 20s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused; /* Pausa al hover opcional */
+}

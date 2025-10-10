@@ -4,6 +4,7 @@ import NavComponent from "./components/NavComponent";
 import NavMobileComponent from "./components/NavMobileComponent";
 import Cards from "./components/packages/Cards";
 import SliderTestimonial from "./components/testimonials/SliderTestimonial";
+import CarruselComponent from "./components/carrusel/carruselComponent";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -57,6 +58,12 @@ export default function Home() {
       <section className="w-full py-12 text-black">
         <h2 className="text-2xl font-semibold text-center mb-4">Testimonios de nuestros clientes</h2>
         <SliderTestimonial />
+      </section>
+
+      {/* Logo Carrusel */}
+      <section className="w-full py-2 text-black">
+        {/* <h2 className="text-2xl font-semibold text-center mb-4">Nuestros Clientes</h2> */}
+        <CarruselComponent />
       </section>
     </div>
   );
