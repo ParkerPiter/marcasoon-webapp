@@ -1,0 +1,7 @@
+[build]
+  base = "frontend"
+  publish = ".next"
+  command = "npm run build" # o yarn build o pnpm build
+
+[context.production]
+  branch = "QA-test"
