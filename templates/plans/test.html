@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planes - Prueba de Checkout</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+    .muted { color: #666; font-size: 0.9rem; }
+    button { padding: 8px 12px; margin-right: 8px; cursor: pointer; }
+    .price { margin-top: 8px; }
+    .row { display: flex; justify-content: space-between; }
+  </style>
+  <script>
+    function getCookie(name){
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if(parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    async function fetchPlans(){
+      const res = await fetch('/api/plans/');
+      if(!res.ok) throw new Error('No se pudieron cargar los planes');
+      return res.json();
+    }
+
+    function money(cents, currency){
+      return new Intl.NumberFormat('es-US', { style: 'currency', currency }).format(cents/100);
+    }
+
+    async function render(){
+      const root = document.getElementById('root');
+      try {
+        const plans = await fetchPlans();
+        root.innerHTML = '<div class="grid">' + plans.map(p => `
+          <div class="card">
+            <h3>${p.title}</h3>
+            <p class="muted">${p.description || ''}</p>
+            <ul>${(p.includes||[]).map(i => `<li>${i}</li>`).join('')}</ul>
+            <div class="price">
+              <div class="row"><span>Sub total</span><strong>${money(p.base_price_cents ?? 0, p.currency)}</strong></div>
+              <div class="row"><span>Fee (USPTO)</span><strong>${money(p.fee_cents ?? 0, p.currency)}</strong></div>
+              <div class="row"><span>Total</span><strong>${money((p.base_price_cents||0)+(p.fee_cents||0), p.currency)}</strong></div>
+            </div>
+            <div style="margin-top:10px;">
+              <button onclick="payStripe(${p.id})">Pagar con Stripe</button>
+              <button onclick="payPayPal(${p.id})">Pagar con PayPal</button>
+            </div>
+          </div>
+        `).join('') + '</div>';
+      } catch (e) {
+        root.textContent = e.message;
+      }
+    }
+
+    async function payStripe(planId){
+      const headers = { 'Content-Type': 'application/json' };
+      const jwt = localStorage.getItem('jwt');
+      if (jwt) {
+        headers['Authorization'] = 'Bearer ' + jwt;
+      } else {
+        const csrf = document.querySelector('input[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken') || '';
+        if (csrf) headers['X-CSRFToken'] = csrf;
+      }
+      const res = await fetch('/api/stripe/create-checkout-session/', {
+        method: 'POST', credentials: 'include', headers,
+        body: JSON.stringify({ plan_id: planId, success_path: '/api/payments/success', cancel_path: '/api/payments/cancel' })
+      });
+      if (!res.ok) { const j = await res.json().catch(()=>({})); alert(j.detail || 'Error creando sesión de Stripe'); return; }
+      const data = await res.json();
+      if (data.url) window.location = data.url; else alert('No se obtuvo URL de Stripe');
+    }
+
+    async function payPayPal(planId){
+      const headers = { 'Content-Type': 'application/json' };
+      const jwt = localStorage.getItem('jwt');
+      if (jwt) {
+        headers['Authorization'] = 'Bearer ' + jwt;
+      } else {
+        const csrf = document.querySelector('input[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken') || '';
+        if (csrf) headers['X-CSRFToken'] = csrf;
+      }
+      const res = await fetch('/api/paypal/create-order/', {
+        method: 'POST', credentials: 'include', headers,
+        body: JSON.stringify({ plan_id: planId, redirect: true })
+      });
+      if (!res.ok) { const j = await res.json().catch(()=>({})); alert(j.detail || 'Error creando orden de PayPal'); return; }
+      const data = await res.json();
+      if (data.approveUrl) window.location = data.approveUrl; else alert('No se obtuvo approveUrl');
+    }
+
+    window.addEventListener('DOMContentLoaded', render);
+  </script>
+</head>
+<body>
+  <h1>Planes (Prueba)</h1>
+  <p class="muted">Selecciona un plan para validar Sub total, Fee y Total.</p>
+  <form>{% csrf_token %}</form>
+  <div id="root">Cargando…</div>
+</body>
+</html>

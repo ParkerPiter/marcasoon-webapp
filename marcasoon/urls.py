@@ -16,11 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework.schemas import get_schema_view
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,7 +29,9 @@ urlpatterns = [
         description="Documentación automática de la API",
         version="1.0.0"
     ), name='openapi-schema'),
-    # JWT Auth endpoints
-    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # JWT & DRF auth endpoints are declared under core.urls (mounted at /api/)
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

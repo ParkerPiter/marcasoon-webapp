@@ -1,0 +1,50 @@
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD&locale=es_ES"></script>
+<form id="paypal-form">
+  {% csrf_token %}
+  <button type="button" id="paypal-same-window" style="margin-top:12px">Pagar en esta ventana</button>
+  <span id="paypal-loading" style="display:none;margin-left:8px;">Creando orden…</span>
+</form>
+<script>
+function getCookie(name){
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if(parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Opción sin popup: redirigir al approveUrl en la misma ventana
+document.getElementById('paypal-same-window').addEventListener('click', async () => {
+  const btn = document.getElementById('paypal-same-window');
+  const loading = document.getElementById('paypal-loading');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + (localStorage.getItem('jwt') || '')
+  };
+  if (!localStorage.getItem('jwt')){
+    const csrfInput = document.querySelector('input[name=csrfmiddlewaretoken]');
+    const csrf = csrfInput ? csrfInput.value : (getCookie('csrftoken') || '');
+    if (csrf) headers['X-CSRFToken'] = csrf;
+  }
+  try {
+    btn.disabled = true; loading.style.display = 'inline';
+    const res = await fetch('/api/paypal/create-order/', {
+      method: 'POST',
+      credentials: 'include',
+      headers,
+      body: JSON.stringify({ amount: 15.00, currency: 'USD', redirect: true })
+    });
+    if (!res.ok) throw res;
+    const data = await res.json();
+    if (data.approveUrl) {
+      window.location.assign(data.approveUrl);
+    } else {
+      alert('No se encontró approveUrl.');
+    }
+  } catch (err) {
+    let msg = 'Error creando la orden de PayPal';
+    try { const j = await err.json(); if (j.detail) msg = j.detail; } catch(_) {}
+    alert(msg);
+  } finally {
+    btn.disabled = false; loading.style.display = 'none';
+  }
+});
+</script>

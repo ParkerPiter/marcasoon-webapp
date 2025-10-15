@@ -3,4 +3,7 @@
 /marcasoon/__pycache__/
 /marcasoon/migrations/
 venv
+env
+.txt
 /frontend/node_modules/
+

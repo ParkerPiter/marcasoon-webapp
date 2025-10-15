@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import TestModel, Task
+from .models import Trademark, TrademarkAsset, User, Plan
 
 # Register your models here.
 
-admin.site.register(TestModel)
-admin.site.register(Task)
+admin.site.register(Trademark)
+admin.site.register(TrademarkAsset)
+admin.site.register(User)
+admin.site.register(Plan)
