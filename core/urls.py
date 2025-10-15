@@ -45,6 +45,7 @@ urlpatterns = [
     # Plans endpoints
     path('plans/', plans_list, name='plans-list'),
     path('plans/<int:pk>/', plan_detail, name='plan-detail'),
+    path('plans/test/', TemplateView.as_view(template_name='plans/test.html'), name='plans-test'),
     
     # Trademark lookup endpoints
     path('trademark/classification-search/', trademark_classification_search, name='trademark-classification-search'),

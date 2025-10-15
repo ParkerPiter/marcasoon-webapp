@@ -21,9 +21,9 @@ def create_paypal_order(request):
                 plan = Plan.objects.get(pk=plan_id, is_active=True)
             except Plan.DoesNotExist:
                 return JsonResponse({'detail': 'Invalid plan_id'}, status=400)
-            amount = plan.price_cents / 100.0
+            amount = plan.total_cents / 100.0
             currency = plan.currency
-            purchase_desc = plan.title
+            purchase_desc = f"{plan.title} (Base: {plan.base_price_cents/100:.2f} + Fee: {plan.fee_cents/100:.2f})"
         else:
             purchase_desc = 'Custom payment'
             if amount is None:

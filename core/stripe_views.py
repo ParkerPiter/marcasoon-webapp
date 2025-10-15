@@ -63,12 +63,21 @@ def create_checkout_session(request):
                 line_items=[{
                     'price_data': {
                         'currency': plan.currency,
-                        'product_data': {'name': plan.title, 'description': plan.description[:500]},
-                        'unit_amount': int(plan.price_cents),
+                        'product_data': {
+                            'name': plan.title,
+                            'description': (plan.description or '')[:400]
+                        },
+                        'unit_amount': int(plan.total_cents),
                     },
                     'quantity': 1,
                 }],
-                metadata={'plan_id': str(plan.id), 'user_id': str(request.user.id)},
+                metadata={
+                    'plan_id': str(plan.id),
+                    'user_id': str(request.user.id),
+                    'base_price_cents': str(plan.base_price_cents),
+                    'fee_cents': str(plan.fee_cents),
+                    'total_cents': str(plan.total_cents),
+                },
                 success_url=success_url,
                 cancel_url=cancel_url,
                 customer_email=request.user.email or None,

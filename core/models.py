@@ -59,10 +59,21 @@ class Plan(models.Model):
     client_objective = models.CharField(max_length=255)
     includes = models.JSONField(default=list, help_text="Lista de elementos incluidos en el plan")
     # Guardamos precio en centavos para precisión
-    price_cents = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    # (DEPRECATED) price_cents: mantenido por compatibilidad, no se usa si hay base/fee
+    price_cents = models.PositiveIntegerField(validators=[MinValueValidator(1)], null=True, blank=True)
+    # Desglose de costos (en centavos)
+    base_price_cents = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=0, help_text="Precio del plan sin tasas")
+    fee_cents = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=35000, help_text="Tasa USPTO u otra, en centavos")
     currency = models.CharField(max_length=10, default='USD')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.title} ({self.currency} {self.price_cents/100:.2f})"
+            return f"{self.title} ({self.currency} {self.total_cents/100:.2f})"
+
+    @property
+    def total_cents(self) -> int:
+        """Total a cobrar = base + fee. Si no hay base/fee, usa price_cents como respaldo."""
+        if self.base_price_cents is not None or self.fee_cents is not None:
+            return int((self.base_price_cents or 0) + (self.fee_cents or 0))
+        return int(self.price_cents or 0)
 

@@ -51,16 +51,25 @@ class TrademarkSerializer(serializers.ModelSerializer):
 
 class PlanSerializer(serializers.ModelSerializer):
     price = serializers.SerializerMethodField()
+    total = serializers.SerializerMethodField()
 
     class Meta:
         model = Plan
         fields = (
             'id', 'title', 'description', 'client_objective', 'includes',
-            'price_cents', 'currency', 'price', 'is_active'
+            'price_cents', 'base_price_cents', 'fee_cents', 'currency',
+            'price', 'total', 'is_active'
         )
 
     def get_price(self, obj):
+        cents = obj.price_cents if obj.price_cents is not None else (obj.base_price_cents or 0)
         return {
-            'amount': obj.price_cents / 100.0,
+            'amount': cents / 100.0,
+            'currency': obj.currency,
+        }
+
+    def get_total(self, obj):
+        return {
+            'amount': obj.total_cents / 100.0,
             'currency': obj.currency,
         }
