@@ -1,6 +1,6 @@
 from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
-from .models import  Trademark, TrademarkAsset, Plan
+from .models import  Trademark, TrademarkAsset, Plan, Testimonial
 
 
 User = get_user_model()
@@ -73,3 +73,28 @@ class PlanSerializer(serializers.ModelSerializer):
             'amount': obj.total_cents / 100.0,
             'currency': obj.currency,
         }
+
+
+class TestimonialSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    trademark = serializers.PrimaryKeyRelatedField(queryset=Trademark.objects.all(), required=False, allow_null=True)
+
+    class Meta:
+        model = Testimonial
+        fields = (
+            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'approved', 'created_at'
+        )
+        read_only_fields = ('approved', 'created_at')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        validated_data['user'] = user
+        # Auto-fill client/brand when missing
+        if not validated_data.get('client_name') and user:
+            validated_data['client_name'] = (user.get_full_name() or user.username or '').strip()
+        tm = validated_data.get('trademark')
+        if not validated_data.get('brand_name') and tm:
+            # If you later store brand name in assets, adapt here
+            validated_data['brand_name'] = getattr(user, 'username', '')
+        return super().create(validated_data)

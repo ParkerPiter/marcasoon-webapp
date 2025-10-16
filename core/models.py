@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator
 
 # Create your models here.
 class User(AbstractUser):
@@ -76,4 +77,24 @@ class Plan(models.Model):
         if self.base_price_cents is not None or self.fee_cents is not None:
             return int((self.base_price_cents or 0) + (self.fee_cents or 0))
         return int(self.price_cents or 0)
+
+
+class Testimonial(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='testimonials')
+    trademark = models.ForeignKey('Trademark', on_delete=models.SET_NULL, null=True, blank=True, related_name='testimonials')
+    client_name = models.CharField(max_length=150)
+    brand_name = models.CharField(max_length=150)
+    title = models.CharField(max_length=180, blank=True)
+    content = models.TextField()
+    rating = models.PositiveSmallIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        who = self.client_name or getattr(self.user, 'username', 'user')
+        return f"{who} sobre {self.brand_name}" if self.brand_name else who
 

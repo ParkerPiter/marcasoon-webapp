@@ -4,8 +4,8 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
-from .models import Trademark, TrademarkAsset, User, Plan
-from .serializers import RegisterSerializer, UserSerializer, PlanSerializer
+from .models import Trademark, TrademarkAsset, User, Plan, Testimonial
+from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer
 from .trademark_service import TrademarkLookupClient
 
 
@@ -253,4 +253,49 @@ def plan_detail(request, pk: int):
     except Plan.DoesNotExist:
         return Response({'detail': 'Plan not found'}, status=404)
     return Response(PlanSerializer(plan).data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def testimonials_list_public(request):
+    qs = Testimonial.objects.filter(approved=True).order_by('-created_at')
+    return Response(TestimonialSerializer(qs, many=True).data)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([permissions.IsAuthenticated])
+def testimonials_collection(request):
+    if request.method == 'GET':
+        qs = Testimonial.objects.filter(user=request.user).order_by('-created_at')
+        return Response(TestimonialSerializer(qs, many=True).data)
+    # POST create
+    serializer = TestimonialSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        obj = serializer.save()
+        return Response(TestimonialSerializer(obj).data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def testimonial_detail(request, pk: int):
+    try:
+        obj = Testimonial.objects.get(pk=pk)
+    except Testimonial.DoesNotExist:
+        return Response({'detail': 'Not found'}, status=404)
+    # Owner or staff can edit/delete; public get is restricted to owner unless approved
+    if request.method == 'GET':
+        if obj.approved or obj.user_id == request.user.id or request.user.is_staff:
+            return Response(TestimonialSerializer(obj).data)
+        return Response({'detail': 'Forbidden'}, status=403)
+    if obj.user_id != request.user.id and not request.user.is_staff:
+        return Response({'detail': 'Forbidden'}, status=403)
+    if request.method == 'PATCH':
+        serializer = TestimonialSerializer(obj, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            obj = serializer.save()
+            return Response(TestimonialSerializer(obj).data)
+        return Response(serializer.errors, status=400)
+    obj.delete()
+    return Response(status=204)
     
