@@ -10,7 +10,7 @@ const Cards = () => {
         <CardPrice key={paquete.id} 
             id={paquete.id}
             title={paquete.title}
-            client_objetive={paquete.client_objetive}
+            client_objective={paquete.client_objetive}
             description={paquete.description}
             includes={paquete.includes}
             price={paquete.price}
