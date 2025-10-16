@@ -4,7 +4,8 @@ export interface CardPrice {
     description: string;
     client_objective: string;
     includes: string[];
-    price: { amount: number, currency: string };
+    //price: { amount: number, currency: string };
+    price: number;
 }
 
 export interface CardBlog {
