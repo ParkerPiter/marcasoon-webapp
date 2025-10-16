@@ -1,0 +1,47 @@
+import { CardPrice } from "../src/app/interfaces/card";
+/**
+ * GET directo al Admin (HTML). Requiere estar logueado en Django y que CORS permita la petición.
+ * Devuelve el HTML de la página del admin.
+ */
+export async function getPlansFromAdminHTML(
+  url = "http://localhost:8000/admin/core/plan/"
+): Promise<string> {
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include", // envía cookies de sesión del admin
+    headers: {
+      Accept: "text/html,application/xhtml+xml",
+    },
+    // mode: "cors" // opcional en navegador
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Admin GET failed (${res.status}): ${text || res.statusText}`);
+  }
+  return res.text();
+}
+
+/**
+ * GET recomendado a un endpoint REST que devuelva JSON de planes.
+ * Cambia la ruta por tu endpoint real (ej: /api/plans/).
+ */
+export async function getPlansAPI(
+  url = "http://localhost:8000/api/plans/",
+  options?: RequestInit
+): Promise<CardPrice[]> {
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+    ...(options || {}),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API GET failed (${res.status}): ${text || res.statusText}`);
+  }
+  return res.json();
+}
