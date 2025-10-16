@@ -18,7 +18,7 @@ const Card = ( { id, title, includes, description, price, client_objective } : C
 
             <div className="min-h-[60px] text-center">
                 <p className="text-sm text-gray-600">
-                    <span className="font-semibold">Ideal para:</span> {client_objetive}
+                    <span className="font-semibold">Ideal para:</span> {client_objective}
                 </p>
             </div>
 
