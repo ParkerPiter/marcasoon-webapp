@@ -5,6 +5,9 @@ from .views import (
     tasks_page,
     plans_list,
     plan_detail,
+    testimonials_list_public,
+    testimonials_collection,
+    testimonial_detail,
     trademark_classification_search,
     trademark_name_search,
     trademark_availability,
@@ -45,6 +48,10 @@ urlpatterns = [
     # Plans endpoints
     path('plans/', plans_list, name='plans-list'),
     path('plans/<int:pk>/', plan_detail, name='plan-detail'),
+    # Testimonials endpoints
+    path('testimonials/public/', testimonials_list_public, name='testimonials-public'),
+    path('testimonials/', testimonials_collection, name='testimonials-collection'),
+    path('testimonials/<int:pk>/', testimonial_detail, name='testimonial-detail'),
     path('plans/test/', TemplateView.as_view(template_name='plans/test.html'), name='plans-test'),
     
     # Trademark lookup endpoints
