@@ -20,6 +20,8 @@ export interface CardTestimonial {
     name: string;
     testimonial: string;
     logo?: string;
+    countryName?: string;
+    countryCode?: string; 
 }
 
 export interface FaqItem {

@@ -48,25 +48,29 @@ export const testimonials = [
         id: 1,
         name: "Miami Emprendedores",
         quote: 'Como CEO y fundadora, sabía que registrar mi marca era crucial, pero me preocupaba encontrar al profesional adecuado para un proceso tan importante. Fue fundamental para mi decisión que Marcasoon viniera con excelentes referencias.\nEl proceso superó mis expectativas: fue completamente sin esfuerzo de mi parte. No tuve que hacer nada; simplemente dejé que los expertos hicieran su trabajo.\nAhora que la marca de Miami Emprendedores está registrada, la sensación de tranquilidad es total. Es un alivio enorme tener este activo protegido, lo cual me permite enfocarme en lo que realmente importa: hacer crecer mi negocio. Si tuviera que dar un consejo, sería este: no intenten hacerlo todo. Dejen que los expertos se encarguen y obtengan la paz mental que solo ellos pueden ofrecer.',
-        logo: "/Miami Emprendedores.jpeg"
+        logo: "/Miami Emprendedores.jpeg",
+        country: "USA"
     },
     {
         id: 2,
         name: "El Truck de las Flores",
         quote: 'Antes de empezar, mi mayor preocupación era la falta de información y no saber a quién acudir para registrar mi marca. Es un proceso legal que me generaba muchas dudas.\nLa decisión de trabajar con MarcaSoon fue gracias a la recomendación de una amiga, que me dijo con total seguridad: “Ricardo es el indicado”. Y no se equivocó. Desde el principio, me impresionó la claridad, la cercanía y el gran profesionalismo. Todo se manejó exactamente como me lo explicaron en nuestra primera reunión, y en los tiempos acordados.\nAhora que mi marca está registrada, me siento completamente segura. Si tuviera que recomendar sus servicios, le diría a cualquiera lo mismo que me dijo mi amiga: háganlo con Ricardo a ojos cerrados, porque lo explica todo con total claridad y los tiempos son impecables.',
-        logo: "/logo truck de las flores.png"
+        logo: "/logo truck de las flores.png",
+        country: "USA"
     },
     {
         id: 3,
         name: "Zona Fit",
         quote: 'Antes de iniciar el proceso de registro, mi mayor preocupación era que alguien más tomara la marca que había elegido para mi negocio. Fue entonces cuando encontré a Marcasoon, y supe que ellos eran la opción correcta. \nEl proceso fue sorprendentemente fácil y claro. Me explicaron cada paso, lo cual me dio mucha confianza. Ahora que mi marca Zona Fit está en proceso de registro, me siento mucho más tranquila. Sé que mi marca está en manos de profesionales que saben lo que hacen. \nLa tranquilidad no tiene precio, y Marcasoon me la ha dado. Recomendaría sus servicios a cualquiera que busque una gestión profesional y sin preocupaciones para el registro de su marca.',
-        logo: "/Zona fit.jpeg"
+        logo: "/Zona fit.jpeg",
+        country: "USA"
     },
     {
         id: 4,
         name: "Franco Arte",
         quote: 'Desde el inicio, nuestra prioridad era asegurarnos de que el proceso se hiciera bien hecho. La recomendación de Ricardo fue excelente y eso, junto a su calidad humana, nos dio total confianza. \nLa comunicación fue siempre fácil y constante. Hoy, es un orgullo para nuestra empresa contar con nuestras marcas registradas en EE. UU., lo cual ha facilitado y agilizado los procesos con varios de nuestros clientes importantes al solicitarnos dichos registros. \nLos recomiendo con total confianza. Son un equipo muy profesional, responsable y serio.',
-        logo: "/LOGO_FRANCO_ARTE_1000X1000.png"
+        logo: "/LOGO_FRANCO_ARTE_1000X1000.png",
+        country: "Colombia"
     }
 ];
 

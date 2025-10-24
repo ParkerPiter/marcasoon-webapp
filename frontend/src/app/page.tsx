@@ -48,7 +48,7 @@ export default function Home() {
 
       {/* Precios */}
       <section className="w-5/6 py-12 text-black">
-        <h3 className="text-2xl text-center mb-4 uppercase font-semibold font-archivo">Nuestros <span className="font-playfair font-semibold italic">Paquetes</span></h3>
+        <h3 className="text-2xl text-center mb-4 font-semibold font-archivo">Nuestros <span className="font-playfair font-semibold italic">paquetes</span></h3>
         <Cards></Cards>
       </section>
 
@@ -109,7 +109,7 @@ export default function Home() {
 
       {/* Blog */}
       <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Nuestro Blog</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4">Nuestro <span className="font-playfair italic">Blog</span></h2>
         <BlogCards />
       </section>
 
@@ -135,31 +135,7 @@ export default function Home() {
             {
             question: '¿Qué son las "Clases de Niza" y por qué debo elegir la correcta?',
             answer: 'La Clasificación de Niza es un sistema internacional que agrupa productos y servicios en 45 categorías (o "clases"). Es la base para tu solicitud de registro. Es vital elegirlas correctamente porque tu marca solo estará protegida legalmente para los productos o servicios específicos que declares. Si no incluyes una clase importante para tu negocio, podrías dejar una puerta abierta a que un competidor use tu marca en ese sector. Nosotros te asesoramos para elegir las clases adecuadas que blinden tu negocio completamente.'
-          },
-          //   {
-          //   question: "¿Qué pasa si mi marca ya está registrada?",
-          //   answer: "Si tu marca no está disponible, no es el final. Te asesoraremos para encontrar la mejor alternativa legal. Podemos ayudarte a modificarla o a crear una nueva que sea única y viable, para que puedas seguir adelante con tu negocio sin tener que empezar de cero."
-          // },
-          //   {
-          //   question: "¿Qué incluye el servicio de Marcasoon?",
-          //   answer: "Nuestro servicio es integral. No solo nos encargamos del papeleo. Te ofrecemos una asesoría completa que incluye la búsqueda inicial de viabilidad, la preparación y presentación de la solicitud, y el monitoreo de tu marca durante todo el proceso ante la USPTO."
-          // },
-          //   {
-          //   question: "¿Cómo funciona la Garantía de Éxito?",
-          //   answer: "Creemos firmemente en nuestro trabajo. Si tu marca es rechazada por un error de nuestra parte en la solicitud o en la asesoría, te devolvemos el 100% de nuestros honorarios profesionales. Tu inversión está protegida, dándote total tranquilidad."
-          // },
-          //   {
-          //   question: "¿El costo del servicio incluye las tarifas del gobierno?",
-          //   answer: "No. El costo de nuestro servicio profesional cubre nuestra asesoría y gestión experta. Las tarifas gubernamentales de la USPTO o de la OMPI son un pago separado que se gestiona directamente a las oficinas. Te daremos un desglose transparente de todos los costos."
-          // },
-          //   {
-          //   question: "¿Qué pasa después del registro? ¿Tengo que renovar mi marca?",
-          //   answer: "¡Absolutamente! El registro de una marca en EE. UU. (USPTO) es válido por 10 años, pero debes presentar una Declaración de Uso (Secciones 8 y 15) entre el quinto y sexto año para mantenerla activa. Si no se presenta, tu marca se cancela. Dentro de nuestro servicio, te monitoreamos y te notificamos con suficiente tiempo para que nunca pierdas tu protección."
-          // },
-          // {
-          //   question: "¿Qué me diferencia de otros servicios de registro de marca?",
-          //   answer: "No somos solo un portal automatizado. Somos tu aliado. Te damos la tranquilidad de estar en manos de expertos que entienden tanto el proceso legal complejo como tu cultura de negocio. Nuestro objetivo es que tu marca se convierta en un activo fuerte, seguro y respetado, no solo en un certificado."
-          // }
+          }
         ]} />
       </section>
 
