@@ -29,7 +29,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True')
 
 ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
 
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'marcasoon-webapp.onrender.com')
 
 # Cookies/CSRF defaults (override below in DEBUG for local dev)
 CSRF_COOKIE_SECURE = True
@@ -192,7 +192,7 @@ REST_FRAMEWORK = {
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "marcasoon-webapp.onrender.com"]
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -205,4 +205,5 @@ if DEBUG:
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'https://marcasoon-webapp.onrender.com'
     ]
