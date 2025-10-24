@@ -1,0 +1,23 @@
+databases:
+  - name: marcasoon-webapp-db
+    plan: free
+    databaseName: marcasoon
+    user: postgres
+    type: postgresql
+
+services:
+  - type: web
+    plan: free
+    name: marcasoon-webapp
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn mysite.asgi:application -k uvicorn.workers.UvicornWorker'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: marcasoon-webapp-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
