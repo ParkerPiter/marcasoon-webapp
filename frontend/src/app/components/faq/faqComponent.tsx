@@ -42,7 +42,7 @@ const FaqComponent = ({
 								className="border border-gray-200 rounded-sm bg-[#f8fafc]"
 							>
 								<button
-									className="w-full text-left px-6 py-4 font-semibold text-gray-900 flex items-center justify-between"
+									className="w-full text-left px-6 py-4 font-semibold text-gray-900 flex items-center justify-between hover:cursor-pointer"
 									onClick={() => toggle(idx)}
 									aria-expanded={isOpen}
 									aria-controls={`faq-panel-${idx}`}
@@ -56,14 +56,18 @@ const FaqComponent = ({
 										<ChevronDown className="w-5 h-5 text-gray-700" />
 									)}
 								</button>
-								{isOpen && (
-									<div
-										id={`faq-panel-${idx}`}
-										className="px-6 pb-5 text-gray-700"
-									>
-										{item.answer}
-									</div>
-								)}
+											{/* Panel con transición suave usando grid-rows */}
+											<div
+												id={`faq-panel-${idx}`}
+												aria-hidden={!isOpen}
+												className={`grid transition-all duration-300 ease-in-out ${
+													isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+												}`}
+											>
+												<div className="overflow-hidden px-6 pb-5 text-gray-700">
+													{item.answer}
+												</div>
+											</div>
 							</div>
 						);
 					})}

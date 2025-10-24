@@ -5,6 +5,12 @@ import SliderTestimonial from "./components/testimonials/SliderTestimonial";
 import CarruselComponent from "./components/carrusel/carruselComponent";
 import BlogCards from "./components/blog/Cards";
 import FaqComponent from "./components/faq/faqComponent";
+import Banner from "./components/Banner";
+import Button from "./components/buttons/homeButtons";
+import Image from "next/image";
+
+import proceso from '../../public/arte2.png';
+import protocolo_madrid from '../../public/BANNER-PRINCIPAL.png';
 
 
 export default function Home() {
@@ -13,32 +19,85 @@ export default function Home() {
     <div className="font-sans min-h-screen  pb-20 flex flex-col gap-16 items-center">
 
       {/* Hero */}
-      <section className="w-full py-16 text-black">
-        <h1 className="text-4xl font-bold text-center mb-4">Bienvenido a <span className="text-[#192A56]">Marca</span><span className="text-[#FF6B6B]">soon</span></h1>
-        <p className="text-center text-lg">Protege tu marca de forma fácil y rápida.</p>
+      <section className="w-full py-0 text-black">
+        <Banner />
       </section>
 
       {/* Cómo trabajamos */}
-      <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">¿Cómo trabajamos?</h2>
-        <p className="text-center">Te guiamos en cada paso del proceso de registro y protección de tu marca.</p>
+      <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-20">
+        <h2 className="md:text-3xl text-2xl font-semibold text-center mb-4">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="md:order-1 order-2 w-full">
+            <Image
+              src={proceso}
+              alt="Cómo trabajamos"
+              width={800}
+              height={800}
+              sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
+              placeholder="blur"
+              className="w-full h-auto rounded-2xl"
+            />
+          </div> 
+          <div className="md:order-2 orden-1 ">
+            <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center">Paso a paso</h3>
+            <p className="text-center md:text-lg text-base md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque suscipit luctus orci in hendrerit. Nulla velit urna, aliquet accumsan turpis a, faucibus tincidunt lorem. Sed euismod commodo risus et luctus. Nulla tempor erat eget venenatis tincidunt. Duis feugiat leo quis elit luctus, eu placerat ligula lobortis. Aenean tincidunt finibus dictum. Curabitur finibus ornare ornare. Quisque egestas dui sapien, vitae luctus justo tincidunt ut. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat leo elit, ac feugiat turpis commodo ut. Nam id nisi quis metus ultrices commodo luctus in magna. Donec sodales efficitur ullamcorper. Aenean convallis tincidunt mollis.</p>
+            <Button />
+          </div>
+        </div>
       </section>
 
       {/* Precios */}
       <section className="w-5/6 py-12 text-black">
-        <h3 className="text-2xl font-medium text-center mb-4 uppercase">Paquetes</h3>
+        <h3 className="text-2xl text-center mb-4 uppercase font-semibold font-archivo">Nuestros <span className="font-playfair font-semibold italic">Paquetes</span></h3>
         <Cards></Cards>
       </section>
 
       {/* Otros servicios */}
-      <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Otros servicios</h2>
-        <p className="text-center">Consultoría, vigilancia de marcas y más soluciones legales.</p>
+      <section className="w-full bg-[#ED5E32]">
+        {/* <h2 className="md:text-3xl text-2xl font-semibold text-center mb-6">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h2> */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center ">
+          <div className="order-1 md:order-1 w-full md:w-[940px] md:px-0 px-0">
+            <Image
+              src={protocolo_madrid}
+              alt="Protocolo de Madrid"
+              width={680}
+              height={680}
+              sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
+              placeholder="blur"
+              className="w-full h-auto "
+            />
+          </div> 
+          <div className="order-2 md:order-2 py-12 md:pr-12 px-4 md:px-0">
+            <p className="text-center md:text-lg text-base md:text-left">
+              El <span className="italic font-playfair font-semibold ">Protocolo de Madrid</span> es un sistema internacional que permite registrar una marca en varios países con un solo trámite,
+              haciendo todo mucho más simple y eficiente.
+            </p>
+
+            <div className="space-y-2 mt-3">
+              <h3 className="font-semibold">Cómo funciona con Marcasoon:</h3>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Primero, solicitamos tu marca en los Estados Unidos.</li>
+                <li>Seguidamente iniciamos el proceso internacional bajo el Protocolo de Madrid, extendiendo la protección a más de 130 países miembros del sistema.</li>
+                <li>La Oficina Internacional revisa tu solicitud y la envía a los países elegidos. Cada país evalúa la marca según sus propias leyes.</li>
+                <li>Una vez cumplimentado cada proceso, tu marca quedará protegida en todos esos países, sin tener que hacer trámites separados en cada uno.</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <h3 className="font-semibold">Beneficios:</h3>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><span className="font-semibold">Ahorro de tiempo y dinero:</span> un solo formulario, un solo pago, una sola estrategia global.</li>
+                <li><span className="font-semibold">Cobertura internacional rápida:</span> protege tu marca en múltiples países a la vez.</li>
+                <li><span className="font-semibold">Gestión sencilla:</span> cualquier cambio, modificación o renovación se hace desde Marcasoon.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Testimonios de nuestros clientes */}
       <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Testimonios de nuestros clientes</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4 font-archivo"><span className="font-playfair italic">Testimonios</span> de nuestros clientes</h2>
         <SliderTestimonial />
       </section>
 
@@ -55,7 +114,7 @@ export default function Home() {
       </section>
 
       {/* FAQs */}
-      <section className="w-full py-12 text-black">
+      <section className="w-full py-6 text-black">
         <FaqComponent items={[
           {
             question: "¿Qué es una marca y por qué es tan importante para mi negocio?",
