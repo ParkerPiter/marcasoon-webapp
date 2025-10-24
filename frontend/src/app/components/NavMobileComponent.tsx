@@ -14,7 +14,7 @@ const NavMobileComponent = () => {
   };
 
   return (
-    <nav className=" bg-white shadow-md w-full md:hidden sticky top-0 z-50">
+  <nav className="bg-white shadow-md w-full md:hidden sticky top-0 z-50">
       {/* Barra superior visible */}
       <div className="flex items-center justify-between p-4">
         <LogoComponent />
@@ -25,7 +25,7 @@ const NavMobileComponent = () => {
 
       {/* Menú desplegable */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-lg py-4 px-5">
+        <div className="absolute top-full left-0 w-full bg-white shadow-lg py-4 px-5 z-50">
           <ul className="flex flex-col gap-4">
             <li>
               <a href="/" className="text-lg text-gray-700 hover:text-[#192A56]">Inicio</a>

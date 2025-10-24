@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import NavComponent from "./components/NavComponent";
+import NavMobileComponent from "./components/NavMobileComponent";
+import Footer from "./components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,12 +25,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Nav móvil (XS-SM) */}
+        <div className="md:hidden sticky top-0 z-50">
+          <NavMobileComponent />
+        </div>
+        {/* Nav desktop (MD en adelante) */}
+        <div className="hidden md:block sticky top-0 z-50">
+          <NavComponent />
+        </div>
         {children}
+        <Footer />
       </body>
     </html>
   );

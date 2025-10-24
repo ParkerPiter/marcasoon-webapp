@@ -3,7 +3,7 @@
 import { CardPrice } from "@/app/interfaces/card";
 import {CheckCircle2} from 'lucide-react';
 
-const Card = ( { id, title, includes, description, price, client_objetive } : CardPrice) => {
+const Card = ( { id, title, includes, description, price, client_objective } : CardPrice) => {
   return (
     <div className="group border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-white overflow-hidden">
         <div className="border-t-4 border-[#FF6B6B] group-hover:border-[#192A56] transition-colors duration-300"></div>
@@ -18,7 +18,7 @@ const Card = ( { id, title, includes, description, price, client_objetive } : Ca
 
             <div className="min-h-[60px] text-center">
                 <p className="text-sm text-gray-600">
-                    <span className="font-semibold">Ideal para:</span> {client_objetive}
+                    <span className="font-semibold">Ideal para:</span> {client_objective}
                 </p>
             </div>
 
@@ -38,7 +38,7 @@ const Card = ( { id, title, includes, description, price, client_objetive } : Ca
 
             <div className="mt-auto pt-6">
                 <button className="w-full uppercase font-bold bg-[#FF6B6B] text-white py-3 px-4 rounded-lg hover:bg-[#192A56] transition-colors duration-300 hover:cursor-pointer">
-                    Adquirir
+                    Select
                 </button>
             </div>
         </div>
