@@ -22,20 +22,20 @@ const FaqComponent = ({
 
 	return (
 		<section className="w-full py-10">
-			<div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+			<div className="container mx-auto px-4 ">
 				{/* Columna izquierda: título y subtítulo */}
-				<div>
-					<h2 className="text-3xl font-bold text-gray-900 mb-2">
+				<div className="text-center">
+					<h2 className="text-3xl font-bold text-gray-900 mb-2 font-archivo">
 						{title}
 					</h2>
 					<p className="text-gray-600">
 						{subtitle}
 					</p>
-					<Button />
+
 				</div>
 
 				{/* Columna derecha: acordeón */}
-				<div className="md:col-span-2 space-y-4">
+				<div className="md:col-span-2 space-y-4 mt-8">
 					{items.map((item, idx) => {
 						const isOpen = openIndex === idx;
 						return (
@@ -44,12 +44,12 @@ const FaqComponent = ({
 								className="border border-gray-200 rounded-sm bg-[#f8fafc]"
 							>
 								<button
-									className="w-full text-left px-6 py-4 font-semibold text-gray-900 flex items-center justify-between hover:cursor-pointer"
+									className="w-full text-sm md:text-lg text-left  px-6 py-4 font-semibold text-gray-900 flex items-center justify-between hover:cursor-pointer"
 									onClick={() => toggle(idx)}
 									aria-expanded={isOpen}
 									aria-controls={`faq-panel-${idx}`}
 								>
-									<span>
+									<span className="">
 										{idx + 1}. {item.question}
 									</span>
 									{isOpen ? (
