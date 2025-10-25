@@ -2,9 +2,10 @@
 
 set -o errexit
 
+# Build phase: install dependencies and collect static files.
 pip install -r requirements.txt
-
 python manage.py collectstatic --noinput
-python manage.py makemigrations core
-python manage.py migrate --noinput
-DJANGO_SUPERUSER_USERNAME=admin DJANGO_SUPERUSER_EMAIL=admin@example.com DJANGO_SUPERUSER_PASSWORD='12345' python manage.py createsuperuser --noinput
+
+# NOTE:
+# - Migrations, superuser creation, and data seeding must NOT run in build.
+#   They belong to the Pre-Deploy Command. See predeploy.sh in the repo root.
