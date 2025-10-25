@@ -25,8 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$4zck577%4d_z$k1%6+*)%5ah2+xw2h59=(jy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
+# Parse DJANGO_DEBUG to a real boolean; default to True for local dev convenience.
+# In Render (producción), configura DJANGO_DEBUG=False en Environment.
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
 ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
 
