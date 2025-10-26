@@ -1,6 +1,6 @@
 from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
-from .models import  Trademark, TrademarkAsset, Plan, Testimonial
+from .models import  Trademark, TrademarkAsset, Plan, Testimonial, BlogPost
 
 
 User = get_user_model()
@@ -139,3 +139,20 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
     def get_country(self, obj):
         # Country not stored yet; return None to keep shape stable
         return None
+
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = BlogPost
+        fields = (
+            'id', 'author', 'title', 'slug', 'body', 'is_published', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('slug', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        validated_data['author'] = user
+        return super().create(validated_data)

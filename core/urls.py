@@ -8,6 +8,8 @@ from .views import (
     testimonials_list_public,
     testimonials_collection,
     testimonial_detail,
+    blog_posts,
+    blog_post_detail,
     trademark_classification_search,
     trademark_name_search,
     trademark_availability,
@@ -53,6 +55,10 @@ urlpatterns = [
     path('testimonials/', testimonials_collection, name='testimonials-collection'),
     path('testimonials/<int:pk>/', testimonial_detail, name='testimonial-detail'),
     path('plans/test/', TemplateView.as_view(template_name='plans/test.html'), name='plans-test'),
+
+    # Blog / Foro endpoints
+    path('blog/posts/', blog_posts, name='blog-posts'),
+    path('blog/posts/<int:pk>/', blog_post_detail, name='blog-post-detail'),
     
     # Trademark lookup endpoints
     path('trademark/classification-search/', trademark_classification_search, name='trademark-classification-search'),
