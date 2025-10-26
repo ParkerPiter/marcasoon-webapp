@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_user:dTn7TLoU0ssqMOMFb6E2UCAlwJUh1jB6@dpg-d3u0ehuuk2gs73dgkh5g-a/marcasoon_webapp_db'),
+        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_2a55_user:tJg1sxkMnfBQCKnVRudkh5up76HqC5Qg@dpg-d3v7s6ndiees73epq8sg-a/marcasoon_webapp_db_2a55'),
         conn_max_age=600
     )
 }
