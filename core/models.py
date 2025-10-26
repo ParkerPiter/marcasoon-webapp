@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
+from django.utils.text import slugify
 
 # Create your models here.
 class User(AbstractUser):
@@ -97,4 +98,40 @@ class Testimonial(models.Model):
     def __str__(self):
         who = self.client_name or getattr(self.user, 'username', 'user')
         return f"{who} sobre {self.brand_name}" if self.brand_name else who
+
+
+class BlogPost(models.Model):
+    """Blog/foro: entradas creadas por usuarios.
+    - author: usuario creador
+    - title, slug: título y slug único
+    - body: contenido
+    - is_published: visible públicamente si True
+    - created_at/updated_at
+    """
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True, blank=True)
+    body = models.TextField()
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        # Autogenerar slug único a partir del título si no se suministra
+        if not self.slug:
+            base = slugify(self.title) or 'post'
+            candidate = base
+            i = 1
+            Model = self.__class__
+            while Model.objects.filter(slug=candidate).exclude(pk=self.pk).exists():
+                i += 1
+                candidate = f"{base}-{i}"
+            self.slug = candidate
+        super().save(*args, **kwargs)
 
