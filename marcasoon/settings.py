@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,12 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3eeby=m%(a0$s$4zck577%4d_z$k1%6+*)%5ah2+xw2h59=(jy'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$4zck577%4d_z$k1%6+*)%5ah2+xw2h59=(jy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'marcasoon-webapp.onrender.com')
 
 # Cookies/CSRF defaults (override below in DEBUG for local dev)
 CSRF_COOKIE_SECURE = True
@@ -52,6 +56,7 @@ AUTH_USER_MODEL = 'core.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -85,14 +90,10 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'marcasoon',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_2a55_user:tJg1sxkMnfBQCKnVRudkh5up76HqC5Qg@dpg-d3v7s6ndiees73epq8sg-a/marcasoon_webapp_db_2a55'),
+        conn_max_age=600
+    )
 }
 
 
@@ -141,8 +142,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_MEDIA_ROOT = BASE_DIR / 'static'
+# URL base for static assets
+STATIC_URL = '/static/'
+
+# Always set STATIC_ROOT so collectstatic has a destination both in dev and prod
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Use optimized storage in non-debug (production)
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Optional: local source directory for static assets (if you place app-level or project-level static/)
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Note: This project previously had STATIC_MEDIA_ROOT; Django ignores it. Keeping media config below.
 
 # Media files (for uploads like logos and sounds)
 MEDIA_URL = '/media/'
@@ -156,6 +169,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #CORS AUTHORIZATION
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://marcasoon-webapp.onrender.com"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -187,7 +201,7 @@ REST_FRAMEWORK = {
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "marcasoon-webapp.onrender.com"]
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -200,4 +214,5 @@ if DEBUG:
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'https://marcasoon-webapp.onrender.com'
     ]

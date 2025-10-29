@@ -4,8 +4,8 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
-from .models import Trademark, TrademarkAsset, User, Plan, Testimonial
-from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer
+from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
+from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
 from .trademark_service import TrademarkLookupClient
 
 
@@ -259,7 +259,7 @@ def plan_detail(request, pk: int):
 @permission_classes([permissions.AllowAny])
 def testimonials_list_public(request):
     qs = Testimonial.objects.filter(approved=True).order_by('-created_at')
-    return Response(TestimonialSerializer(qs, many=True).data)
+    return Response(TestimonialSimpleSerializer(qs, many=True, context={'request': request}).data)
 
 
 @api_view(['GET', 'POST'])
@@ -267,12 +267,18 @@ def testimonials_list_public(request):
 def testimonials_collection(request):
     if request.method == 'GET':
         qs = Testimonial.objects.filter(user=request.user).order_by('-created_at')
-        return Response(TestimonialSerializer(qs, many=True).data)
+        return Response(TestimonialSimpleSerializer(qs, many=True, context={'request': request}).data)
     # POST create
-    serializer = TestimonialSerializer(data=request.data, context={'request': request})
+    data = request.data.copy()
+    # Accept new shape: name -> brand_name, quote -> content
+    if 'name' in data and 'brand_name' not in data:
+        data['brand_name'] = data.get('name')
+    if 'quote' in data and 'content' not in data:
+        data['content'] = data.get('quote')
+    serializer = TestimonialSerializer(data=data, context={'request': request})
     if serializer.is_valid():
         obj = serializer.save()
-        return Response(TestimonialSerializer(obj).data, status=201)
+        return Response(TestimonialSimpleSerializer(obj, context={'request': request}).data, status=201)
     return Response(serializer.errors, status=400)
 
 
@@ -286,16 +292,70 @@ def testimonial_detail(request, pk: int):
     # Owner or staff can edit/delete; public get is restricted to owner unless approved
     if request.method == 'GET':
         if obj.approved or obj.user_id == request.user.id or request.user.is_staff:
-            return Response(TestimonialSerializer(obj).data)
+            return Response(TestimonialSimpleSerializer(obj, context={'request': request}).data)
         return Response({'detail': 'Forbidden'}, status=403)
     if obj.user_id != request.user.id and not request.user.is_staff:
         return Response({'detail': 'Forbidden'}, status=403)
     if request.method == 'PATCH':
-        serializer = TestimonialSerializer(obj, data=request.data, partial=True, context={'request': request})
+        data = request.data.copy()
+        if 'name' in data:
+            data['brand_name'] = data.pop('name') or data.get('brand_name')
+        if 'quote' in data:
+            data['content'] = data.pop('quote') or data.get('content')
+        serializer = TestimonialSerializer(obj, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             obj = serializer.save()
-            return Response(TestimonialSerializer(obj).data)
+            return Response(TestimonialSimpleSerializer(obj, context={'request': request}).data)
         return Response(serializer.errors, status=400)
+    obj.delete()
+    return Response(status=204)
+
+
+# Blog / Foro
+@api_view(['GET', 'POST'])
+@permission_classes([permissions.AllowAny])
+def blog_posts(request):
+    """Lista pública de posts publicados. Crear requiere autenticación."""
+    if request.method == 'GET':
+        qs = BlogPost.objects.filter(is_published=True).order_by('-created_at')
+        return Response(BlogPostSerializer(qs, many=True, context={'request': request}).data)
+    # POST create (auth required)
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication required'}, status=401)
+    serializer = BlogPostSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        obj = serializer.save()
+        return Response(BlogPostSerializer(obj, context={'request': request}).data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([permissions.AllowAny])
+def blog_post_detail(request, pk: int):
+    try:
+        obj = BlogPost.objects.get(pk=pk)
+    except BlogPost.DoesNotExist:
+        return Response({'detail': 'Not found'}, status=404)
+
+    if request.method == 'GET':
+        # Permitir ver borradores solo al autor o staff
+        if obj.is_published or (request.user.is_authenticated and (request.user.is_staff or request.user.id == obj.author_id)):
+            return Response(BlogPostSerializer(obj, context={'request': request}).data)
+        return Response({'detail': 'Forbidden'}, status=403)
+
+    # PATCH/DELETE requieren autenticación y ser autor (o staff)
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication required'}, status=401)
+    if request.user.id != obj.author_id and not request.user.is_staff:
+        return Response({'detail': 'Forbidden'}, status=403)
+
+    if request.method == 'PATCH':
+        serializer = BlogPostSerializer(obj, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            obj = serializer.save()
+            return Response(BlogPostSerializer(obj, context={'request': request}).data)
+        return Response(serializer.errors, status=400)
+
     obj.delete()
     return Response(status=204)
     

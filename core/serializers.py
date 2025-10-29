@@ -1,6 +1,6 @@
 from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
-from .models import  Trademark, TrademarkAsset, Plan, Testimonial
+from .models import  Trademark, TrademarkAsset, Plan, Testimonial, BlogPost
 
 
 User = get_user_model()
@@ -97,4 +97,62 @@ class TestimonialSerializer(serializers.ModelSerializer):
         if not validated_data.get('brand_name') and tm:
             # If you later store brand name in assets, adapt here
             validated_data['brand_name'] = getattr(user, 'username', '')
+        return super().create(validated_data)
+
+
+class TestimonialSimpleSerializer(serializers.ModelSerializer):
+    """Public/simple representation to match frontend shape.
+    Shape:
+      {
+        id: number,
+        name: string,       # maps from brand_name or client_name or user name
+        quote: string,      # maps from content
+        logo: string|null,  # placeholder until model adds a field
+        country: string|null
+      }
+    """
+
+    name = serializers.SerializerMethodField()
+    quote = serializers.CharField(source='content')
+    logo = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonial
+        fields = ('id', 'name', 'quote', 'logo', 'country')
+
+    def get_name(self, obj):
+        # Prefer brand_name, then client_name, then user display
+        if getattr(obj, 'brand_name', None):
+            return obj.brand_name
+        if getattr(obj, 'client_name', None):
+            return obj.client_name
+        user = getattr(obj, 'user', None)
+        if user:
+            return getattr(user, 'full_name', '') or getattr(user, 'username', '') or str(user)
+        return ''
+
+    def get_logo(self, obj):
+        # No dedicated field yet; return None for now or derive from future assets
+        return None
+
+    def get_country(self, obj):
+        # Country not stored yet; return None to keep shape stable
+        return None
+
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = BlogPost
+        fields = (
+            'id', 'author', 'title', 'slug', 'body', 'is_published', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('slug', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        validated_data['author'] = user
         return super().create(validated_data)
