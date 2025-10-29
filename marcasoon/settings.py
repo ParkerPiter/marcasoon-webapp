@@ -25,9 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$4zck577%4d_z$k1%6+*)%5ah2+xw2h59=(jy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Parse DJANGO_DEBUG to a real boolean; default to True for local dev convenience.
-# In Render (producción), configura DJANGO_DEBUG=False en Environment.
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
+# Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
 
 ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
 
@@ -89,24 +88,14 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-'''
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_user:dTn7TLoU0ssqMOMFb6E2UCAlwJUh1jB6@dpg-d3u0ehuuk2gs73dgkh5g-a/marcasoon_webapp_db'),
+        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_2a55_user:tJg1sxkMnfBQCKnVRudkh5up76HqC5Qg@dpg-d3v7s6ndiees73epq8sg-a/marcasoon_webapp_db_2a55'),
         conn_max_age=600
     )
 }
-'''
-DATABASES = {
-    'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'marcasoon',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+
 
 # USPTO / api.data.gov configuration
 USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'
@@ -193,7 +182,7 @@ FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AV4BrF31675Y-M6Ml2lF0Wdp9ePWgpF3UiqpSF8yGbGRhARUn1L5kIc0-mxtw8FqjtemTQdAWV1InaGT')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
