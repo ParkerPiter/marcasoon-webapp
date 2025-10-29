@@ -1,9 +1,22 @@
 "use client";
 
 import { CardPrice } from "@/app/interfaces/card";
-import {CheckCircle2} from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
-const Card = ( { id, title, includes, description, price, client_objective } : CardPrice) => {
+// Aceptamos ambas variantes por compatibilidad temporal de backend
+type CardPropsCompat = Omit<CardPrice, 'client_objective'> & { client_objective?: string; client_objetive?: string };
+
+const Card = ({ id, title, includes, description, price, client_objective, client_objetive }: CardPropsCompat) => {
+
+    const amount = (price as any)?.amount ?? price;
+    const currency = (price as any)?.currency ?? 'USD';
+        
+        const rawClient = typeof client_objective === 'string' 
+            ? client_objective 
+            : (typeof client_objetive === 'string' ? client_objetive : '');
+        const displayClient = rawClient
+            .replace(/^\s*ideal\s*para\s*[:\-–—]*\s*/i, '')
+            .trim();
   return (
     <div className="group border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-white overflow-hidden">
         <div className="border-t-4 border-[#FF6B6B] group-hover:border-[#192A56] transition-colors duration-300"></div>
@@ -12,15 +25,17 @@ const Card = ( { id, title, includes, description, price, client_objective } : C
             <p className="text-xl text-center font-semibold text-[#192A56]">Plan {title}</p>
             
             <div className="my-4 flex items-baseline justify-center text-center">
-                <span className="text-5xl font-extrabold text-[#FF6B6B]">${price}</span>
-                <span className="text-xl font-semibold text-black-500 ml-2">USD</span>
+                                <span className="text-5xl font-extrabold text-[#FF6B6B]">${amount}</span>
+                                <span className="text-xl font-semibold text-black-500 ml-2">{currency}</span>
             </div>
 
-            <div className="min-h-[60px] text-center">
-                <p className="text-sm text-gray-600">
-                    <span className="font-semibold">Ideal para:</span> {client_objective}
-                </p>
-            </div>
+                        {displayClient && (
+              <div className="min-h-[60px] text-center">
+                  <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Ideal para:</span> {displayClient}
+                  </p>
+              </div>
+            )}
 
             <hr className="my-4" />
             

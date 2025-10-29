@@ -35,3 +35,9 @@ export interface FaqProps {
     items: FaqItem[];
     defaultOpenIndex?: number;
 }
+export interface SearchCard {
+    logo: string; // URL de la imagen del logo
+    liveOrDeadStatus: "Live" | "Dead"; // estado de la marca
+    correspondenceName: string; // nombre del corresponsal
+    transactionDate: string; // fecha (YYYY-MM-DD)
+}
