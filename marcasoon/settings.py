@@ -169,9 +169,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #CORS AUTHORIZATION
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://marcasoon-webapp.onrender.com"
+    "https://marcasoon-webapp.onrender.com",
+    "https://marcasoon.netlify.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# Allow Netlify preview deploys like https://<hash>--marcasoon.netlify.app
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://([a-z0-9-]+\.)*netlify\.app$"]
 
 # Stripe configuration
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
@@ -198,6 +202,12 @@ REST_FRAMEWORK = {
     ),
 }
 
+# CSRF trusted origins (production + local)
+CSRF_TRUSTED_ORIGINS = [
+    'https://marcasoon-webapp.onrender.com',
+    'https://marcasoon.netlify.app',
+]
+
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
@@ -208,11 +218,10 @@ if DEBUG:
     # Lax is enough for same-site form login; use None+Secure only when on HTTPS and cross-site is needed
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
-    # CSRF trusted origins for local tools/frontends
-    CSRF_TRUSTED_ORIGINS = [
+    # Add local origins for CSRF in development
+    CSRF_TRUSTED_ORIGINS += [
         'http://localhost:8000',
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
-        'https://marcasoon-webapp.onrender.com'
     ]
