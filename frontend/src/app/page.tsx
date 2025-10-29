@@ -7,6 +7,7 @@ import BlogCards from "./components/blog/Cards";
 import FaqComponent from "./components/faq/faqComponent";
 import Banner from "./components/Banner";
 import Button from "./components/buttons/homeButtons";
+import SearchCards from "./components/search/SearchCards";
 import Image from "next/image";
 
 import proceso from '../../public/arte2.png';
@@ -25,7 +26,7 @@ export default function Home() {
 
       {/* Cómo trabajamos */}
       <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-20">
-        <h2 className="md:text-3xl text-2xl font-semibold text-center mb-4">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h2>
+        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="md:order-1 order-2 w-full">
             <Image
@@ -46,9 +47,14 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-[#192A56] w-full min-h-[22vh] py-12 flex flex-col items-center justify-center md:px-0 px-6">
+        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">Haz una busqueda de prueba aquí</h3>
+        <SearchCards />
+      </section>
+
       {/* Precios */}
       <section className="w-5/6 py-12 text-black">
-        <h3 className="text-2xl text-center mb-4 font-semibold font-archivo">Nuestros <span className="font-playfair font-semibold italic">paquetes</span></h3>
+        <h3 className="text-3xl text-center mb-4 font-semibold font-playfair italic">Paquetes</h3>
         <Cards></Cards>
       </section>
 
@@ -96,8 +102,8 @@ export default function Home() {
       </section>
 
       {/* Testimonios de nuestros clientes */}
-      <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4 font-archivo"><span className="font-playfair italic">Testimonios</span> de nuestros clientes</h2>
+      <section className=" w-full py-12 text-black">
+        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Clientes</h3>
         <SliderTestimonial />
       </section>
 
@@ -108,8 +114,8 @@ export default function Home() {
       </section>
 
       {/* Blog */}
-      <section className="w-full py-12 text-black">
-        <h2 className="text-2xl font-semibold text-center mb-4">Nuestro <span className="font-playfair italic">Blog</span></h2>
+      <section className="w-full pt-12 pb-16 text-white bg-[#192A56]">
+        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Blogs</h3>
         <BlogCards />
       </section>
 
