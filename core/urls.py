@@ -50,6 +50,7 @@ urlpatterns = [
     # Plans endpoints
     path('plans/', plans_list, name='plans-list'),
     path('plans/<int:pk>/', plan_detail, name='plan-detail'),
+  
     # Testimonials endpoints
     path('testimonials/public/', testimonials_list_public, name='testimonials-public'),
     path('testimonials/', testimonials_collection, name='testimonials-collection'),

@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+try:
+    from corsheaders.defaults import default_headers
+except Exception:
+    default_headers = (
+        'accept', 'accept-encoding', 'authorization', 'content-type', 'dnt', 'origin', 'user-agent',
+        'x-csrftoken', 'x-requested-with'
+    )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -169,9 +176,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #CORS AUTHORIZATION
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://marcasoon-webapp.onrender.com"
+    "https://marcasoon-webapp.onrender.com",
+    "https://marcasoon.netlify.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# Allow Netlify preview deploys like https://<hash>--marcasoon.netlify.app
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://([a-z0-9-]+\.)*netlify\.app$"]
+
+# Allow browser Client Hints headers used by Chrome (sec-ch-ua*) in preflight
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'sec-ch-ua',
+    'sec-ch-ua-mobile',
+    'sec-ch-ua-platform',
+]
 
 # Stripe configuration
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
@@ -181,8 +199,8 @@ STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'ASyLovLj_GW6wQ6iM4WawLy0u9miHa5_69nMSaYmniyY5MOl65tw125cp72oKq1At5fsMyq7QCWpF23y')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-z7HxCFcyiDKN0N6A9WfDvh3K1TpI23vPDVPP0eG0V64LJvLY_HN1Mrzfmp')
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AV4BrF31675Y-M6Ml2lF0Wdp9ePWgpF3UiqpSF8yGbGRhARUn1L5kIc0-mxtw8FqjtemTQdAWV1InaGT')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
@@ -198,6 +216,12 @@ REST_FRAMEWORK = {
     ),
 }
 
+# CSRF trusted origins (production + local)
+CSRF_TRUSTED_ORIGINS = [
+    'https://marcasoon-webapp.onrender.com',
+    'https://marcasoon.netlify.app',
+]
+
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
@@ -208,11 +232,12 @@ if DEBUG:
     # Lax is enough for same-site form login; use None+Secure only when on HTTPS and cross-site is needed
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
-    # CSRF trusted origins for local tools/frontends
-    CSRF_TRUSTED_ORIGINS = [
+    # Add local origins for CSRF in development
+    CSRF_TRUSTED_ORIGINS += [
         'http://localhost:8000',
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
-        'https://marcasoon-webapp.onrender.com'
+        'https://marcasoon-webapp.onrender.com',
+        'https://marcasoon.netlify.app'
     ]
