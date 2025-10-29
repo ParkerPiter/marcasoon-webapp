@@ -27,7 +27,7 @@ export async function getPlansFromAdminHTML(
  * Cambia la ruta por tu endpoint real (ej: /api/plans/).
  */
 export async function getPlansAPI(
-  url = "https://marcasoon-webapp.onrender.com/api/plans",
+  url = "/api/plans",
   options?: RequestInit
 ): Promise<CardPrice[]> {
   const res = await fetch(url, {
@@ -60,7 +60,7 @@ type TrademarkSearchResponse = {
 
 export async function searchTrademarksByName(
   name: string,
-  baseUrl = "https://marcasoon-webapp.onrender.com/api/trademark/name-search/"
+  baseUrl = "/api/trademark/name-search/"
 ): Promise<SearchCard[]> {
   const url = `${baseUrl}?name=${encodeURIComponent(name)}`;
   const res = await fetch(url, {
