@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+try:
+    from corsheaders.defaults import default_headers
+except Exception:
+    default_headers = (
+        'accept', 'accept-encoding', 'authorization', 'content-type', 'dnt', 'origin', 'user-agent',
+        'x-csrftoken', 'x-requested-with'
+    )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -177,6 +184,13 @@ CORS_ALLOW_CREDENTIALS = True
 # Allow Netlify preview deploys like https://<hash>--marcasoon.netlify.app
 CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://([a-z0-9-]+\.)*netlify\.app$"]
 
+# Allow browser Client Hints headers used by Chrome (sec-ch-ua*) in preflight
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'sec-ch-ua',
+    'sec-ch-ua-mobile',
+    'sec-ch-ua-platform',
+]
+
 # Stripe configuration
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51LGXhpAvrGiOE7p8aV2OsAxNyW30bMbmv3s1f5k9n0lp4zjzvXKmtgOhKLUyO7lhRhMDPBzcvGYDeUr41tbNutRu00IOFFL9Zx')
@@ -224,4 +238,6 @@ if DEBUG:
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'https://marcasoon-webapp.onrender.com',
+        'https://marcasoon.netlify.app'
     ]
