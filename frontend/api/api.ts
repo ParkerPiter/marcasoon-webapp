@@ -27,7 +27,7 @@ export async function getPlansFromAdminHTML(
  * Cambia la ruta por tu endpoint real (ej: /api/plans/).
  */
 export async function getPlansAPI(
-  url = "https://marcasoon-webapp.onrender.com/api/plans",
+  url = "https://marcasoon-webapp.onrender.com/api/plans/",
   options?: RequestInit
 ): Promise<CardPrice[]> {
   const res = await fetch(url, {
