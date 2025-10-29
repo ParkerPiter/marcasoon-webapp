@@ -50,6 +50,9 @@ urlpatterns = [
     # Plans endpoints
     path('plans/', plans_list, name='plans-list'),
     path('plans/<int:pk>/', plan_detail, name='plan-detail'),
+    # No-trailing-slash aliases to avoid 301 redirects that can break CORS preflight
+    path('plans', plans_list, name='plans-list-noslash'),
+    path('plans/<int:pk>', plan_detail, name='plan-detail-noslash'),
     # Testimonials endpoints
     path('testimonials/public/', testimonials_list_public, name='testimonials-public'),
     path('testimonials/', testimonials_collection, name='testimonials-collection'),
