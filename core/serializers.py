@@ -82,7 +82,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = (
-            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'approved', 'created_at'
+            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'image', 'approved', 'created_at'
         )
         read_only_fields = ('approved', 'created_at')
 
@@ -133,7 +133,16 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
         return ''
 
     def get_logo(self, obj):
-        # No dedicated field yet; return None for now or derive from future assets
+        try:
+            f = getattr(obj, 'image', None)
+            if f and getattr(f, 'url', None):
+                request = self.context.get('request')
+                url = f.url
+                if request is not None:
+                    return request.build_absolute_uri(url)
+                return url
+        except Exception:
+            pass
         return None
 
     def get_country(self, obj):
@@ -147,7 +156,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = (
-            'id', 'author', 'title', 'slug', 'body', 'is_published', 'created_at', 'updated_at'
+            'id', 'author', 'title', 'slug', 'body', 'image', 'is_published', 'created_at', 'updated_at'
         )
         read_only_fields = ('slug', 'created_at', 'updated_at')
 

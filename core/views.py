@@ -323,6 +323,9 @@ def testimonials_collection(request):
         data['brand_name'] = data.get('name')
     if 'quote' in data and 'content' not in data:
         data['content'] = data.get('quote')
+    # Include uploaded image file if present (request.data.copy() loses files)
+    if hasattr(request, 'FILES') and 'image' in request.FILES:
+        data['image'] = request.FILES['image']
     serializer = TestimonialSerializer(data=data, context={'request': request})
     if serializer.is_valid():
         obj = serializer.save()
@@ -351,6 +354,8 @@ def testimonial_detail(request, pk: int):
             data['brand_name'] = data.pop('name') or data.get('brand_name')
         if 'quote' in data:
             data['content'] = data.pop('quote') or data.get('content')
+        if hasattr(request, 'FILES') and 'image' in request.FILES:
+            data['image'] = request.FILES['image']
         serializer = TestimonialSerializer(obj, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             obj = serializer.save()
