@@ -3,6 +3,8 @@ import requests
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
 from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
@@ -23,6 +25,32 @@ class MeView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+# JSON login/logout endpoints (no HTML templates)
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def auth_login_json(request):
+    data = request.data or {}
+    username = data.get('username') or data.get('email')
+    password = data.get('password')
+    if not username or not password:
+        return Response({'detail': 'username and password are required'}, status=400)
+    user = authenticate(request, username=username, password=password)
+    if user is None:
+        return Response({'detail': 'Invalid credentials'}, status=401)
+    login(request, user)
+    return Response({'detail': 'ok', 'user': UserSerializer(user).data})
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def auth_logout_json(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return Response({'detail': 'ok'})
 
 
 def tasks_page(request):

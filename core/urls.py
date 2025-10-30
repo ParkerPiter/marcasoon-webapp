@@ -2,6 +2,8 @@ from rest_framework import routers
 from .views import (
     RegisterView,
     MeView,
+    auth_login_json,
+    auth_logout_json,
     tasks_page,
     plans_list,
     plan_detail,
@@ -37,6 +39,10 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('v1/', include(router.urls)),
     
+    # JSON auth endpoints (override DRF's HTML login/logout)
+    path('auth/login/', auth_login_json, name='auth-login-json'),
+    path('auth/logout/', auth_logout_json, name='auth-logout-json'),
+
     # DRF browsable API login/logout under /api/auth/
     path('auth/', include('rest_framework.urls')),
     path('auth/register/', RegisterView.as_view(), name='auth-register'),
