@@ -201,8 +201,8 @@ STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', '')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', '')
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AV4BrF31675Y-M6Ml2lF0Wdp9ePWgpF3UiqpSF8yGbGRhARUn1L5kIc0-mxtw8FqjtemTQdAWV1InaGT')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
