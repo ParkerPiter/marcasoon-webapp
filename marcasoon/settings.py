@@ -207,9 +207,8 @@ PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    # Enable session auth for DRF browsable API login/logout
-    'rest_framework.authentication.SessionAuthentication',
-    'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # JWT-only for APIs: disables SessionAuthentication to avoid CSRF on DRF views
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',

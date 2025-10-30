@@ -1,11 +1,13 @@
 # core/paypal_views.py
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import permissions
 from django.http import JsonResponse, HttpResponseRedirect
 from .paypal_service import get_paypal_client
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def create_paypal_order(request):
     try:
@@ -71,6 +73,7 @@ def create_paypal_order(request):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def capture_paypal_order(request):
     try:
@@ -89,6 +92,7 @@ def capture_paypal_order(request):
         return JsonResponse({'detail': str(e)}, status=500)
     
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def paypal_return(request):
     """Handle PayPal redirect return (same-window flow): capture and redirect to success/cancel."""

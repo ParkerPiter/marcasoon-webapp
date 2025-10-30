@@ -3,13 +3,15 @@ from django.conf import settings
 import requests
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
 from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
 from .trademark_service import TrademarkLookupClient
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
@@ -41,8 +43,16 @@ def auth_login_json(request):
     user = authenticate(request, username=username, password=password)
     if user is None:
         return Response({'detail': 'Invalid credentials'}, status=401)
-    login(request, user)
-    return Response({'detail': 'ok', 'user': UserSerializer(user).data})
+    # Emitir JWT (access + refresh). No es necesario crear sesión.
+    refresh = RefreshToken.for_user(user)
+    access = str(refresh.access_token)
+    return Response({
+        'detail': 'ok',
+        'user': UserSerializer(user).data,
+        'access': access,
+        'refresh': str(refresh),
+        'token_type': 'Bearer'
+    })
 
 
 @csrf_exempt
@@ -300,6 +310,7 @@ def testimonials_list_public(request):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def testimonials_collection(request):
     if request.method == 'GET':
@@ -320,6 +331,7 @@ def testimonials_collection(request):
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def testimonial_detail(request, pk: int):
     try:
