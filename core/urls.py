@@ -2,6 +2,7 @@ from rest_framework import routers
 from .views import (
     RegisterView,
     MeView,
+    auth_ping,
     auth_login_json,
     auth_logout_json,
     tasks_page,
@@ -42,6 +43,7 @@ urlpatterns = [
     # JSON auth endpoints (override DRF's HTML login/logout)
     path('auth/login/', auth_login_json, name='auth-login-json'),
     path('auth/logout/', auth_logout_json, name='auth-logout-json'),
+    path('auth/ping/', auth_ping, name='auth-ping'),
 
     # DRF browsable API login/logout under /api/auth/
     path('auth/', include('rest_framework.urls')),
@@ -95,6 +97,11 @@ urlpatterns = [
     path('paypal/return/', paypal_return, name='paypal-return'),
     path('payments/success', paypal_success, name='paypal-success'),
     path('payments/cancel', paypal_cancel, name='paypal-cancel'),
+    # Paypal aliases for testing (avoid 301 and common typos)
+    path('paypal/create-order', create_paypal_order, name='paypal-create-order-noslash'),
+    path('paypal/capture-order', capture_paypal_order, name='paypal-capture-order-noslash'),
+    path('paypal/create-checkout-session/', create_paypal_order, name='paypal-create-checkout-session'),
+    path('paypal/create-checkout-session', create_paypal_order, name='paypal-create-checkout-session-noslash'),
     
     # No-trailing-slash aliases to avoid POST -> GET redirect via APPEND_SLASH
     path('stripe/create-checkout-session', create_checkout_session, name='stripe-create-checkout-session-noslash'),

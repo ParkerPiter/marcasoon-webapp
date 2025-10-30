@@ -92,8 +92,7 @@ def capture_paypal_order(request):
         return JsonResponse({'detail': str(e)}, status=500)
     
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.AllowAny])
 def paypal_return(request):
     """Handle PayPal redirect return (same-window flow): capture and redirect to success/cancel."""
     try:

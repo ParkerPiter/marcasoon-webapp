@@ -407,4 +407,12 @@ def blog_post_detail(request, pk: int):
 
     obj.delete()
     return Response(status=204)
+
+
+# Simple JWT-protected ping to verify Authorization header end-to-end
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def auth_ping(request):
+    return Response({'detail': 'ok', 'user': UserSerializer(request.user).data})
     
