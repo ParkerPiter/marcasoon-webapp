@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+from datetime import timedelta
+
 try:
     from corsheaders.defaults import default_headers
 except Exception:
@@ -192,15 +194,15 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 # Stripe configuration
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51LGXhpAvrGiOE7p8aV2OsAxNyW30bMbmv3s1f5k9n0lp4zjzvXKmtgOhKLUyO7lhRhMDPBzcvGYDeUr41tbNutRu00IOFFL9Zx')
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
 STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AV4BrF31675Y-M6Ml2lF0Wdp9ePWgpF3UiqpSF8yGbGRhARUn1L5kIc0-mxtw8FqjtemTQdAWV1InaGT')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', '')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', '')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
@@ -240,3 +242,11 @@ if DEBUG:
         'https://marcasoon-webapp.onrender.com',
         'https://marcasoon.netlify.app'
     ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=480),  # p.ej. 480 min
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # p.ej. 7 días
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    # otras opciones según necesites…
+}
