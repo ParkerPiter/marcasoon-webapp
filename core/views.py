@@ -1,12 +1,18 @@
 from django.shortcuts import render
+from django.conf import settings
 import requests
 from rest_framework import viewsets, permissions, generics
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
 from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
 from .trademark_service import TrademarkLookupClient
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
@@ -16,6 +22,8 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
+    # Allow multipart/form-data so registration can include file uploads
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
 
 class MeView(generics.RetrieveAPIView):
@@ -23,6 +31,40 @@ class MeView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+# JSON login/logout endpoints (no HTML templates)
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def auth_login_json(request):
+    data = request.data or {}
+    username = data.get('username') or data.get('email')
+    password = data.get('password')
+    if not username or not password:
+        return Response({'detail': 'username and password are required'}, status=400)
+    user = authenticate(request, username=username, password=password)
+    if user is None:
+        return Response({'detail': 'Invalid credentials'}, status=401)
+    # Emitir JWT (access + refresh). No es necesario crear sesión.
+    refresh = RefreshToken.for_user(user)
+    access = str(refresh.access_token)
+    return Response({
+        'detail': 'ok',
+        'user': UserSerializer(user).data,
+        'access': access,
+        'refresh': str(refresh),
+        'token_type': 'Bearer'
+    })
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def auth_logout_json(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return Response({'detail': 'ok'})
 
 
 def tasks_page(request):
@@ -241,6 +283,14 @@ def trademark_availability(request):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def plans_list(request):
+    # If the client requests HTML (e.g., direct browser navigation), render the demo page
+    accept = request.META.get('HTTP_ACCEPT', '') or ''
+    if 'text/html' in accept:
+        # Template uses fetch('/api/plans/') to load JSON and buttons to hit Stripe/PayPal endpoints
+        return render(request, 'plans/test.html', {
+            'paypal_client_id': getattr(settings, 'PAYPAL_CLIENT_ID', ''),
+            'stripe_public_key': getattr(settings, 'STRIPE_PUBLIC_KEY', ''),
+        })
     qs = Plan.objects.filter(is_active=True).order_by('price_cents')
     return Response(PlanSerializer(qs, many=True).data)
 
@@ -263,6 +313,7 @@ def testimonials_list_public(request):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def testimonials_collection(request):
     if request.method == 'GET':
@@ -275,6 +326,9 @@ def testimonials_collection(request):
         data['brand_name'] = data.get('name')
     if 'quote' in data and 'content' not in data:
         data['content'] = data.get('quote')
+    # Include uploaded image file if present (request.data.copy() loses files)
+    if hasattr(request, 'FILES') and 'image' in request.FILES:
+        data['image'] = request.FILES['image']
     serializer = TestimonialSerializer(data=data, context={'request': request})
     if serializer.is_valid():
         obj = serializer.save()
@@ -283,6 +337,7 @@ def testimonials_collection(request):
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def testimonial_detail(request, pk: int):
     try:
@@ -302,6 +357,8 @@ def testimonial_detail(request, pk: int):
             data['brand_name'] = data.pop('name') or data.get('brand_name')
         if 'quote' in data:
             data['content'] = data.pop('quote') or data.get('content')
+        if hasattr(request, 'FILES') and 'image' in request.FILES:
+            data['image'] = request.FILES['image']
         serializer = TestimonialSerializer(obj, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             obj = serializer.save()
@@ -358,4 +415,12 @@ def blog_post_detail(request, pk: int):
 
     obj.delete()
     return Response(status=204)
+
+
+# Simple JWT-protected ping to verify Authorization header end-to-end
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def auth_ping(request):
+    return Response({'detail': 'ok', 'user': UserSerializer(request.user).data})
     

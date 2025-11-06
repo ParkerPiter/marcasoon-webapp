@@ -15,18 +15,91 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
+    # Optional fields to create an initial Trademark and TrademarkAsset
+    asset_kind = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    asset_text = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    asset_image = serializers.ImageField(write_only=True, required=False, allow_null=True)
+    brand_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    # Read-only representation of the created/tracked trademark and asset
+    trademark = serializers.SerializerMethodField(read_only=True)
+    initial_asset = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset')
 
     def create(self, validated_data):
+        # Extract possible asset fields
+        asset_kind = validated_data.pop('asset_kind', None) or ''
+        asset_text = validated_data.pop('asset_text', None)
+        asset_image = validated_data.pop('asset_image', None)
+        brand_name = validated_data.pop('brand_name', None)
+
+        # Create the user
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password']
         )
+
+        # Create an empty Trademark for the user (placeholder "mi marca")
+        try:
+            from .models import Trademark, TrademarkAsset
+            tm = Trademark.objects.create(user=user)
+
+            # If any asset information was provided, create a TrademarkAsset
+            kind = (asset_kind or '').upper()
+            if asset_image or asset_text or kind:
+                # Normalize kind to known values; default to LOGO if image provided, else NAME
+                valid_kinds = {c[0] for c in TrademarkAsset.Kind.choices}
+                if not kind:
+                    kind = 'LOGO' if asset_image else 'NAME'
+                if kind not in valid_kinds:
+                    kind = 'NAME'
+
+                asset_kwargs = {'trademark': tm, 'kind': kind}
+                if kind in ('NAME', 'SLOGAN'):
+                    asset_kwargs['text_value'] = asset_text or brand_name or ''
+                elif kind == 'LOGO':
+                    # attach uploaded image file if present
+                    if asset_image:
+                        asset_kwargs['logo'] = asset_image
+                elif kind == 'SOUND':
+                    # If sound upload supported in future, user can provide via asset_image field too
+                    if asset_image:
+                        asset_kwargs['sound'] = asset_image
+
+                TrademarkAsset.objects.create(**asset_kwargs)
+        except Exception:
+            # Non-fatal: if trademark creation fails, user creation should still succeed.
+            # Log can be added in future iterations.
+            pass
+
         return user
+
+    def get_trademark(self, obj):
+        try:
+            from .models import Trademark
+            tm = Trademark.objects.filter(user=obj).order_by('created_at').first()
+            if not tm:
+                return None
+            # TrademarkSerializer is defined later in this module; reference it directly
+            return TrademarkSerializer(tm, context=self.context).data
+        except Exception:
+            return None
+
+    def get_initial_asset(self, obj):
+        try:
+            from .models import Trademark, TrademarkAsset
+            tm = Trademark.objects.filter(user=obj).order_by('created_at').first()
+            if not tm:
+                return None
+            asset = TrademarkAsset.objects.filter(trademark=tm).order_by('-id').first()
+            if not asset:
+                return None
+            return TrademarkAssetSerializer(asset, context=self.context).data
+        except Exception:
+            return None
 
 class MeView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -82,7 +155,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = (
-            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'approved', 'created_at'
+            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'image', 'approved', 'created_at'
         )
         read_only_fields = ('approved', 'created_at')
 
@@ -133,7 +206,16 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
         return ''
 
     def get_logo(self, obj):
-        # No dedicated field yet; return None for now or derive from future assets
+        try:
+            f = getattr(obj, 'image', None)
+            if f and getattr(f, 'url', None):
+                request = self.context.get('request')
+                url = f.url
+                if request is not None:
+                    return request.build_absolute_uri(url)
+                return url
+        except Exception:
+            pass
         return None
 
     def get_country(self, obj):
@@ -147,7 +229,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = (
-            'id', 'author', 'title', 'slug', 'body', 'is_published', 'created_at', 'updated_at'
+            'id', 'author', 'title', 'slug', 'body', 'image', 'is_published', 'created_at', 'updated_at'
         )
         read_only_fields = ('slug', 'created_at', 'updated_at')
 

@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+from datetime import timedelta
+
 try:
     from corsheaders.defaults import default_headers
 except Exception:
@@ -95,14 +97,12 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_2a55_user:tJg1sxkMnfBQCKnVRudkh5up76HqC5Qg@dpg-d3v7s6ndiees73epq8sg-a/marcasoon_webapp_db_2a55'),
         conn_max_age=600
     )
 }
-
 
 # USPTO / api.data.gov configuration
 USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'
@@ -200,16 +200,15 @@ FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AV4BrF31675Y-M6Ml2lF0Wdp9ePWgpF3UiqpSF8yGbGRhARUn1L5kIc0-mxtw8FqjtemTQdAWV1InaGT')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EI3V5zC198tsmrQHTkS1t-EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EKCk8Em1Uvj7XQNt4ir4xJ5I5MaMWZ84CTDdqfDNHZ3IzhpHmQItjzT1kj9hHCv6QiFuswADWG3yUBuD')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    # Enable session auth for DRF browsable API login/logout
-    'rest_framework.authentication.SessionAuthentication',
-    'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # JWT-only for APIs: disables SessionAuthentication to avoid CSRF on DRF views
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -241,3 +240,11 @@ if DEBUG:
         'https://marcasoon-webapp.onrender.com',
         'https://marcasoon.netlify.app'
     ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=480),  # p.ej. 480 min
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # p.ej. 7 días
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    # otras opciones según necesites…
+}

@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import permissions
 from .stripe_service import init_stripe
 import stripe
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 @api_view(['GET'])
@@ -17,6 +18,7 @@ def stripe_config(request):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def create_checkout_session(request):
     try:
@@ -122,6 +124,7 @@ def create_checkout_session(request):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def create_payment_intent(request):
     try:
