@@ -26,7 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-    fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset')
+        fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset')
 
     def create(self, validated_data):
         # Extract possible asset fields
@@ -83,7 +83,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             tm = Trademark.objects.filter(user=obj).order_by('created_at').first()
             if not tm:
                 return None
-            from .serializers import TrademarkSerializer
+            # TrademarkSerializer is defined later in this module; reference it directly
             return TrademarkSerializer(tm, context=self.context).data
         except Exception:
             return None
