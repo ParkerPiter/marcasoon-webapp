@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 import requests
 from rest_framework import viewsets, permissions, generics
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.contrib.auth import authenticate, login, logout
@@ -21,6 +22,8 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
+    # Allow multipart/form-data so registration can include file uploads
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
 
 class MeView(generics.RetrieveAPIView):
