@@ -15,6 +15,12 @@ export interface CardBlog {
     image?: string;
 }
 
+export interface CardService {
+    id:number,
+    title: string,
+    bullets: string[];
+}
+
 export interface CardTestimonial {
     id:number,
     name: string;

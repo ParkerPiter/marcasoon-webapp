@@ -2,11 +2,16 @@
 
 import { CardPrice } from "@/app/interfaces/card";
 import { CheckCircle2 } from 'lucide-react';
+import { useState } from "react";
+import ModalRegister from "../../components/register/ModalRegisterRHF";
+import { checkAuthStatus } from "../../../../api/api";
 
 // Aceptamos ambas variantes por compatibilidad temporal de backend
 type CardPropsCompat = Omit<CardPrice, 'client_objective'> & { client_objective?: string; client_objetive?: string };
 
 const Card = ({ id, title, includes, description, price, client_objective, client_objetive }: CardPropsCompat) => {
+
+    const [openRegister, setOpenRegister] = useState(false);
 
     const amount = (price as any)?.amount ?? price;
     const currency = (price as any)?.currency ?? 'USD';
@@ -51,12 +56,32 @@ const Card = ({ id, title, includes, description, price, client_objective, clien
                 </ul>
             </div>
 
-            <div className="mt-auto pt-6">
-                <button className="w-full uppercase font-bold bg-[#FF6B6B] text-white py-3 px-4 rounded-lg hover:bg-[#192A56] transition-colors duration-300 hover:cursor-pointer">
-                    Select
-                </button>
-            </div>
+                        <div className="mt-auto pt-6">
+                                <button
+                                    className="w-full uppercase font-bold bg-[#FF6B6B] text-white py-3 px-4 rounded-lg hover:bg-[#192A56] transition-colors duration-300 hover:cursor-pointer"
+                                    onClick={async () => {
+                                        const authed = await checkAuthStatus();
+                                        if (!authed) {
+                                            setOpenRegister(true);
+                                            return;
+                                        }
+                                        // Aquí iría el flujo autenticado (checkout, etc.)
+                                    }}
+                                >
+                                        Select
+                                </button>
+                        </div>
         </div>
+                {openRegister && (
+                    <ModalRegister
+                        open={openRegister}
+                        onClose={() => setOpenRegister(false)}
+                        onSubmit={(data) => {
+                            // Aquí puedes enviar los datos a tu backend o analytics si lo deseas
+                            console.log("register modal submit", data);
+                        }}
+                    />
+                )}
       </div>
       
   );

@@ -81,3 +81,30 @@ export async function searchTrademarksByName(
     transactionDate: item.transactionDate || "",
   }));
 }
+
+// Auth helpers
+export async function checkAuthStatus(): Promise<boolean> {
+  try {
+    // 1) JWT via localStorage
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access") || sessionStorage.getItem("access");
+      if (token) {
+        const r = await fetch("/api/auth/me/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (r.ok) return true;
+      }
+    }
+    // 2) Session (DRF login) via cookies
+    const r2 = await fetch("/api/auth/me/", { credentials: "include" });
+    return r2.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function getAuthLoginPage(): Promise<string> {
+  const res = await fetch("/api/auth/login/", { credentials: "include" });
+  if (!res.ok) throw new Error(`Login page failed (${res.status})`);
+  return res.text();
+}

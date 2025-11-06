@@ -25,23 +25,25 @@ export default function Home() {
       </section>
 
       {/* Cómo trabajamos */}
-      <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-20">
-        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
+        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Sobre nosotros</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div className="md:order-1 order-2 w-full">
             <Image
               src={proceso}
               alt="Cómo trabajamos"
-              width={800}
-              height={800}
               sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-              placeholder="blur"
-              className="w-full h-auto rounded-2xl"
+              className="w-full md:h-[580px] h-auto rounded-2xl"
             />
           </div> 
-          <div className="md:order-2 orden-1 ">
-            <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center">Paso a paso</h3>
-            <p className="text-center md:text-lg text-base md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque suscipit luctus orci in hendrerit. Nulla velit urna, aliquet accumsan turpis a, faucibus tincidunt lorem. Sed euismod commodo risus et luctus. Nulla tempor erat eget venenatis tincidunt. Duis feugiat leo quis elit luctus, eu placerat ligula lobortis. Aenean tincidunt finibus dictum. Curabitur finibus ornare ornare. Quisque egestas dui sapien, vitae luctus justo tincidunt ut. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat leo elit, ac feugiat turpis commodo ut. Nam id nisi quis metus ultrices commodo luctus in magna. Donec sodales efficitur ullamcorper. Aenean convallis tincidunt mollis.</p>
+          <div className="md:order-2 orden-1 md:pr-22">
+            <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center"></h3>
+            <p className="text-center md:text-lg text-base md:text-left"><span className="font-semibold">Protege tu Negocio Global: 30 Años de Experiencia en Propiedad Intelectual, Sin Sorpresas ni Barreras.</span>
+             <br /> <br />Tu marca, invención o obra de arte es un activo valioso. En Marcasoon, nuestra misión es simplificar su protección, ya sea en EE. UU., en Latinoamérica o a nivel internacional.
+              <br /><br />Hemos creado un puente claro y directo para la comunidad hispanohablante, eliminando la complejidad de las formalidades legales y los costos ocultos.
+              <br /> <br />Somos expertos: Con más de 30 años de experiencia acumulada en Propiedad Intelectual y un profundo conocimiento en sistemas de registro global (marcas, patentes, derechos de autor), combinamos la guía profesional con la eficiencia tecnológica.
+             <br /> <br />Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la transparencia que necesitas para expandir tu inversión con confianza. Te acompañamos en cada paso para asegurar lo que es legítimamente tuyo
+            </p>
             <Button />
           </div>
         </div>
@@ -54,7 +56,7 @@ export default function Home() {
 
       {/* Precios */}
       <section className="w-5/6 py-12 text-black">
-        <h3 className="text-3xl text-center mb-4 font-semibold font-playfair italic">Paquetes</h3>
+        <h3 className="text-3xl text-center mb-4 font-semibold font-playfair italic uppercase">Paquetes</h3>
         <Cards></Cards>
       </section>
 
@@ -103,7 +105,7 @@ export default function Home() {
 
       {/* Testimonios de nuestros clientes */}
       <section className=" w-full py-12 text-black">
-        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Clientes</h3>
+        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic uppercase">Clientes</h3>
         <SliderTestimonial />
       </section>
 
@@ -115,7 +117,7 @@ export default function Home() {
 
       {/* Blog */}
       <section className="w-full pt-12 pb-16 text-white bg-[#192A56]">
-        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Blogs</h3>
+        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic uppercase">Blogs</h3>
         <BlogCards />
       </section>
 

@@ -112,3 +112,43 @@ export const blogs = [
         image: "/blog1.jpg",
     },
 ];
+
+export const servicios = [
+    {
+        id: 1,
+        title: "Registro de Marca",
+        bullets: [
+            "Obtén la Exclusividad: Asegura el derecho legal único sobre tu nombre, logo o eslogan distintivo.",
+            "Protección por 10 Años: Tu registro inicial tiene una vigencia de una década, con posibilidad de renovación indefinida.",
+            "Activo Comercial: Convierte tu marca en un activo valioso para franquiciar, licenciar y aumentar el valor de tu negocio.",
+            "Respaldo Legal: Te entregamos el Título de Registro oficial para defenderte contra el uso no autorizado."
+        ]
+    },
+    {
+        id: 2,
+        title: "Documentos para el Registro y Solicitudes",
+        bullets: [
+            "Clasificación Correcta: Asesoría experta para clasificar tus productos/servicios según la normativa internacional (Clasificación de Niza).",
+            "Gestión Integral de Solicitudes: Nos encargamos de completar y presentar toda la documentación técnica y legal requerida.",
+            "Seguimiento Proactivo: Gestionamos todas las notificaciones y posibles requerimientos de la oficina de registro hasta la concesión final.",
+        ]
+    },
+    {
+        id: 3,
+        title: "Registro de Copyrights y Patentes",
+        bullets: [
+            "Registro de Copyright (Derechos de Autor): Protege la expresión original de tus obras creativas (libros, software, música, arte, contenido web).",
+            "Registro de Patentes: Protege tus invenciones o soluciones técnicas novedosas (productos o procesos) para obtener un monopolio temporal de explotación.",
+            "Protección 360°: Aseguramos legalmente tanto tu identidad comercial como tu innovación técnica y artística.",
+        ]
+    },
+    {
+        id: 4,
+        title: "Búsqueda, Monitoreo y Mantenimiento",
+        bullets: [
+            "Búsqueda de Viabilidad: Realizamos un análisis de anterioridad exhaustivo antes de registrar para confirmar que tu marca sea única y evitar rechazos costosos.",
+            "Monitoreo Continuo: Vigilamos activamente los registros y el uso en el mercado para detectar imitadores o marcas conflictivas a tiempo.",
+            "Mantenimiento y Renovación: Gestionamos automáticamente los trámites periódicos y las renovaciones necesarias para garantizar que tu protección legal nunca caduque.",
+        ]
+    }
+];

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import LogoComponent from "./LogoComponent";
+import Link from "next/link";
 
 function NavComponent() {
  const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -12,7 +13,7 @@ function NavComponent() {
     <nav className=" border-[#192A56] shadow-[#192a5667] shadow-lg py-4 flex  w-full sticky top-0 z-50 bg-white">
         <div className="flex gap-4 text-black justify-evenly w-full">
             <LogoComponent />
-            <p><a href="/">Inicio</a></p>
+            <p><Link href="/">Inicio</Link></p>
             <div
               className="relative"
               onClick={() => {setIsServicesOpen(!isServicesOpen)
