@@ -26,8 +26,19 @@ class RegisterView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
 
-class MeView(generics.RetrieveAPIView):
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+
+
+class MeView(generics.RetrieveUpdateAPIView):
+    """Return or update the current authenticated user's profile.
+
+    GET /api/auth/me/    -> returns current user
+    PATCH /api/auth/me/  -> partial update current user
+    PUT  /api/auth/me/   -> full update
+    """
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_object(self):
         return self.request.user
