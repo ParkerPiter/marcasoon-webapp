@@ -3,8 +3,9 @@
 import { CardPrice } from "@/app/interfaces/card";
 import { CheckCircle2 } from 'lucide-react';
 import { useState } from "react";
-import ModalRegister from "../../components/register/ModalRegisterRHF";
-import { checkAuthStatus } from "../../../../api/api";
+import AuthModal from "../../components/auth/AuthModal";
+import PaymentMethodModal from "../../components/payment/PaymentMethodModal";
+import { createStripeCheckoutSession, createPaypalOrder } from "../../../../api/api";
 
 // Aceptamos ambas variantes por compatibilidad temporal de backend
 type CardPropsCompat = Omit<CardPrice, 'client_objective'> & { client_objective?: string; client_objetive?: string };
@@ -12,6 +13,7 @@ type CardPropsCompat = Omit<CardPrice, 'client_objective'> & { client_objective?
 const Card = ({ id, title, includes, description, price, client_objective, client_objetive }: CardPropsCompat) => {
 
     const [openRegister, setOpenRegister] = useState(false);
+    const [openPayment, setOpenPayment] = useState(false);
 
     const amount = (price as any)?.amount ?? price;
     const currency = (price as any)?.currency ?? 'USD';
@@ -59,13 +61,14 @@ const Card = ({ id, title, includes, description, price, client_objective, clien
                         <div className="mt-auto pt-6">
                                 <button
                                     className="w-full uppercase font-bold bg-[#FF6B6B] text-white py-3 px-4 rounded-lg hover:bg-[#192A56] transition-colors duration-300 hover:cursor-pointer"
-                                    onClick={async () => {
-                                        const authed = await checkAuthStatus();
-                                        if (!authed) {
-                                            setOpenRegister(true);
+                                    onClick={() => {
+                                        // Evitamos llamada a /auth/me: solo verificamos tokens locales
+                                        const hasToken = typeof window !== 'undefined' && !!(localStorage.getItem('access') || sessionStorage.getItem('access'));
+                                        if (!hasToken) {
+                                            setOpenRegister(true); // Usuario no autenticado: mostrar modal auth
                                             return;
                                         }
-                                        // Aquí iría el flujo autenticado (checkout, etc.)
+                                        setOpenPayment(true); // Ya autenticado: ir directo a métodos de pago
                                     }}
                                 >
                                         Select
@@ -73,12 +76,38 @@ const Card = ({ id, title, includes, description, price, client_objective, clien
                         </div>
         </div>
                 {openRegister && (
-                    <ModalRegister
+                    <AuthModal
                         open={openRegister}
+                        initialTab="register"
                         onClose={() => setOpenRegister(false)}
-                        onSubmit={(data) => {
-                            // Aquí puedes enviar los datos a tu backend o analytics si lo deseas
-                            console.log("register modal submit", data);
+                        onSuccess={() => {
+                            setOpenRegister(false);
+                            setOpenPayment(true);
+                        }}
+                    />
+                )}
+                {openPayment && (
+                    <PaymentMethodModal
+                        open={openPayment}
+                        onClose={() => setOpenPayment(false)}
+                        onSelect={async (method) => {
+                            try {
+                                if (method === 'stripe') {
+                                    const session = await createStripeCheckoutSession(id);
+                                    if (session?.url) window.location.href = session.url;
+                                } else {
+                                    // Crear orden PayPal con datos mínimos; backend calculará monto real según plan
+                                    const paypalOrder = await createPaypalOrder({
+                                        plan_id: id,
+                                        redirect: true,
+                                        amount: typeof price === 'number' ? price : (price as any)?.amount ?? 0,
+                                        currency: 'USD'
+                                    });
+                                    if (paypalOrder?.approveUrl) window.location.href = paypalOrder.approveUrl;
+                                }
+                            } catch (e) {
+                                console.error('Payment error', e);
+                            }
                         }}
                     />
                 )}

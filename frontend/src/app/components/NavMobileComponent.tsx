@@ -39,9 +39,10 @@ const NavMobileComponent = () => {
               </div>
               {isServicesOpen && (
                 <ul className="pl-4 mt-2 flex flex-col gap-2">
-                  <li><a href="/servicios/registro" className="text-gray-600 hover:text-black">Registro de Marca</a></li>
-                  <li><a href="/servicios/busqueda" className="text-gray-600 hover:text-black">Búsqueda Fonética</a></li>
-                  <li><a href="/servicios/consultoria" className="text-gray-600 hover:text-black">Consultoría Legal</a></li>
+                  <li><a href="/servicios/#registro" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Registro de Marca</a></li>
+                  <li><a href="/servicios/#documentos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Consultoría Legal</a></li>
+                  <li><a href="/servicios/#patentes" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Registro de Patentes</a></li>
+                  <li><a href="/servicios/#busqueda-monitoreo-mantenimiento" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Búsqueda Fonética</a></li>
                 </ul>
               )}
             </li>

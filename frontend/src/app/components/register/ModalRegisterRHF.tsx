@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { X, Mail, Phone, User2, Quote, Image as ImageIcon, Music2, Type } from "lucide-react";
-import { FormValues, ProtectType } from "@/app/interfaces/inputs";
+import { X, Mail, Phone, User2, Quote, Image as ImageIcon, Music2, Type, AtSign, Lock } from "lucide-react";
+import { FormValues, ProtectType, SubmitPayload } from "@/app/interfaces/inputs";
+import { registerUserAPI, obtainTokenPair, storeTokens } from "../../../../api/api";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit?: (payload: FormValues) => void | Promise<void>;
+  onSubmit?: (payload: SubmitPayload) => void | Promise<void>;
 }
 
 export default function ModalRegisterRHF({ open, onClose, onSubmit }: Props) {
@@ -16,11 +17,15 @@ export default function ModalRegisterRHF({ open, onClose, onSubmit }: Props) {
 
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<FormValues>({
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
+      username: "",
       email: "",
       countryCode: "+1",
       phoneLocal: "",
       protect: [],
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -37,12 +42,35 @@ export default function ModalRegisterRHF({ open, onClose, onSubmit }: Props) {
 
   const onSubmitForm = async (values: FormValues) => {
     const phone = values.phoneLocal ? `${values.countryCode} ${values.phoneLocal}` : "";
-    await onSubmit?.({
-      fullName: values.fullName.trim(),
+    const selections = values.protect || [];
+    const normalizedProtect: SubmitPayload["protect"] =
+      selections.length === 1 ? selections[0] : selections.map((t) => ({ type: t }));
+
+    const payload: SubmitPayload = {
+      firstName: values.firstName.trim(),
+      lastName: values.lastName.trim(),
+      username: values.username.trim(),
       email: values.email.trim(),
       phone: phone || undefined,
-      protect: values.protect,
-    });
+      protect: normalizedProtect,
+      password: values.password,
+    };
+
+    try {
+      // 1. Registrar usuario
+      await registerUserAPI(payload);
+      // 2. Obtener tokens JWT
+      const tokens = await obtainTokenPair({ username: payload.username, password: payload.password });
+      storeTokens(tokens, true);
+      // 3. Callback opcional por si el padre quiere reaccionar
+      await onSubmit?.(payload);
+      // 4. TODO: abrir modal de selección de pago (emitir evento o estado externo)
+    } catch (e: any) {
+      console.error("Register or login failed", e?.message || e);
+      // Podríamos mostrar un toast / mensaje de error aquí (no implementado aún)
+      return; // No cerramos si falla
+    }
+
     reset();
     onClose();
   };
@@ -56,30 +84,94 @@ export default function ModalRegisterRHF({ open, onClose, onSubmit }: Props) {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        className="relative w-[92vw] max-w-2xl bg-white text-black rounded-2xl shadow-xl p-6 md:p-8 focus:outline-none"
+        className="relative w-[95vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] max-w-2xl bg-white text-black rounded-2xl shadow-xl p-5 md:p-8 focus:outline-none max-h-[90vh] overflow-y-auto"
         tabIndex={-1}
       >
         <button onClick={onClose} aria-label="Close" className="absolute text-[#ED5E32] right-3 top-3 p-2 rounded-full bg-white/80 hover:bg-white shadow hover:cursor-pointer">
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-xl md:text-2xl font-semibold mb-1">¡Registrate para poder ponernos en contacto!</h3>
+  <h3 className="text-xl md:text-2xl font-semibold mb-1">¡Regístrate para poder ponernos en contacto!</h3>
         <p className="text-sm text-gray-600 mb-6">Su información será privada y confidencial, no compartiremos sus datos.</p>
 
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5">
-          {/* Full name */}
+          {/* First / Last name */}
           <div>
-            <label className="block text-sm font-medium mb-1">Nombre completo <span className="text-red-600">*</span></label>
-            <div className="relative">
-              <User2 className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <label className="block text-sm font-medium mb-1">Nombre y Apellido <span className="text-red-600">*</span></label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="relative">
+                <User2 className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  className="text-black w-full border border-[#ED5E32] rounded-lg pl-9 pr-3 py-2 focus:outline-none"
+                  {...register("firstName", { required: "Required field." })}
+                />
+                {errors.firstName && <p className="text-xs text-red-600 mt-1">{errors.firstName.message}</p>}
+              </div>
+              <div className="relative">
+                <User2 className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Apellido"
+                  className="text-black w-full border border-[#ED5E32] rounded-lg pl-9 pr-3 py-2 focus:outline-none"
+                  {...register("lastName", { required: "Required field." })}
+                />
+                {errors.lastName && <p className="text-xs text-red-600 mt-1">{errors.lastName.message}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Passwords */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Contraseña <span className="text-red-600">*</span></label>
+            <div className="relative mb-2">
+              <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
-                type="text"
-                placeholder="Ingresa tu nombre"
+                type="password"
+                placeholder="Ingresa tu contraseña"
                 className="text-black w-full border border-[#ED5E32] rounded-lg pl-9 pr-3 py-2 focus:outline-none"
-                {...register("fullName", { required: "Required field." })}
+                {...register("password", {
+                  required: "Required field.",
+                  minLength: { value: 8, message: "Mínimo 8 caracteres." },
+                  validate: (v) => /[A-Za-z]/.test(v) && /\d/.test(v) || "Debe incluir letras y números.",
+                })}
               />
             </div>
-            {errors.fullName && <p className="text-xs text-red-600 mt-1">{errors.fullName.message}</p>}
+            {errors.password && <p className="text-xs text-red-600 mt-1">{String(errors.password.message)}</p>}
+
+            <label className="block text-sm font-medium mb-1 mt-4">Confirmar contraseña <span className="text-red-600">*</span></label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                placeholder="Repite tu contraseña"
+                className="text-black w-full border border-[#ED5E32] rounded-lg pl-9 pr-3 py-2 focus:outline-none"
+                {...register("confirmPassword", {
+                  required: "Required field.",
+                  validate: (v) => v === watch("password") || "Las contraseñas no coinciden.",
+                })}
+              />
+            </div>
+            {errors.confirmPassword && <p className="text-xs text-red-600 mt-1">{String(errors.confirmPassword.message)}</p>}
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Username <span className="text-red-600">*</span></label>
+            <div className="relative">
+              <AtSign className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Tu usuario"
+                className="text-black w-full border border-[#ED5E32] rounded-lg pl-9 pr-3 py-2 focus:outline-none"
+                {...register("username", {
+                  required: "Required field.",
+                  minLength: { value: 3, message: "At least 3 characters." },
+                })}
+              />
+            </div>
+            {errors.username && <p className="text-xs text-red-600 mt-1">{errors.username.message}</p>}
           </div>
 
           {/* Phone */}

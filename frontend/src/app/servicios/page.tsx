@@ -7,17 +7,16 @@ import Cards from "../components/services/Cards";
 import { Asterisk } from 'lucide-react';
 
 /* Imagenes */
-import registro from '../../../public/registro.jpg';
-import documentos from '../../../public/docu.jpg';
+import registro from '../../../public/4146246_2205926.jpg';
+import documentos from '../../../public/51017075_paper_2.jpg';
+import patente from '../../../public/10756756_4501491.jpg';
+import busqueda from '../../../public/5145027_2516805.jpg';
 
 const ServicesPage = () => {
   return (
-    <div className="mt-8">
-        <h3 className="md:text-3xl text-2xl font-semibold text-black uppercase font-playfair italic text-center my-8">Nuestros servicios</h3>
-        {/* <section className="py-8 px-24">
-            <Cards />
-        </section> */}
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
+    <div className="m-0 p-0 space-y-16 ">
+        <h3 className="md:text-3xl text-2xl font-semibold text-black uppercase font-playfair italic text-center my-8 ">Nuestros servicios</h3>
+        <section className="w-full text-black  px-4 sm:px-8 md:px-16 lg:px-8" id="registro">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-1 order-2 w-full">
@@ -25,7 +24,7 @@ const ServicesPage = () => {
                 src={registro}
                 alt="Registro-marcasoon"
                 sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-                className="w-full md:h-[580px] h-auto rounded-2xl"
+                className="w-auto md:h-[580px] h-auto rounded-2xl"
                 />
             </div> 
             <div className="md:order-2 orden-1 md:pr-22">
@@ -40,7 +39,7 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
+        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8" id="documentos">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-2 order-1 w-full">
@@ -48,7 +47,7 @@ const ServicesPage = () => {
                 src={documentos}
                 alt="documentos-marcasoon"
                 sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-                className="w-full md:h-[580px] h-auto rounded-2xl"
+                className="w-auto md:h-[580px] h-auto rounded-2xl"
                 />
             </div> 
             <div className="md:order-1 orden-2 md:pl-22">
@@ -62,15 +61,15 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
+        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8" id="patentes">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-1 order-2 w-full">
                 <Image
-                src=""
+                src={patente}
                 alt="Cómo trabajamos"
                 sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-                className="w-full md:h-[580px] h-auto rounded-2xl"
+                className="w-auto md:h-[580px] h-auto rounded-2xl"
                 />
             </div> 
             <div className="md:order-2 orden-1 md:pr-22">
@@ -84,15 +83,16 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
+    {/* Última sección: eliminamos el espacio en blanco antes del footer anulando el margin-top del footer (mt-16) con un margin-bottom negativo */}
+    <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 bg-[#F9F9F9] -mb-16 pb-12" id="busqueda-monitoreo-mantenimiento">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-2 order-1 w-full">
                 <Image
-                src=""
+                src={busqueda}
                 alt="Cómo trabajamos"
                 sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-                className="w-full md:h-[580px] h-auto rounded-2xl"
+                className="w-auto md:h-[580px] h-auto rounded-2xl"
                 />
             </div> 
             <div className="md:order-1 orden-2 md:pl-22">

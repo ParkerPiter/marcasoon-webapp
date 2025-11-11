@@ -28,21 +28,21 @@ export default function Home() {
       <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
         <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Sobre nosotros</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          <div className="md:order-1 order-2 w-full">
+          <div className="md:order-1 order-2 w-full lg:w-[46vw]">
             <Image
               src={proceso}
               alt="Cómo trabajamos"
               sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-              className="w-full md:h-[580px] h-auto rounded-2xl"
+              className="w-full md:w-3xl lg:w-[75vw] h-auto rounded-2xl"
             />
           </div> 
           <div className="md:order-2 orden-1 md:pr-22">
             <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center"></h3>
             <p className="text-center md:text-lg text-base md:text-left"><span className="font-semibold">Protege tu Negocio Global: 30 Años de Experiencia en Propiedad Intelectual, Sin Sorpresas ni Barreras.</span>
              <br /> <br />Tu marca, invención o obra de arte es un activo valioso. En Marcasoon, nuestra misión es simplificar su protección, ya sea en EE. UU., en Latinoamérica o a nivel internacional.
-              <br /><br />Hemos creado un puente claro y directo para la comunidad hispanohablante, eliminando la complejidad de las formalidades legales y los costos ocultos.
-              <br /> <br />Somos expertos: Con más de 30 años de experiencia acumulada en Propiedad Intelectual y un profundo conocimiento en sistemas de registro global (marcas, patentes, derechos de autor), combinamos la guía profesional con la eficiencia tecnológica.
-             <br /> <br />Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la transparencia que necesitas para expandir tu inversión con confianza. Te acompañamos en cada paso para asegurar lo que es legítimamente tuyo
+Hemos creado un puente claro y directo para la comunidad hispanohablante, eliminando la complejidad de las formalidades legales y los costos ocultos.
+Somos expertos: Con más de 30 años de experiencia acumulada en Propiedad Intelectual y un profundo conocimiento en sistemas de registro global (marcas, patentes, derechos de autor), combinamos la guía profesional con la eficiencia tecnológica.
+Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la transparencia que necesitas para expandir tu inversión con confianza. Te acompañamos en cada paso para asegurar lo que es legítimamente tuyo
             </p>
             <Button />
           </div>
@@ -64,41 +64,20 @@ export default function Home() {
       <section className="w-full bg-[#ED5E32]">
         {/* <h2 className="md:text-3xl text-2xl font-semibold text-center mb-6">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h2> */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center ">
-          <div className="order-1 md:order-1 w-full md:w-[940px] md:px-0 px-0">
+          <div className="order-1 md:order-1 w-full lg:w-[50vw] md:px-0 px-0">
             <Image
               src={protocolo_madrid}
               alt="Protocolo de Madrid"
               width={680}
               height={680}
-              sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
               placeholder="blur"
-              className="w-full h-auto "
+              className="w-full md:w-3xl lg:w-[75vw]  h-auto "
             />
           </div> 
-          <div className="order-2 md:order-2 py-12 md:pr-12 px-4 md:px-0">
-            <p className="text-center md:text-lg text-base md:text-left">
-              El <span className="italic font-playfair font-semibold ">Protocolo de Madrid</span> es un sistema internacional que permite registrar una marca en varios países con un solo trámite,
-              haciendo todo mucho más simple y eficiente.
-            </p>
-
-            <div className="space-y-2 mt-3">
-              <h3 className="font-semibold">Cómo funciona con Marcasoon:</h3>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Primero, solicitamos tu marca en los Estados Unidos.</li>
-                <li>Seguidamente iniciamos el proceso internacional bajo el Protocolo de Madrid, extendiendo la protección a más de 130 países miembros del sistema.</li>
-                <li>La Oficina Internacional revisa tu solicitud y la envía a los países elegidos. Cada país evalúa la marca según sus propias leyes.</li>
-                <li>Una vez cumplimentado cada proceso, tu marca quedará protegida en todos esos países, sin tener que hacer trámites separados en cada uno.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2 mt-4">
-              <h3 className="font-semibold">Beneficios:</h3>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><span className="font-semibold">Ahorro de tiempo y dinero:</span> un solo formulario, un solo pago, una sola estrategia global.</li>
-                <li><span className="font-semibold">Cobertura internacional rápida:</span> protege tu marca en múltiples países a la vez.</li>
-                <li><span className="font-semibold">Gestión sencilla:</span> cualquier cambio, modificación o renovación se hace desde Marcasoon.</li>
-              </ul>
-            </div>
+          <div className="order-2 md:order-2 py-12 px-4 md:pr-12 md:px-0 lg:px-18">
+              <h3 className="md:text-3xl text-2xl font-semibold mb-4">En Marcasoon te ayudamos a proteger tu marca a nivel internacional</h3>
+              <p className="text-center md:text-lg text-base md:text-left">A través del Protocolo de Madrid, el sistema más eficiente y reconocido para registrar marcas en más de 130 países con una sola solicitud, un solo idioma y un solo pago. Bajo este esquema, expandir tu protección internacional se facilita, haciendo que tu marca cruce fronteras de manera eficiente.</p>
+              <Button />
           </div>
         </div>
       </section>
