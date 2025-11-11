@@ -93,7 +93,7 @@ function NavComponent() {
               <NavSelect
                 placeholder="Recursos"
                 options={[
-                  { label: "Blog", href: "/recursos/blog" },
+                  { label: "Blog", href: "/blog" },
                   { label: "Guías", href: "/recursos/guides" },
                   { label: "Webinars", href: "/recursos/webinars" },
                 ]}

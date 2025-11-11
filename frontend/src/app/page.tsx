@@ -17,7 +17,7 @@ import protocolo_madrid from '../../public/BANNER-PRINCIPAL.png';
 export default function Home() {
 
   return (
-    <div className="font-sans min-h-screen  pb-20 flex flex-col gap-16 items-center">
+    <div className="font-sans min-h-screen pb-20 flex flex-col items-center">
 
       {/* Hero */}
       <section className="w-full py-0 text-black">
@@ -25,8 +25,8 @@ export default function Home() {
       </section>
 
       {/* Cómo trabajamos */}
-      <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8">
-        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Sobre nosotros</h3>
+      <section className="w-full text-black py-24 px-4 sm:px-8 md:px-16 lg:px-8">
+        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-10 font-playfair italic uppercase">Sobre nosotros</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div className="md:order-1 order-2 w-full lg:w-[46vw]">
             <Image
@@ -56,7 +56,7 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
 
       {/* Precios */}
       <section className="w-5/6 py-12 text-black">
-        <h3 className="text-3xl text-center mb-4 font-semibold font-playfair italic uppercase">Paquetes</h3>
+        <h3 className="text-3xl text-center mb-10 font-semibold font-playfair italic uppercase">Paquetes</h3>
         <Cards></Cards>
       </section>
 
@@ -83,20 +83,20 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
       </section>
 
       {/* Testimonios de nuestros clientes */}
-      <section className=" w-full py-12 text-black">
+      <section className=" w-full py-12 text-black bg-[#F9F9F9]">
         <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic uppercase">Clientes</h3>
         <SliderTestimonial />
       </section>
 
       {/* Logo Carrusel */}
-      <section className="w-full py-2 text-black">
+      <section className="w-full py-12 text-black bg-[#F9F9F9]">
         {/* <h2 className="text-2xl font-semibold text-center mb-4">Nuestros Clientes</h2> */}
         <CarruselComponent />
       </section>
 
       {/* Blog */}
-      <section className="w-full pt-12 pb-16 text-white bg-[#192A56]">
-        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic uppercase">Blogs</h3>
+      <section className="w-full pt-16 pb-20 text-white bg-[#192A56]">
+        <h3 className="text-3xl font-semibold text-center mb-10 font-playfair italic uppercase">Blogs</h3>
         <BlogCards />
       </section>
 
