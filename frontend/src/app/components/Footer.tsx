@@ -43,10 +43,10 @@ const Footer = () => {
 								<Link href="/contact" className="hover:text-white">Contacto</Link>
 							</li>
 							<li>
-								<Link href="/recursos/blog" className="hover:text-white">Blog</Link>
+								<Link href="/blog" className="hover:text-white">Blog</Link>
 							</li>
 							<li>
-								<Link href="/servicios/registro" className="hover:text-white">Registro de Marca</Link>
+								<Link href="/servicios#registro" className="hover:text-white">Registro de Marca</Link>
 							</li>
 							<li>
 								<Link href="/about" className="hover:text-white">Sobre nosotros</Link>
@@ -88,8 +88,8 @@ const Footer = () => {
 				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between text-sm">
 					<p className="opacity-95">© {new Date().getFullYear()} Marcasoon. Todos los derechos reservados.</p>
 					<div className="flex gap-4 mt-2 md:mt-0">
-						<Link href="#" className="hover:underline">Términos</Link>
-						<Link href="#" className="hover:underline">Privacidad</Link>
+						<Link href="/terminos-privacidad" className="hover:underline">Términos</Link>
+						<Link href="/terminos-privacidad" className="hover:underline">Privacidad</Link>
 						<Link href="#" className="hover:underline">Cookies</Link>
 					</div>
 				</div>

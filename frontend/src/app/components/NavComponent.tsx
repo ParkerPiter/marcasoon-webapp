@@ -8,7 +8,7 @@ import AuthModal from "./auth/AuthModal";
 import { useEffect } from "react";
 import Link from "next/link";
 import Select, { components, type StylesConfig } from "react-select";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { fetchCurrentUser, getStoredAccessToken, setStoredUsername } from "../../../api/api";
 import userImg from "../../../public/user.png";
 
@@ -18,6 +18,7 @@ function NavComponent() {
  const [authed, setAuthed] = useState(false);
  const [displayName, setDisplayName] = useState<string>("");
  const router = useRouter();
+ const pathname = usePathname();
 
  // Helper local para evitar fetch a /auth/me
  const hasStoredToken = () => {
@@ -84,7 +85,23 @@ function NavComponent() {
                   { label: "Registro de Patentes", href: "/servicios/#patentes" },
                   { label: "Búsqueda Fonética", href: "/servicios/#busqueda-monitoreo-mantenimiento" },
                 ]}
-                onNavigate={(href) => router.push(href)}
+                onNavigate={(href) => {
+                  // Animación de slide (smooth scroll) cuando ya estamos en /servicios
+                  if (href.startsWith('/servicios/#')) {
+                    const id = href.split('#')[1];
+                    if (pathname?.startsWith('/servicios') && typeof window !== 'undefined') {
+                      const el = document.getElementById(id);
+                      if (el) {
+                        // Ajuste: mantener el hash en la URL sin recargar
+                        history.pushState(null, '', `#${id}`);
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        return; // evitamos navegación completa
+                      }
+                    }
+                  }
+                  // Caso general: navegar; la página de servicios hará smooth al montar
+                  router.push(href);
+                }}
               />
             </div>
 

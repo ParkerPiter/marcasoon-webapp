@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import proceso from '../../../../public/proceso.png';
 import Button from '@/app/components/buttons/homeButtons';
-import Cards from "../components/services/Cards";
 import { Asterisk } from 'lucide-react';
+import { useEffect } from 'react';
 
 /* Imagenes */
 import registro from '../../../public/4146246_2205926.jpg';
@@ -13,10 +12,26 @@ import patente from '../../../public/10756756_4501491.jpg';
 import busqueda from '../../../public/5145027_2516805.jpg';
 
 const ServicesPage = () => {
+    // Smooth scroll al cargar con hash o cuando cambia el hash
+    useEffect(() => {
+        const scrollToHash = () => {
+            if (typeof window === 'undefined') return;
+            const hash = window.location.hash?.replace('#','');
+            if (!hash) return;
+            const el = document.getElementById(hash);
+            if (el) {
+                // delay mínimo para asegurar layout listo
+                setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+            }
+        };
+        scrollToHash();
+        window.addEventListener('hashchange', scrollToHash);
+        return () => window.removeEventListener('hashchange', scrollToHash);
+    }, []);
   return (
     <div className="m-0 p-0 space-y-16 ">
         <h3 className="md:text-3xl text-2xl font-semibold text-black uppercase font-playfair italic text-center my-8 ">Nuestros servicios</h3>
-        <section className="w-full text-black  px-4 sm:px-8 md:px-16 lg:px-8" id="registro">
+                <section className="w-full text-black  px-4 sm:px-8 md:px-16 lg:px-8 scroll-mt-24 md:scroll-mt-28" id="registro">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-1 order-2 w-full">
@@ -39,7 +54,7 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8" id="documentos">
+    <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 scroll-mt-24 md:scroll-mt-28" id="documentos">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-2 order-1 w-full">
@@ -61,7 +76,7 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
-        <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8" id="patentes">
+    <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 scroll-mt-24 md:scroll-mt-28" id="patentes">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-1 order-2 w-full">
@@ -84,7 +99,7 @@ const ServicesPage = () => {
             </div>
         </section>
     {/* Última sección: eliminamos el espacio en blanco antes del footer anulando el margin-top del footer (mt-16) con un margin-bottom negativo */}
-    <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 bg-[#F9F9F9] -mb-16 pb-12" id="busqueda-monitoreo-mantenimiento">
+    <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 bg-[#F9F9F9] -mb-16 pb-12 scroll-mt-24 md:scroll-mt-28" id="busqueda-monitoreo-mantenimiento">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:order-2 order-1 w-full">

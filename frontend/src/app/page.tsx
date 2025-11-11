@@ -55,7 +55,7 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
       </section>
 
       {/* Precios */}
-      <section className="w-5/6 py-12 text-black">
+      <section className="w-5/6 py-18 text-black">
         <h3 className="text-3xl text-center mb-10 font-semibold font-playfair italic uppercase">Paquetes</h3>
         <Cards></Cards>
       </section>
