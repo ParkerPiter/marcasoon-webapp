@@ -76,6 +76,7 @@ const ServicesPage = () => {
             </div>
             </div>
         </section>
+        
     <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-8 scroll-mt-24 md:scroll-mt-28" id="patentes">
             {/* <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4 font-playfair italic uppercase">Registro de Marca</h3> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
