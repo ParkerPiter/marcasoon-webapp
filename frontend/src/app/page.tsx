@@ -49,8 +49,8 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
         </div>
       </section>
 
-      <section className="bg-[#192A56] w-full min-h-[22vh] py-12 flex flex-col items-center justify-center md:px-0 px-6">
-        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">Haz una busqueda de prueba aquí</h3>
+      <section className="bg-[#ED5E32] w-full min-h-[22vh] py-12 flex flex-col items-center justify-center md:px-0 px-6">
+        <h3 className="md:text-3xl text-white text-2xl font-semibold text-center mb-4">Haz una busqueda de prueba aquí</h3>
         <SearchCards />
       </section>
 
