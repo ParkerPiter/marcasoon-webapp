@@ -7,6 +7,7 @@ import BlogCards from "./components/blog/Cards";
 import FaqComponent from "./components/faq/faqComponent";
 import Banner from "./components/Banner";
 import Button from "./components/buttons/homeButtons";
+import SaberMasButtons from "./components/buttons/sabermas";
 import SearchCards from "./components/search/SearchCards";
 import Image from "next/image";
 
@@ -77,7 +78,7 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
           <div className="order-2 md:order-2 py-12 px-4 md:pr-12 md:px-0 lg:px-18">
               <h3 className="md:text-3xl text-2xl font-semibold mb-4">En Marcasoon te ayudamos a proteger tu marca a nivel internacional</h3>
               <p className="text-center md:text-lg text-base md:text-left">A través del Protocolo de Madrid, el sistema más eficiente y reconocido para registrar marcas en más de 130 países con una sola solicitud, un solo idioma y un solo pago. Bajo este esquema, expandir tu protección internacional se facilita, haciendo que tu marca cruce fronteras de manera eficiente.</p>
-              <Button />
+              <SaberMasButtons />
           </div>
         </div>
       </section>

@@ -84,6 +84,7 @@ function NavComponent() {
                   { label: "Consultoría Legal", href: "/servicios/#documentos" },
                   { label: "Registro de Patentes", href: "/servicios/#patentes" },
                   { label: "Búsqueda Fonética", href: "/servicios/#busqueda-monitoreo-mantenimiento" },
+                  { label: "Protocolo de Madrid", href: "/servicios/#protocolo-madrid" },
                 ]}
                 onNavigate={(href) => {
                   // Animación de slide (smooth scroll) cuando ya estamos en /servicios
@@ -112,7 +113,7 @@ function NavComponent() {
                 options={[
                   { label: "Blog", href: "/blog" },
                   { label: "Guías", href: "/recursos/guides" },
-                  { label: "Webinars", href: "/recursos/webinars" },
+                  { label: "Conoce más", href: "/recursos/conoce-mas" },
                 ]}
                 onNavigate={(href) => router.push(href)}
               />
