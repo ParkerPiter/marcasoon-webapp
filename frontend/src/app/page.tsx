@@ -7,6 +7,7 @@ import BlogCards from "./components/blog/Cards";
 import FaqComponent from "./components/faq/faqComponent";
 import Banner from "./components/Banner";
 import Button from "./components/buttons/homeButtons";
+import BlogButtons from "./components/buttons/blogButton";
 import SaberMasButtons from "./components/buttons/sabermas";
 import SearchCards from "./components/search/SearchCards";
 import Image from "next/image";
@@ -96,9 +97,12 @@ Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la tr
       </section>
 
       {/* Blog */}
-      <section className="w-full pt-16 pb-20 text-white bg-[#192A56]">
+      <section className="w-full pt-16 pb-20 text-white bg-[#192A56] flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-8 justify-center">
         <h3 className="text-3xl font-semibold text-center mb-10 font-playfair italic uppercase">Blogs</h3>
         <BlogCards />
+        <div>
+          <BlogButtons />
+        </div>
       </section>
 
       {/* FAQs */}

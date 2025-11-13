@@ -13,6 +13,13 @@ export interface FormValues {
   confirmPassword: string;
 };
 
+export interface ContactFormValues {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+}
+
 // Payload final que se envía al padre tras normalización
 export type ProtectNormalized = ProtectType | { type: ProtectType }[];
 

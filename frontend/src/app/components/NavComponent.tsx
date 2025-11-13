@@ -120,7 +120,7 @@ function NavComponent() {
             </div>
 
             <p className="text-[#192A56] font-semibold"><a href="/about">Sobre nosotros</a></p>
-            <p className="text-[#192A56] font-semibold"><a href="/contact">Contacto</a></p>
+            <p className="text-[#192A56] font-semibold"><a href="/contacto">Contacto</a></p>
             {authed ? (
               <UserMenu initialName={displayName} />
             ) : (
