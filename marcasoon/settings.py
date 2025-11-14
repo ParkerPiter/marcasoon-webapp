@@ -35,7 +35,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ('1', 'true', 'yes', 'on')
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
 ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
 
@@ -96,12 +96,24 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 
 # Database
+'''
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_2a55_user:tJg1sxkMnfBQCKnVRudkh5up76HqC5Qg@dpg-d3v7s6ndiees73epq8sg-a/marcasoon_webapp_db_2a55'),
         conn_max_age=600
     )
+}
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'marcasoon',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
 # USPTO / api.data.gov configuration
@@ -248,3 +260,32 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': False,
     # otras opciones según necesites…
 }
+
+
+# Email configuration (use python-decouple if available; otherwise fallback to env vars)
+try:
+    from decouple import config as _decouple_config
+    def _cfg(k, default=None, cast=None):
+        return _decouple_config(k, default=default, cast=cast)
+except Exception:
+    def _cfg(k, default=None, cast=None):
+        v = os.getenv(k, default)
+        if v is None:
+            return v
+        if cast:
+            try:
+                return cast(v)
+            except Exception:
+                return default
+        return v
+
+EMAIL_BACKEND = _cfg('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = _cfg('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(_cfg('EMAIL_PORT', 587))
+EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = str(_cfg('EMAIL_USE_TLS', 'True')).lower() in ('1', 'true', 'yes')
+# Use the authenticated account as default sender if not explicitly configured
+DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'no-reply@marcasoon.com')
+# Where contact form emails should be delivered (defaults to EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
+CONTACT_RECEIVER_EMAIL = _cfg('CONTACT_RECEIVER_EMAIL', EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)

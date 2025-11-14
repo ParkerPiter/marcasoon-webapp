@@ -1,6 +1,7 @@
 from rest_framework import serializers, permissions, generics
 from django.contrib.auth import get_user_model
 from .models import  Trademark, TrademarkAsset, Plan, Testimonial, BlogPost
+from .models import PasswordResetCode
 
 
 User = get_user_model()
@@ -26,8 +27,17 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+# Expose more user/profile fields for registration and profile edit
+UserSerializer.Meta.fields = tuple(list(UserSerializer.Meta.fields) + ['nationality', 'address', 'postal_code'])
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
+    # Allow passing basic profile fields at registration
+    full_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    nationality = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    address = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    postal_code = serializers.CharField(write_only=True, required=False, allow_blank=True)
     # Optional fields to create an initial Trademark and TrademarkAsset
     asset_kind = serializers.CharField(write_only=True, required=False, allow_blank=True)
     asset_text = serializers.CharField(write_only=True, required=False, allow_blank=True)
@@ -39,7 +49,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset')
+        fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code')
 
     def create(self, validated_data):
         # Extract possible asset fields
@@ -47,6 +57,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         asset_text = validated_data.pop('asset_text', None)
         asset_image = validated_data.pop('asset_image', None)
         brand_name = validated_data.pop('brand_name', None)
+        # Optional profile fields
+        full_name = validated_data.pop('full_name', None)
+        nationality = validated_data.pop('nationality', None)
+        address = validated_data.pop('address', None)
+        postal_code = validated_data.pop('postal_code', None)
 
         # Create the user
         user = User.objects.create_user(
@@ -54,6 +69,16 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data.get('email', ''),
             password=validated_data['password']
         )
+        # Set optional profile fields if provided
+        if full_name:
+            user.full_name = full_name
+        if nationality:
+            user.nationality = nationality
+        if address:
+            user.address = address
+        if postal_code:
+            user.postal_code = postal_code
+        user.save()
 
         # Create an empty Trademark for the user (placeholder "mi marca")
         try:
@@ -124,7 +149,7 @@ class MeView(generics.RetrieveAPIView):
 class TrademarkAssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrademarkAsset
-        fields = ('id', 'kind', 'text_value', 'logo', 'sound', 'created_at')
+        fields = ('id', 'kind', 'text_value', 'logo', 'sound', 'created_at', 'protect_colors', 'colors', 'includes_person_name', 'person_name', 'authorization', 'services')
 
 
 class TrademarkSerializer(serializers.ModelSerializer):
@@ -132,7 +157,14 @@ class TrademarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trademark
-        fields = ('id', 'user', 'assets', 'created_at', 'updated_at')
+        fields = ('id', 'user', 'name', 'description', 'foreign_meaning', 'basis_for_registration', 'intention_of_use', 'current_use_description', 'first_use_date', 'foreign_application_number', 'foreign_application_translation', 'foreign_registration_number', 'foreign_registration_translation', 'disclaimer', 'assets', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        # Ensure user is set by view/context when creating
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and not validated_data.get('user'):
+            validated_data['user'] = user
+        return super().create(validated_data)
 
 
 class PlanSerializer(serializers.ModelSerializer):
@@ -251,3 +283,34 @@ class BlogPostSerializer(serializers.ModelSerializer):
         user = getattr(request, 'user', None)
         validated_data['author'] = user
         return super().create(validated_data)
+
+
+class TrademarkEvidenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = None  # set dynamically below if import available
+        fields = ('id', 'file', 'links', 'description', 'first_use_date', 'created_at')
+
+# Import TrademarkEvidence model lazily to avoid issues if model isn't loaded yet
+try:
+    from .models import TrademarkEvidence
+    TrademarkEvidenceSerializer.Meta.model = TrademarkEvidence
+except Exception:
+    # If model not present, keep serializer base; view will raise if used
+    TrademarkEvidenceSerializer.Meta.model = None
+
+
+class ContactSerializer(serializers.Serializer):
+    full_name = serializers.CharField(max_length=200)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    message = serializers.CharField()
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=10)
+    new_password = serializers.CharField(min_length=8)

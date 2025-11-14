@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Contáctanos</title>
+</head>
+<body>
+  <h1>Contáctanos</h1>
+  {% if errors %}
+    <div style="color: red;">
+      <ul>
+      {% for k,v in errors.items %}
+        <li>{{ k }}: {{ v }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <form method="post" action="" accept-charset="utf-8">
+    {% csrf_token %}
+    <div>
+      <label>Nombre completo<br>
+        <input type="text" name="full_name" value="{{ full_name|default:'' }}" required>
+      </label>
+    </div>
+    <div>
+      <label>Correo electrónico<br>
+        <input type="email" name="email" value="{{ email|default:'' }}" required>
+      </label>
+    </div>
+    <div>
+      <label>Número de teléfono<br>
+        <input type="text" name="phone" value="{{ phone|default:'' }}">
+      </label>
+    </div>
+    <div>
+      <label>Mensaje<br>
+        <textarea name="message" rows="6" required>{{ message|default:'' }}</textarea>
+      </label>
+    </div>
+    <div>
+      <button type="submit">Enviar</button>
+    </div>
+  </form>
+</body>
+</html>

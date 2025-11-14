@@ -24,6 +24,13 @@ from .views import (
     trademark_transaction_search,
     trademark_filing_search,
     trademark_event_search,
+    create_trademark,
+    trademark_detail,
+    trademark_evidence_upload,
+    contact,
+    contact_api,
+    password_reset_request,
+    password_reset_confirm,
 )
 from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
 from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
@@ -68,6 +75,16 @@ urlpatterns = [
     path('testimonials/<int:pk>/', testimonial_detail, name='testimonial-detail'),
     path('plans/test/', TemplateView.as_view(template_name='plans/test.html'), name='plans-test'),
 
+    # Contact page
+    path('contact/', contact, name='contact'),
+    # no-trailing-slash alias to avoid 404 on POST without slash
+    path('contact', contact, name='contact-noslash'),
+    # JSON API for contact submissions
+    path('api/contact/', contact_api, name='contact-api'),
+    # Password reset endpoints (no auth/CSRF required)
+    path('auth/password/reset/request/', password_reset_request, name='password-reset-request'),
+    path('auth/password/reset/confirm/', password_reset_confirm, name='password-reset-confirm'),
+
     # Blog / Foro endpoints
     path('blog/posts/', blog_posts, name='blog-posts'),
     path('blog/posts/<int:pk>/', blog_post_detail, name='blog-post-detail'),
@@ -84,6 +101,10 @@ urlpatterns = [
     path('trademark/transaction/', trademark_transaction_search, name='trademark-transaction-search'),
     path('trademark/filing-search/', trademark_filing_search, name='trademark-filing-search'),
     path('trademark/event-search/', trademark_event_search, name='trademark-event-search'),
+    # Trademark CRUD & evidence
+    path('trademarks/', create_trademark, name='trademark-create'),
+    path('trademarks/<int:pk>/', trademark_detail, name='trademark-detail'),
+    path('trademarks/<int:pk>/evidence/', trademark_evidence_upload, name='trademark-evidence-upload'),
     
     # Stripe endpoints
     path('stripe/config/', stripe_config, name='stripe-config'),

@@ -10,9 +10,22 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
 from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
+from .serializers import ContactSerializer
+from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 from .trademark_service import TrademarkLookupClient
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.views.decorators.http import require_http_methods
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+import logging
+import json
+import random
+from datetime import timedelta
+from django.utils import timezone
+from .serializers import TrademarkSerializer
 
 
 
@@ -434,4 +447,220 @@ def blog_post_detail(request, pk: int):
 @permission_classes([permissions.IsAuthenticated])
 def auth_ping(request):
     return Response({'detail': 'ok', 'user': UserSerializer(request.user).data})
+
+
+# --- Trademark endpoints (create, retrieve) and evidence upload ---
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def create_trademark(request):
+    data = request.data.copy()
+    # Bind to current user in serializer context
+    serializer = TrademarkSerializer(data=data, context={'request': request})
+    if serializer.is_valid():
+        tm = serializer.save()
+        return Response(TrademarkSerializer(tm, context={'request': request}).data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def trademark_detail(request, pk: int):
+    try:
+        obj = Trademark.objects.get(pk=pk)
+    except Trademark.DoesNotExist:
+        return Response({'detail': 'Not found'}, status=404)
+    # Only owner or staff can view
+    if obj.user_id != request.user.id and not request.user.is_staff:
+        return Response({'detail': 'Forbidden'}, status=403)
+    return Response(TrademarkSerializer(obj, context={'request': request}).data)
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def trademark_evidence_upload(request, pk: int):
+    try:
+        tm = Trademark.objects.get(pk=pk)
+    except Trademark.DoesNotExist:
+        return Response({'detail': 'Trademark not found'}, status=404)
+    # Only owner or staff can upload
+    if tm.user_id != request.user.id and not request.user.is_staff:
+        return Response({'detail': 'Forbidden'}, status=403)
+    # Lazy import to avoid circulars
+    from .serializers import TrademarkEvidenceSerializer
+    data = request.data.copy()
+    # Accept file upload in 'file' field
+    if hasattr(request, 'FILES') and 'file' in request.FILES:
+        data['file'] = request.FILES['file']
+    serializer = TrademarkEvidenceSerializer(data=data, context={'request': request, 'trademark': tm})
+    if serializer.is_valid():
+        ev = serializer.save()
+        return Response(TrademarkEvidenceSerializer(ev, context={'request': request}).data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@csrf_exempt
+@require_http_methods(['GET', 'POST'])
+def contact(request):
+    """Render contact form (GET) and send email (POST).
+
+    Fields: full_name, email, phone, message
+    """
+    if request.method == 'GET':
+        return render(request, 'contact.html')
+
+    # POST: parse either JSON or form-encoded
+    full_name = email = phone = message = ''
+    content_type = (request.META.get('CONTENT_TYPE') or '').lower()
+    try:
+        if 'application/json' in content_type:
+            payload = json.loads(request.body or b"{}")
+            full_name = (payload.get('full_name') or '').strip()
+            email = (payload.get('email') or '').strip()
+            phone = (payload.get('phone') or '').strip()
+            message = (payload.get('message') or '').strip()
+        else:
+            full_name = (request.POST.get('full_name') or '').strip()
+            email = (request.POST.get('email') or '').strip()
+            phone = (request.POST.get('phone') or '').strip()
+            message = (request.POST.get('message') or '').strip()
+    except Exception:
+        # fall back to empty values; will trigger validation errors
+        pass
+
+    errors = {}
+    if not full_name:
+        errors['full_name'] = 'Required'
+    if not email:
+        errors['email'] = 'Required'
+    if not message:
+        errors['message'] = 'Required'
+    if errors:
+        return render(request, 'contact.html', {'errors': errors, 'full_name': full_name, 'email': email, 'phone': phone, 'message': message})
+
+    # Build email content
+    subject = f'Contacto desde sitio: {full_name}'
+    html_message = render_to_string('emails/contact_email.html', {
+        'full_name': full_name,
+        'email': email,
+        'phone': phone,
+        'message': message,
+        'site': request.get_host(),
+    })
+    plain_message = strip_tags(html_message)
+
+    # Fixed recipient as requested; fallback to settings if you later want to change centrally
+    recipient = 'marcasoon@gmail.com'
+    from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
+
+    try:
+        send_mail(subject, plain_message, from_email, [recipient], html_message=html_message, fail_silently=False)
+    except Exception as exc:
+        logger = logging.getLogger(__name__)
+        logger.exception('Failed sending contact email')
+        # Show a friendly error to the user instead of raising 500
+        error_msg = 'Ocurrió un error al enviar el mensaje. Por favor inténtalo de nuevo más tarde.'
+        return render(request, 'contact.html', {'errors': {'send': error_msg}, 'full_name': full_name, 'email': email, 'phone': phone, 'message': message})
+
+    return render(request, 'contact_success.html', {'full_name': full_name})
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([permissions.AllowAny])
+def contact_api(request):
+    """JSON API endpoint for contact submissions.
+
+    Accepts JSON: { full_name, email, phone?, message }
+    Returns JSON: { detail: 'ok' } on success or serializer errors.
+    """
+    serializer = ContactSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=400)
+    data = serializer.validated_data
+    subject = f'Contacto desde sitio: {data.get("full_name")}'
+    html_message = render_to_string('emails/contact_email.html', {**data, 'site': request.get_host()})
+    plain_message = strip_tags(html_message)
+    recipient = 'marcasoon@gmail.com'
+    from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
+    try:
+        send_mail(subject, plain_message, from_email, [recipient], html_message=html_message, fail_silently=False)
+    except Exception:
+        logger = logging.getLogger(__name__)
+        logger.exception('Failed sending contact email via API')
+        return Response({'detail': 'Failed to send email'}, status=500)
+    return Response({'detail': 'ok'}, status=201)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([permissions.AllowAny])
+def password_reset_request(request):
+    """Start password reset: accept email, generate code, email it.
+    Always respond 200 to avoid email enumeration; but include detail for success path.
+    """
+    ser = PasswordResetRequestSerializer(data=request.data)
+    if not ser.is_valid():
+        return Response(ser.errors, status=400)
+    email = ser.validated_data['email']
+    # Try to find the user; don't reveal whether it exists
+    try:
+        user = User.objects.get(email__iexact=email)
+    except User.DoesNotExist:
+        # Still respond 200 to prevent enumeration
+        return Response({'detail': 'ok'}, status=200)
+    # Generate 6-digit code
+    code = f"{random.randint(0, 999999):06d}"
+    from .models import PasswordResetCode
+    expires_at = timezone.now() + timedelta(minutes=15)
+    PasswordResetCode.objects.create(user=user, code=code, expires_at=expires_at)
+    # Send email
+    html_message = render_to_string('emails/password_reset_code.html', {
+        'user': user,
+        'code': code,
+        'minutes': 15,
+        'site': request.get_host(),
+    })
+    plain_message = strip_tags(html_message)
+    subject = 'Código de recuperación de contraseña'
+    from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
+    try:
+        send_mail(subject, plain_message, from_email, [email], html_message=html_message, fail_silently=False)
+    except Exception:
+        logger = logging.getLogger(__name__)
+        logger.exception('Failed sending password reset code email')
+        # Do not reveal failure details to client
+    return Response({'detail': 'ok'}, status=200)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([permissions.AllowAny])
+def password_reset_confirm(request):
+    """Confirm reset: verify email+code then set new password."""
+    ser = PasswordResetConfirmSerializer(data=request.data)
+    if not ser.is_valid():
+        return Response(ser.errors, status=400)
+    email = ser.validated_data['email']
+    code = ser.validated_data['code']
+    new_password = ser.validated_data['new_password']
+    try:
+        user = User.objects.get(email__iexact=email)
+    except User.DoesNotExist:
+        return Response({'detail': 'Invalid code or email'}, status=400)
+    from .models import PasswordResetCode
+    prc = PasswordResetCode.objects.filter(user=user, code=code, used=False).order_by('-created_at').first()
+    if not prc or not prc.is_valid():
+        return Response({'detail': 'Invalid or expired code'}, status=400)
+    # Update password and mark code used
+    user.set_password(new_password)
+    user.save()
+    prc.used = True
+    prc.save(update_fields=['used'])
+    return Response({'detail': 'ok'}, status=200)
     

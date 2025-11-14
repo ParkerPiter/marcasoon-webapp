@@ -1,0 +1,12 @@
+<html>
+  <body>
+    <h2>Nuevo formulario de contacto</h2>
+    <p><strong>Nombre:</strong> {{ full_name }}</p>
+    <p><strong>Email:</strong> {{ email }}</p>
+    <p><strong>Teléfono:</strong> {{ phone }}</p>
+    <p><strong>Mensaje:</strong></p>
+    <div style="border:1px solid #ddd;padding:10px">{{ message|linebreaks }}</div>
+    <hr>
+    <p>Enviado desde: {{ site }}</p>
+  </body>
+</html>
