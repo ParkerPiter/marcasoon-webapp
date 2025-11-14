@@ -7,6 +7,8 @@ import BlogCards from "./components/blog/Cards";
 import FaqComponent from "./components/faq/faqComponent";
 import Banner from "./components/Banner";
 import Button from "./components/buttons/homeButtons";
+import BlogButtons from "./components/buttons/blogButton";
+import SaberMasButtons from "./components/buttons/sabermas";
 import SearchCards from "./components/search/SearchCards";
 import Image from "next/image";
 
@@ -17,7 +19,7 @@ import protocolo_madrid from '../../public/BANNER-PRINCIPAL.png';
 export default function Home() {
 
   return (
-    <div className="font-sans min-h-screen  pb-20 flex flex-col gap-16 items-center">
+    <div className="font-sans min-h-screen pb-20 flex flex-col items-center">
 
       {/* Hero */}
       <section className="w-full py-0 text-black">
@@ -25,36 +27,38 @@ export default function Home() {
       </section>
 
       {/* Cómo trabajamos */}
-      <section className="w-full text-black px-4 sm:px-8 md:px-16 lg:px-20">
-        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="md:order-1 order-2 w-full">
+      <section className="w-full text-black py-24 px-4 sm:px-8 md:px-16 lg:px-8">
+        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-10 font-playfair italic uppercase">Sobre nosotros</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div className="md:order-1 order-2 w-full lg:w-[46vw]">
             <Image
               src={proceso}
               alt="Cómo trabajamos"
-              width={800}
-              height={800}
               sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
-              placeholder="blur"
-              className="w-full h-auto rounded-2xl"
+              className="w-full md:w-3xl lg:w-[75vw] h-auto rounded-2xl"
             />
           </div> 
-          <div className="md:order-2 orden-1 ">
-            <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center">Paso a paso</h3>
-            <p className="text-center md:text-lg text-base md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque suscipit luctus orci in hendrerit. Nulla velit urna, aliquet accumsan turpis a, faucibus tincidunt lorem. Sed euismod commodo risus et luctus. Nulla tempor erat eget venenatis tincidunt. Duis feugiat leo quis elit luctus, eu placerat ligula lobortis. Aenean tincidunt finibus dictum. Curabitur finibus ornare ornare. Quisque egestas dui sapien, vitae luctus justo tincidunt ut. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat leo elit, ac feugiat turpis commodo ut. Nam id nisi quis metus ultrices commodo luctus in magna. Donec sodales efficitur ullamcorper. Aenean convallis tincidunt mollis.</p>
+          <div className="md:order-2 orden-1 md:pr-22">
+            <h3 className="md:text-xl text-xl font-semibold mb-2 md:text-start text-center"></h3>
+            <p className="text-center md:text-lg text-base md:text-left"><span className="font-semibold">Protege tu Negocio Global: 30 Años de Experiencia en Propiedad Intelectual, Sin Sorpresas ni Barreras.</span>
+             <br /> <br />Tu marca, invención o obra de arte es un activo valioso. En Marcasoon, nuestra misión es simplificar su protección, ya sea en EE. UU., en Latinoamérica o a nivel internacional.
+Hemos creado un puente claro y directo para la comunidad hispanohablante, eliminando la complejidad de las formalidades legales y los costos ocultos.
+Somos expertos: Con más de 30 años de experiencia acumulada en Propiedad Intelectual y un profundo conocimiento en sistemas de registro global (marcas, patentes, derechos de autor), combinamos la guía profesional con la eficiencia tecnológica.
+Con nosotros, obtienes la seguridad de un equipo que conoce los mercados y la transparencia que necesitas para expandir tu inversión con confianza. Te acompañamos en cada paso para asegurar lo que es legítimamente tuyo
+            </p>
             <Button />
           </div>
         </div>
       </section>
 
-      <section className="bg-[#192A56] w-full min-h-[22vh] py-12 flex flex-col items-center justify-center md:px-0 px-6">
-        <h3 className="md:text-3xl text-2xl font-semibold text-center mb-4">Haz una busqueda de prueba aquí</h3>
+      <section className="bg-[#ED5E32] w-full min-h-[22vh] py-12 flex flex-col items-center justify-center md:px-0 px-6">
+        <h3 className="md:text-3xl text-white text-2xl font-semibold text-center mb-4">Haz una busqueda de prueba aquí</h3>
         <SearchCards />
       </section>
 
       {/* Precios */}
-      <section className="w-5/6 py-12 text-black">
-        <h3 className="text-3xl text-center mb-4 font-semibold font-playfair italic">Paquetes</h3>
+      <section className="w-5/6 py-18 text-black">
+        <h3 className="text-3xl text-center mb-10 font-semibold font-playfair italic uppercase">Paquetes</h3>
         <Cards></Cards>
       </section>
 
@@ -62,61 +66,43 @@ export default function Home() {
       <section className="w-full bg-[#ED5E32]">
         {/* <h2 className="md:text-3xl text-2xl font-semibold text-center mb-6">¿Cómo <span className="font-playfair italic">trabajamos</span>?</h2> */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center ">
-          <div className="order-1 md:order-1 w-full md:w-[940px] md:px-0 px-0">
+          <div className="order-1 md:order-1 w-full lg:w-[50vw] md:px-0 px-0">
             <Image
               src={protocolo_madrid}
               alt="Protocolo de Madrid"
               width={680}
               height={680}
-              sizes="(min-width: 1024px) 70vw, (min-width: 768px) 85vw, 96vw"
               placeholder="blur"
-              className="w-full h-auto "
+              className="w-full md:w-3xl lg:w-[75vw]  h-auto "
             />
           </div> 
-          <div className="order-2 md:order-2 py-12 md:pr-12 px-4 md:px-0">
-            <p className="text-center md:text-lg text-base md:text-left">
-              El <span className="italic font-playfair font-semibold ">Protocolo de Madrid</span> es un sistema internacional que permite registrar una marca en varios países con un solo trámite,
-              haciendo todo mucho más simple y eficiente.
-            </p>
-
-            <div className="space-y-2 mt-3">
-              <h3 className="font-semibold">Cómo funciona con Marcasoon:</h3>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Primero, solicitamos tu marca en los Estados Unidos.</li>
-                <li>Seguidamente iniciamos el proceso internacional bajo el Protocolo de Madrid, extendiendo la protección a más de 130 países miembros del sistema.</li>
-                <li>La Oficina Internacional revisa tu solicitud y la envía a los países elegidos. Cada país evalúa la marca según sus propias leyes.</li>
-                <li>Una vez cumplimentado cada proceso, tu marca quedará protegida en todos esos países, sin tener que hacer trámites separados en cada uno.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2 mt-4">
-              <h3 className="font-semibold">Beneficios:</h3>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><span className="font-semibold">Ahorro de tiempo y dinero:</span> un solo formulario, un solo pago, una sola estrategia global.</li>
-                <li><span className="font-semibold">Cobertura internacional rápida:</span> protege tu marca en múltiples países a la vez.</li>
-                <li><span className="font-semibold">Gestión sencilla:</span> cualquier cambio, modificación o renovación se hace desde Marcasoon.</li>
-              </ul>
-            </div>
+          <div className="order-2 md:order-2 py-12 px-4 md:pr-12 md:px-0 lg:px-18">
+              <h3 className="md:text-3xl text-2xl font-semibold mb-4">En Marcasoon te ayudamos a proteger tu marca a nivel internacional</h3>
+              <p className="text-center md:text-lg text-base md:text-left">A través del Protocolo de Madrid, el sistema más eficiente y reconocido para registrar marcas en más de 130 países con una sola solicitud, un solo idioma y un solo pago. Bajo este esquema, expandir tu protección internacional se facilita, haciendo que tu marca cruce fronteras de manera eficiente.</p>
+              <SaberMasButtons />
           </div>
         </div>
       </section>
 
       {/* Testimonios de nuestros clientes */}
-      <section className=" w-full py-12 text-black">
-        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Clientes</h3>
+      <section className=" w-full py-12 text-black bg-[#F9F9F9]">
+        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic uppercase">Clientes</h3>
         <SliderTestimonial />
       </section>
 
       {/* Logo Carrusel */}
-      <section className="w-full py-2 text-black">
+      <section className="w-full py-12 text-black bg-[#F9F9F9]">
         {/* <h2 className="text-2xl font-semibold text-center mb-4">Nuestros Clientes</h2> */}
         <CarruselComponent />
       </section>
 
       {/* Blog */}
-      <section className="w-full pt-12 pb-16 text-white bg-[#192A56]">
-        <h3 className="text-3xl font-semibold text-center mb-4 font-playfair italic">Blogs</h3>
+      <section className="w-full pt-16 pb-20 text-white bg-[#192A56] flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-8 justify-center">
+        <h3 className="text-3xl font-semibold text-center mb-10 font-playfair italic uppercase">Blogs</h3>
         <BlogCards />
+        <div>
+          <BlogButtons />
+        </div>
       </section>
 
       {/* FAQs */}

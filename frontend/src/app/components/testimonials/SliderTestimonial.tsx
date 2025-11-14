@@ -8,13 +8,19 @@ interface SliderTestimonialProps {
   intervalMs?: number;
 }
 
+// Determina cuántas tarjetas mostrar por página según ancho
 const usePageSize = () => {
-  const [pageSize, setPageSize] = useState(2); // default desktop
+  const calc = () => {
+    const w = window.innerWidth;
+    if (w < 640) return 1;       // móvil
+    if (w < 1024) return 2;      // tablet
+    return 3;                    // desktop
+  };
+  const [pageSize, setPageSize] = useState<number>(typeof window === 'undefined' ? 3 : calc());
   useEffect(() => {
-    const update = () => setPageSize(window.innerWidth < 640 ? 1 : 2); // < sm => 1
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    const onResize = () => setPageSize(calc());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
   return pageSize;
 };
@@ -22,13 +28,9 @@ const usePageSize = () => {
 const SliderTestimonial = ({ intervalMs = 8000 }: SliderTestimonialProps) => {
   const pageSize = usePageSize();
 
-  const pages = useMemo(() => {
-    const p: typeof testimonials[] = [];
-    for (let i = 0; i < testimonials.length; i += pageSize) {
-      p.push(testimonials.slice(i, i + pageSize));
-    }
-    return p;
-  }, [pageSize]);
+  // Paginación en grupos del tamaño actual de página (avanza de a 'pageSize')
+  // Modo de una sola tarjeta por página siempre (animación de referencia)
+  const pages = useMemo(() => testimonials.map(t => [t]), []);
 
   const [page, setPage] = useState(0);
   const total = pages.length;
@@ -51,38 +53,41 @@ const SliderTestimonial = ({ intervalMs = 8000 }: SliderTestimonialProps) => {
   }, [next, intervalMs, total]);
 
   return (
-    <div className="relative w-full py-6">
-      {/* Contenedor principal del carrusel */}
-  <div className="overflow-hidden w-full max-w-[1700px] mx-auto px-2">
+    <div className="relative w-full py-6 ">
+      <div className="overflow-hidden w-full max-w-5xl mx-auto px-0 ">
         <div
           className="flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${page * 100}%)` }}
         >
-          {pages.map((group, idx) => {
-            const isSingleInDouble = pageSize === 2 && group.length === 1;
-            const gridClass = pageSize === 1
-              ? "grid grid-cols-1 gap-10 w-full max-w-[1600px] mx-auto"
-              : isSingleInDouble
-                ? "grid grid-cols-1 gap-10 w-full max-w-[1600px] mx-auto"
-                : "grid grid-cols-1 sm:grid-cols-2 gap-10 w-full max-w-[1600px] mx-auto";
-            return (
-              <div key={idx} className="w-full flex-shrink-0 flex justify-center">
-                <div className={gridClass + " justify-items-center"}>
-                  {group.map((t) => (
-                    <Card
-                      key={t.id}
-                      id={t.id}
-                      name={t.name}
-                      testimonial={t.quote}
-                      logo={t.logo}
-                      countryName={t.country}
-                    />
-                  ))}
-                </div>
+          {pages.map((group, idx) => (
+            <div key={idx} className="w-full flex-shrink-0 space-x-4">
+              <div className="w-full max-w-4xl mx-auto ">
+                <Card
+                  key={group[0].id}
+                  id={group[0].id}
+                  name={group[0].name}
+                  testimonial={group[0].quote}
+                  logo={group[0].logo}
+                  countryName={group[0].country}
+                />
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
+
+        {/* Dots */}
+        {total > 1 && (
+          <div className="flex justify-center gap-2 mt-8">
+            {pages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className={`w-3 h-3 rounded-full transition-colors ${i === page ? 'bg-[#192A56]' : 'bg-gray-300 hover:bg-gray-400'}`}
+                aria-label={`Ir a página ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

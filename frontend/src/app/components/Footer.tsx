@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Footer = () => {
 	return (
-		<footer className="mt-16 text-white">
+		<footer className=" text-white">
 			{/* Main area */}
 			<div className="bg-[var(--blue-color)]">
 				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -40,13 +40,13 @@ const Footer = () => {
 						<h3 className="text-lg font-semibold mb-4">Enlaces útiles</h3>
 						<ul className="space-y-3 text-gray-200/90">
 							<li>
-								<Link href="/contact" className="hover:text-white">Contacto</Link>
+								<Link href="/contacto" className="hover:text-white">Contacto</Link>
 							</li>
 							<li>
-								<Link href="/recursos/blog" className="hover:text-white">Blog</Link>
+								<Link href="/blog" className="hover:text-white">Blog</Link>
 							</li>
 							<li>
-								<Link href="/servicios/registro" className="hover:text-white">Registro de Marca</Link>
+								<Link href="/servicios#registro" className="hover:text-white">Registro de Marca</Link>
 							</li>
 							<li>
 								<Link href="/about" className="hover:text-white">Sobre nosotros</Link>
@@ -88,8 +88,8 @@ const Footer = () => {
 				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between text-sm">
 					<p className="opacity-95">© {new Date().getFullYear()} Marcasoon. Todos los derechos reservados.</p>
 					<div className="flex gap-4 mt-2 md:mt-0">
-						<Link href="#" className="hover:underline">Términos</Link>
-						<Link href="#" className="hover:underline">Privacidad</Link>
+						<Link href="/terminos-privacidad" className="hover:underline">Términos</Link>
+						<Link href="/terminos-privacidad" className="hover:underline">Privacidad</Link>
 						<Link href="#" className="hover:underline">Cookies</Link>
 					</div>
 				</div>

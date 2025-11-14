@@ -7,7 +7,7 @@ const CarruselComponent = () => {
     const items = [...carrusel, ...carrusel];
 
     return (
-        <div className="w-full marquee py-4">
+        <div className="w-full marquee py-4 ">
             <div className="marquee-track items-center">
                 {items.map((item, idx) => (
                     <div key={`${item.id}-${idx}`} className="flex-shrink-0 px-8">

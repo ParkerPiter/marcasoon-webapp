@@ -53,7 +53,7 @@ export default function SearchBar({ onSearch, loading, onClear }: Props) {
       <button
         type="submit"
         disabled={loading || !query.trim()}
-        className="bg-[#ED5E32] rounded-e-2xl hover:opacity-90 text-white font-semibold px-5 py-2 hover:cursor-pointer  "
+        className="bg-[#192A56] rounded-e-2xl hover:opacity-90 text-white font-semibold px-5 py-2 hover:cursor-pointer  "
       >
         <Search className="text-white" />
       </button>
