@@ -24,3 +24,36 @@ Backend API using Django + DRF with JWT/session auth, RapidAPI Trademark Lookup,
 1. Install deps: `pip install -r requirements.txt`
 2. Run checks: `python manage.py check`
 3. Ensure auth works (JWT or session login via `/api/auth/`)
+
+### Live webinar embed
+- Public JSON endpoint: `GET /api/webinar/live/`
+	- Returns `{ "embed_url": "https://..." }` with the configured stream URL.
+	- Configure the stream URL with the `WEBINAR_EMBED_URL` environment variable (supports YouTube/Vimeo/Zoom embed links), e.g.:
+		- `WEBINAR_EMBED_URL=https://www.youtube.com/embed/VIDEO_ID?autoplay=1`
+	- In development you can override via query param: `/api/webinar/live/?url=https://...` (only when `DEBUG=True`).
+- Example (React):
+	```tsx
+	import { useEffect, useState } from 'react';
+
+	export default function LiveWebinar() {
+		const [url, setUrl] = useState('');
+		useEffect(() => {
+			fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/webinar/live/`)
+				.then(r => r.json())
+				.then(d => setUrl(d.embed_url || ''))
+				.catch(() => setUrl(''));
+		}, []);
+		if (!url) return <p>No hay webinar configurado.</p>;
+		return (
+			<div style={{position:'relative',paddingTop:'56.25%'}}>
+				<iframe
+					src={url}
+					title="Webinar en vivo"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allowFullScreen
+					style={{position:'absolute',inset:0,width:'100%',height:'100%',border:0}}
+				/>
+			</div>
+		);
+	}
+	```

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth import get_user_model
 from .models import Trademark, TrademarkAsset, User, Plan, Testimonial, BlogPost
 from .serializers import RegisterSerializer, UserSerializer, PlanSerializer, TestimonialSerializer, TestimonialSimpleSerializer, BlogPostSerializer
@@ -26,6 +27,8 @@ import random
 from datetime import timedelta
 from django.utils import timezone
 from .serializers import TrademarkSerializer
+from django.http import HttpResponse
+from urllib.parse import urlparse
 
 
 
@@ -663,4 +666,26 @@ def password_reset_confirm(request):
     prc.used = True
     prc.save(update_fields=['used'])
     return Response({'detail': 'ok'}, status=200)
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([permissions.AllowAny])
+def webinar_live_embed(request):
+    """Public JSON endpoint exposing the configured live webinar embed URL.
+
+    Returns JSON: { "embed_url": "https://..." }
+    In DEBUG, allows override via ?url=... for quick testing.
+    """
+    embed_url = getattr(settings, 'WEBINAR_EMBED_URL', '') or ''
+    if settings.DEBUG:
+        override = (request.GET.get('url') or '').strip()
+        if override:
+            embed_url = override
+    if not embed_url:
+        return Response({'detail': 'Webinar no configurado', 'embed_url': ''}, status=503)
+    parsed = urlparse(embed_url)
+    if parsed.scheme not in ('http', 'https'):
+        return Response({'detail': 'URL inválida', 'embed_url': embed_url}, status=400)
+    return Response({'embed_url': embed_url})
     

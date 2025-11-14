@@ -31,6 +31,7 @@ from .views import (
     contact_api,
     password_reset_request,
     password_reset_confirm,
+    webinar_live_embed,
 )
 from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
 from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
@@ -84,6 +85,9 @@ urlpatterns = [
     # Password reset endpoints (no auth/CSRF required)
     path('auth/password/reset/request/', password_reset_request, name='password-reset-request'),
     path('auth/password/reset/confirm/', password_reset_confirm, name='password-reset-confirm'),
+
+    # Public embeddable webinar page
+    path('webinar/live/', webinar_live_embed, name='webinar-live-embed'),
 
     # Blog / Foro endpoints
     path('blog/posts/', blog_posts, name='blog-posts'),

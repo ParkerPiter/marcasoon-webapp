@@ -289,3 +289,7 @@ EMAIL_USE_TLS = str(_cfg('EMAIL_USE_TLS', 'True')).lower() in ('1', 'true', 'yes
 DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'no-reply@marcasoon.com')
 # Where contact form emails should be delivered (defaults to EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
 CONTACT_RECEIVER_EMAIL = _cfg('CONTACT_RECEIVER_EMAIL', EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
+
+# Webinar embed configuration: public page will iframe this URL
+# Example: https://www.youtube.com/embed/<video_id>?autoplay=1 or a Vimeo/Zoom embed
+WEBINAR_EMBED_URL = _cfg('WEBINAR_EMBED_URL', 'https://www.youtube.com/embed/sNSwSrASlrM?autoplay=1')
