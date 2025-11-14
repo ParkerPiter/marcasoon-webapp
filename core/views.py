@@ -4,7 +4,7 @@ import requests
 from rest_framework import viewsets, permissions, generics
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -27,6 +27,8 @@ import random
 from datetime import timedelta
 from django.utils import timezone
 from .serializers import TrademarkSerializer
+from .serializers import TrademarkAssetSerializer
+from .serializers import TrademarkIntakeSerializer
 from django.http import HttpResponse
 from urllib.parse import urlparse
 
@@ -688,4 +690,51 @@ def webinar_live_embed(request):
     if parsed.scheme not in ('http', 'https'):
         return Response({'detail': 'URL inválida', 'embed_url': embed_url}, status=400)
     return Response({'embed_url': embed_url})
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+def trademark_intake(request):
+    """Combined endpoint to read/update the full trademark intake in one call.
+
+    - GET: returns current values for user + trademark + last logo asset
+    - POST: accepts JSON or multipart to update fields and optional files
+    """
+    if request.method == 'GET':
+        # Ensure we have a trademark placeholder
+        from .models import Trademark, TrademarkAsset
+        tm, _ = Trademark.objects.get_or_create(user=request.user)
+        asset = TrademarkAsset.objects.filter(trademark=tm, kind=TrademarkAsset.Kind.LOGO).order_by('-id').first()
+        data = {
+            'user': UserSerializer(request.user, context={'request': request}).data,
+            'trademark': TrademarkSerializer(tm, context={'request': request}).data,
+        }
+        if asset:
+            data['asset'] = TrademarkAssetSerializer(asset, context={'request': request}).data
+        return Response(data)
+
+    # POST update
+    # Normalize multipart edge cases (evidence_links sent as JSON string or comma list)
+    incoming = request.data.copy()
+    try:
+        links_val = incoming.get('evidence_links')
+        if isinstance(links_val, str):
+            import json as _json
+            parsed = None
+            try:
+                parsed = _json.loads(links_val)
+            except Exception:
+                # allow comma-separated
+                parsed = [s.strip() for s in links_val.split(',') if s.strip()]
+            incoming['evidence_links'] = parsed
+    except Exception:
+        pass
+
+    ser = TrademarkIntakeSerializer(data=incoming, context={'request': request})
+    if not ser.is_valid():
+        return Response(ser.errors, status=400)
+    payload = ser.save(user=request.user)
+    return Response(payload, status=200)
     

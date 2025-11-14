@@ -32,6 +32,7 @@ from .views import (
     password_reset_request,
     password_reset_confirm,
     webinar_live_embed,
+    trademark_intake,
 )
 from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
 from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
@@ -88,6 +89,9 @@ urlpatterns = [
 
     # Public embeddable webinar page
     path('webinar/live/', webinar_live_embed, name='webinar-live-embed'),
+
+    # Combined intake endpoint (GET current, POST update)
+    path('trademark/intake/', trademark_intake, name='trademark-intake'),
 
     # Blog / Foro endpoints
     path('blog/posts/', blog_posts, name='blog-posts'),

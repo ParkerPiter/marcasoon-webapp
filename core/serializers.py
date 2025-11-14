@@ -314,3 +314,147 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     email = serializers.EmailField()
     code = serializers.CharField(max_length=10)
     new_password = serializers.CharField(min_length=8)
+
+
+class TrademarkIntakeSerializer(serializers.Serializer):
+    """Combined intake serializer to populate User, Trademark, and related Asset/Evidence.
+
+    Accepts both JSON and multipart (for logo/evidence_file). All fields optional so it can PATCH-like update.
+    """
+    # Applicant/User fields
+    applicant_name = serializers.CharField(required=False, allow_blank=True)
+    nationality = serializers.CharField(required=False, allow_blank=True)
+    address = serializers.CharField(required=False, allow_blank=True)
+    postal_code = serializers.CharField(required=False, allow_blank=True)
+
+    # Trademark fields
+    brand_name = serializers.CharField(required=False, allow_blank=True)
+    description = serializers.CharField(required=False, allow_blank=True)
+    foreign_meaning = serializers.CharField(required=False, allow_blank=True)
+    basis_for_registration = serializers.CharField(required=False, allow_blank=True)
+    intention_of_use = serializers.BooleanField(required=False)
+    current_use_description = serializers.CharField(required=False, allow_blank=True)
+    first_use_date = serializers.DateField(required=False)
+    foreign_application_number = serializers.CharField(required=False, allow_blank=True)
+    foreign_application_translation = serializers.CharField(required=False, allow_blank=True)
+    foreign_registration_number = serializers.CharField(required=False, allow_blank=True)
+    foreign_registration_translation = serializers.CharField(required=False, allow_blank=True)
+    disclaimer = serializers.CharField(required=False, allow_blank=True)
+
+    # Asset (logo/name) and extra attributes
+    logo = serializers.ImageField(required=False, allow_null=True)
+    protect_colors = serializers.BooleanField(required=False)
+    colors = serializers.CharField(required=False, allow_blank=True)
+    includes_person_name = serializers.BooleanField(required=False)
+    person_name = serializers.CharField(required=False, allow_blank=True)
+    authorization = serializers.CharField(required=False, allow_blank=True)
+    services = serializers.CharField(required=False, allow_blank=True)
+
+    # Evidence
+    evidence_file = serializers.FileField(required=False, allow_null=True)
+    evidence_links = serializers.ListField(child=serializers.URLField(), required=False)
+    evidence_description = serializers.CharField(required=False, allow_blank=True)
+    evidence_first_use_date = serializers.DateField(required=False)
+
+    def save(self, **kwargs):
+        request = self.context.get('request')
+        user = kwargs.get('user') or (getattr(request, 'user', None))
+        if not user:
+            raise serializers.ValidationError({'detail': 'Authentication required'})
+
+        data = self.validated_data
+
+        # Update User fields
+        if 'applicant_name' in data:
+            user.full_name = data.get('applicant_name') or user.full_name
+        if 'nationality' in data:
+            user.nationality = data.get('nationality') or user.nationality
+        if 'address' in data:
+            user.address = data.get('address') or user.address
+        if 'postal_code' in data:
+            user.postal_code = data.get('postal_code') or user.postal_code
+        user.save()
+
+        # Ensure Trademark exists
+        tm, _ = Trademark.objects.get_or_create(user=user)
+
+        # Map Trademark fields
+        for f in (
+            'name','description','foreign_meaning','basis_for_registration','intention_of_use',
+            'current_use_description','first_use_date','foreign_application_number','foreign_application_translation',
+            'foreign_registration_number','foreign_registration_translation','disclaimer'
+        ):
+            pass
+
+        if 'brand_name' in data:
+            tm.name = data.get('brand_name') or tm.name
+        if 'description' in data:
+            tm.description = data.get('description') or tm.description
+        if 'foreign_meaning' in data:
+            tm.foreign_meaning = data.get('foreign_meaning') or tm.foreign_meaning
+        if 'basis_for_registration' in data:
+            tm.basis_for_registration = data.get('basis_for_registration') or tm.basis_for_registration
+        if 'intention_of_use' in data:
+            tm.intention_of_use = data.get('intention_of_use')
+        if 'current_use_description' in data:
+            tm.current_use_description = data.get('current_use_description') or tm.current_use_description
+        if 'first_use_date' in data:
+            tm.first_use_date = data.get('first_use_date')
+        if 'foreign_application_number' in data:
+            tm.foreign_application_number = data.get('foreign_application_number') or tm.foreign_application_number
+        if 'foreign_application_translation' in data:
+            tm.foreign_application_translation = data.get('foreign_application_translation') or tm.foreign_application_translation
+        if 'foreign_registration_number' in data:
+            tm.foreign_registration_number = data.get('foreign_registration_number') or tm.foreign_registration_number
+        if 'foreign_registration_translation' in data:
+            tm.foreign_registration_translation = data.get('foreign_registration_translation') or tm.foreign_registration_translation
+        if 'disclaimer' in data:
+            tm.disclaimer = data.get('disclaimer') or tm.disclaimer
+        tm.save()
+
+        # Create or update an asset (prefer LOGO if logo provided)
+        asset = TrademarkAsset.objects.filter(trademark=tm, kind=TrademarkAsset.Kind.LOGO).order_by('-id').first()
+        if not asset:
+            # If no logo asset exists and we have asset-related data, create one
+            if any(k in data for k in ('logo','protect_colors','colors','includes_person_name','person_name','authorization','services')):
+                asset = TrademarkAsset.objects.create(trademark=tm, kind=TrademarkAsset.Kind.LOGO)
+        if asset:
+            if 'logo' in data and data.get('logo') is not None:
+                asset.logo = data.get('logo')
+            if 'protect_colors' in data:
+                asset.protect_colors = bool(data.get('protect_colors'))
+            if 'colors' in data:
+                asset.colors = data.get('colors') or asset.colors
+            if 'includes_person_name' in data:
+                asset.includes_person_name = bool(data.get('includes_person_name'))
+            if 'person_name' in data:
+                asset.person_name = data.get('person_name') or asset.person_name
+            if 'authorization' in data:
+                asset.authorization = data.get('authorization') or asset.authorization
+            if 'services' in data:
+                asset.services = data.get('services') or asset.services
+            asset.save()
+
+        # Evidence: create a new record if provided
+        has_evidence = any(k in data for k in ('evidence_file','evidence_links','evidence_description','evidence_first_use_date'))
+        if has_evidence:
+            from .models import TrademarkEvidence
+            links = data.get('evidence_links') or []
+            ev_first = data.get('evidence_first_use_date') or tm.first_use_date
+            TrademarkEvidence.objects.create(
+                trademark=tm,
+                file=data.get('evidence_file'),
+                links=links,
+                description=data.get('evidence_description') or '',
+                first_use_date=ev_first,
+            )
+
+        # Build combined response structure
+        from .serializers import TrademarkSerializer, TrademarkAssetSerializer
+        payload = {
+            'user': UserSerializer(user, context=self.context).data,
+            'trademark': TrademarkSerializer(tm, context=self.context).data,
+        }
+        if asset:
+            payload['asset'] = TrademarkAssetSerializer(asset, context=self.context).data
+        return payload
