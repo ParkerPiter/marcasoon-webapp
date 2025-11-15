@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 
 # Database
-
+'''
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
@@ -115,7 +115,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-'''
+
 
 # USPTO / api.data.gov configuration
 USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'
@@ -283,11 +283,11 @@ except Exception:
 EMAIL_BACKEND = _cfg('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = _cfg('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(_cfg('EMAIL_PORT', 587))
-EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER', 'jeromerr.oficina@gmail.com')
+EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD', 'ogvf xnhg npgx bmmp')
 EMAIL_USE_TLS = str(_cfg('EMAIL_USE_TLS', 'True')).lower() in ('1', 'true', 'yes')
 # Use the authenticated account as default sender if not explicitly configured
-DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'no-reply@marcasoon.com')
+DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'jeromerr.oficina@gmail.com')
 # Where contact form emails should be delivered (defaults to EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
 CONTACT_RECEIVER_EMAIL = _cfg('CONTACT_RECEIVER_EMAIL', EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
 
