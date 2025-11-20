@@ -14,6 +14,7 @@ class User(AbstractUser):
     nationality = models.CharField(max_length=100, blank=True)
     address = models.TextField(blank=True)
     postal_code = models.CharField(max_length=20, blank=True)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
     def __str__(self):
         return self.username or self.full_name or super().__str__()
@@ -36,6 +37,9 @@ class Trademark(models.Model):
     foreign_registration_number = models.CharField(max_length=120, blank=True)
     foreign_registration_translation = models.TextField(blank=True)
     disclaimer = models.TextField(blank=True)
+    # Verification state
+    is_verified = models.BooleanField(default=False)
+    verified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Trademark of {getattr(self.user, 'username', 'user')}"
@@ -197,6 +201,28 @@ class PasswordResetCode(models.Model):
 
     def __str__(self):
         return f"ResetCode({self.user_id}, {self.code}, used={self.used})"
+
+    def is_valid(self) -> bool:
+        return (not self.used) and timezone.now() <= self.expires_at
+
+
+class TrademarkVerificationCode(models.Model):
+    """Email verification codes tied to a user's Trademark."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trademark_verification_codes')
+    trademark = models.ForeignKey(Trademark, on_delete=models.CASCADE, related_name='verification_codes')
+    code = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'code']),
+            models.Index(fields=['expires_at']),
+        ]
+
+    def __str__(self):
+        return f"TrademarkVerify({self.user_id}, {self.trademark_id}, {self.code}, used={self.used})"
 
     def is_valid(self) -> bool:
         return (not self.used) and timezone.now() <= self.expires_at

@@ -96,24 +96,13 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 
 # Database
-'''
+
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_epno_user:WtOa1VxS5hKRRjgb29pI4c5uTr7iuT3H@dpg-d4bokie3jp1c73bt06t0-a.virginia-postgres.render.com/marcasoon_webapp_db_epno'),
         conn_max_age=600
     )
-}
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'marcasoon',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
 }
 
 
