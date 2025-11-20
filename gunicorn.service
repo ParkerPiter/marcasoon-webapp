@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn daemon for marcasoon
+After=network.target
+
+[Service]
+User=u967020933
+Group=www-data
+WorkingDirectory=/home/u967020933/marcasoon-webapp
+ExecStart=/home/u967020933/marcasoon-webapp/venv/bin/gunicorn --config /home/u967020933/marcasoon-webapp/gunicorn.conf.py marcasoon.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
