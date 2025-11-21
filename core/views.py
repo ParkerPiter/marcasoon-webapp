@@ -739,18 +739,41 @@ def trademark_intake(request):
     # Guardar en la base de datos
     payload = ser.save(user=request.user)
 
-    # Enviar correo electrónico de notificación
     try:
-        # Preparar el contexto para el template del correo
         email_context = ser.validated_data.copy()
         email_context['full_name'] = request.user.get_full_name()
         email_context['email'] = request.user.email
         
-        # Añadir información de los archivos para el correo
         logo_image = request.FILES.get('logo_image')
         evidence_files = request.FILES.getlist('evidence_files')
-        email_context['logo_image'] = logo_image
-        email_context['evidence_files'] = evidence_files
 
-        # Renderizar el cuerpo del correo
         subject = f'Nuevo Registro de Marca: {ser.validated_data.get("name")}'
+        html_message = render_to_string('emails/trademark_intake_notification.html', {
+            'data': email_context,
+            'site': request.get_host(),
+        })
+        
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL')
+        recipient = getattr(settings, 'EMAIL_HOST_USER')
+
+        from django.core.mail import EmailMessage
+        email = EmailMessage(subject, html_message, from_email, [recipient])
+        email.content_subtype = "html"
+
+        if logo_image:
+            logo_image.seek(0)
+            email.attach(logo_image.name, logo_image.read(), logo_image.content_type)
+        
+        for f in evidence_files:
+            f.seek(0)
+            email.attach(f.name, f.read(), f.content_type)
+
+        email.send(fail_silently=False)
+
+    except Exception as e:
+        logger = logging.getLogger(__name__)
+        logger.exception(f'Error al enviar correo de notificación de registro de marca: {e}')
+        # No fallar la petición si el correo no se envía, pero loguear el error.
+        # Se podría añadir un sistema de reintentos o notificaciones de fallo aquí.
+    
+    return Response(payload, status=200)
