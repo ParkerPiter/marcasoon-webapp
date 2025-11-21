@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 
 
 # Database
-
+'''
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
@@ -104,7 +104,17 @@ DATABASES = {
         conn_max_age=600
     )
 }
-
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'marcasoon',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # USPTO / api.data.gov configuration
 USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'

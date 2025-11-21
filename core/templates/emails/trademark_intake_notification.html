@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Registro de Marca</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        .field-group {
+            margin-bottom: 15px;
+        }
+        .field-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .field-value {
+            margin-left: 10px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nuevo Registro de Marca Recibido</h1>
+        <p>Se ha recibido un nuevo formulario de registro de marca a través del sitio web. A continuación se detallan los datos proporcionados.</p>
+
+        <h2>Datos del Cliente</h2>
+        <div class="field-group">
+            <span class="field-label">Nombre Completo:</span>
+            <span class="field-value">{{ data.full_name|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Email:</span>
+            <span class="field-value">{{ data.email|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Teléfono:</span>
+            <span class="field-value">{{ data.phone|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Nacionalidad:</span>
+            <span class="field-value">{{ data.nationality|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Dirección:</span>
+            <span class="field-value">{{ data.address|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Código Postal:</span>
+            <span class="field-value">{{ data.postal_code|default:"No proporcionado" }}</span>
+        </div>
+
+        <h2>Datos de la Marca</h2>
+        <div class="field-group">
+            <span class="field-label">Tipo de Marca:</span>
+            <span class="field-value">{{ data.type|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Nombre de la Marca:</span>
+            <span class="field-value">{{ data.name|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Descripción de Bienes/Servicios:</span>
+            <span class="field-value">{{ data.goods_services_description|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Países de Interés:</span>
+            <span class="field-value">{{ data.countries_of_interest|join:", "|default:"No proporcionado" }}</span>
+        </div>
+
+        <h2>Activos de la Marca</h2>
+        <div class="field-group">
+            <span class="field-label">Proteger Colores:</span>
+            <span class="field-value">{{ data.protect_colors|yesno:"Sí,No" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Nombre de Persona en la Marca:</span>
+            <span class="field-value">{{ data.person_name|default:"No aplica" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Significado del Nombre:</span>
+            <span class="field-value">{{ data.name_meaning|default:"No proporcionado" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Uso Previo:</span>
+            <span class="field-value">{{ data.previous_use|yesno:"Sí,No" }}</span>
+        </div>
+        <div class="field-group">
+            <span class="field-label">Fecha de Primer Uso:</span>
+            <span class="field-value">{{ data.first_use_date|date:"d/m/Y"|default:"No proporcionado" }}</span>
+        </div>
+
+        <h2>Archivos Adjuntos</h2>
+        <p>
+            Se han adjuntado los siguientes archivos como pruebas de uso y/o logo. Por favor, revisa los adjuntos en este correo.
+        </p>
+        <ul>
+            {% if data.logo_image %}
+                <li>Logo de la marca.</li>
+            {% endif %}
+            {% if data.evidence_files %}
+                <li>{{ data.evidence_files|length }} archivo(s) de prueba de uso.</li>
+            {% else %}
+                 <li>No se adjuntaron archivos de prueba de uso.</li>
+            {% endif %}
+        </ul>
+
+        <hr>
+        <p>Este es un correo generado automáticamente desde <a href="http://{{ site }}">{{ site }}</a>.</p>
+    </div>
+</body>
+</html>

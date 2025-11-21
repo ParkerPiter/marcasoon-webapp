@@ -735,6 +735,22 @@ def trademark_intake(request):
     ser = TrademarkIntakeSerializer(data=incoming, context={'request': request})
     if not ser.is_valid():
         return Response(ser.errors, status=400)
-    payload = ser.save(user=request.user)
-    return Response(payload, status=200)
     
+    # Guardar en la base de datos
+    payload = ser.save(user=request.user)
+
+    # Enviar correo electrónico de notificación
+    try:
+        # Preparar el contexto para el template del correo
+        email_context = ser.validated_data.copy()
+        email_context['full_name'] = request.user.get_full_name()
+        email_context['email'] = request.user.email
+        
+        # Añadir información de los archivos para el correo
+        logo_image = request.FILES.get('logo_image')
+        evidence_files = request.FILES.getlist('evidence_files')
+        email_context['logo_image'] = logo_image
+        email_context['evidence_files'] = evidence_files
+
+        # Renderizar el cuerpo del correo
+        subject = f'Nuevo Registro de Marca: {ser.validated_data.get("name")}'
