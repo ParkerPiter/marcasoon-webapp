@@ -14,8 +14,10 @@ bind = 'unix:/var/run/gunicorn.sock'
 # The number of worker processes for handling requests.
 # A common recommendation is (2 * number_of_cores) + 1.
 workers = multiprocessing.cpu_count() * 2 + 1
-# The type of workers to use. 'gevent' is a good choice for I/O-bound applications.
-worker_class = 'gevent'
+# The type of workers to use. 'gthread' is a standard choice that supports threads.
+worker_class = 'gthread'
+# The number of threads per worker.
+threads = 4
 
 # Logging Options
 # The path to the log file for Gunicorn access logs.
