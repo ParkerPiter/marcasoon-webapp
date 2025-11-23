@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0009_trademark_verification'),
+        ('core', '0010_trademark_verification'),
     ]
 
     operations = [
