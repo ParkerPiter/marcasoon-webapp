@@ -12,8 +12,8 @@ import multiprocessing
 
 # Worker Options
 # The number of worker processes for handling requests.
-# A common recommendation is (2 * number_of_cores) + 1.
-workers = multiprocessing.cpu_count() * 2 + 1
+# For Render's free/starter tiers, it's better to limit workers to avoid OOM (Out Of Memory) errors.
+workers = 2
 # The type of workers to use. 'gthread' is a standard choice that supports threads.
 worker_class = 'gthread'
 # The number of threads per worker.
