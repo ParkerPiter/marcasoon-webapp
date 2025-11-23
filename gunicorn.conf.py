@@ -8,7 +8,7 @@ import multiprocessing
 # Socket Path
 # The path to the Gunicorn socket file.
 # This is used for communication between Gunicorn and the web server (e.g., Nginx).
-bind = 'unix:/var/run/gunicorn.sock'
+# bind = 'unix:/var/run/gunicorn.sock'
 
 # Worker Options
 # The number of worker processes for handling requests.
@@ -21,9 +21,9 @@ threads = 4
 
 # Logging Options
 # The path to the log file for Gunicorn access logs.
-accesslog = '/var/log/gunicorn/access.log'
+# accesslog = '/var/log/gunicorn/access.log'
 # The path to the log file for Gunicorn error logs.
-errorlog = '/var/log/gunicorn/error.log'
+# errorlog = '/var/log/gunicorn/error.log'
 # The level of logging.
 loglevel = 'info'
 
@@ -40,7 +40,7 @@ wsgi_app = 'marcasoon.wsgi:application'
 
 # The directory to chdir to at startup.
 # This should be the root of your Django project.
-chdir = '/home/u967020933/marcasoon-webapp' # Change this to your project's path on the server
+# chdir = '/home/u967020933/marcasoon-webapp' # Change this to your project's path on the server
 
 # User and Group
 # The user and group to run the Gunicorn process as.
