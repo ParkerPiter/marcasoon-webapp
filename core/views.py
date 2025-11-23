@@ -616,8 +616,9 @@ def password_reset_request(request):
     try:
         user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
-        # Still respond 200 to prevent enumeration
-        return Response({'detail': 'ok'}, status=200)
+        # DEBUG: Reveal user not found for QA
+        return Response({'detail': f'User with email {email} not found'}, status=404)
+        # Production: return Response({'detail': 'ok'}, status=200)
     # Generate 6-digit code
     code = f"{random.randint(0, 999999):06d}"
     from .models import PasswordResetCode
@@ -635,11 +636,10 @@ def password_reset_request(request):
     from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
     try:
         send_mail(subject, plain_message, from_email, [email], html_message=html_message, fail_silently=False)
-    except Exception:
+    except Exception as e:
         logger = logging.getLogger(__name__)
         logger.exception('Failed sending password reset code email')
-        # Do not reveal failure details to client
-    return Response({'detail': 'ok'}, status=200)
+        return Response({'detail': f'Failed to send email: {str(e)}'}, status=500)
 
 
 @csrf_exempt

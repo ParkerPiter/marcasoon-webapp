@@ -83,6 +83,7 @@ urlpatterns = [
     path('contact/', contact, name='contact-noslash'),
     # JSON API for contact submissions
     path('api/contact/', contact_api, name='contact-api'),
+    
     # Password reset endpoints (no auth/CSRF required)
     path('auth/password/reset/request/', password_reset_request, name='password-reset-request'),
     path('auth/password/reset/confirm/', password_reset_confirm, name='password-reset-confirm'),
