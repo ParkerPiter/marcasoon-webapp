@@ -566,7 +566,7 @@ def contact(request):
         logger = logging.getLogger(__name__)
         logger.exception('Failed sending contact email')
         # Show a friendly error to the user instead of raising 500
-        error_msg = 'Ocurrió un error al enviar el mensaje. Por favor inténtalo de nuevo más tarde.'
+        error_msg = f'Error: {str(exc)}'
         return render(request, 'contact.html', {'errors': {'send': error_msg}, 'full_name': full_name, 'email': email, 'phone': phone, 'message': message})
 
     return render(request, 'contact_success.html', {'full_name': full_name})
@@ -593,10 +593,10 @@ def contact_api(request):
     from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
     try:
         send_mail(subject, plain_message, from_email, [recipient], html_message=html_message, fail_silently=False)
-    except Exception:
+    except Exception as exc:
         logger = logging.getLogger(__name__)
         logger.exception('Failed sending contact email via API')
-        return Response({'detail': 'Failed to send email'}, status=500)
+        return Response({'detail': f'Failed to send email: {str(exc)}'}, status=500)
     return Response({'detail': 'ok'}, status=201)
 
 
