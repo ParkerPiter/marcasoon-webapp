@@ -270,10 +270,11 @@ except Exception:
 
 EMAIL_BACKEND = _cfg('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = _cfg('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(_cfg('EMAIL_PORT', 587))
+EMAIL_PORT = int(_cfg('EMAIL_PORT', 465))
 EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER', 'marcasoon@gmail.com')
 EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD', 'dunojkhqsvjpegji')
-EMAIL_USE_TLS = str(_cfg('EMAIL_USE_TLS', 'True')).lower() in ('1', 'true', 'yes')
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 # Use the authenticated account as default sender if not explicitly configured
 DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'marcasoon@gmail.com')
 # Where contact form emails should be delivered (defaults to EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)

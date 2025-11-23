@@ -80,7 +80,7 @@ urlpatterns = [
     # Contact page
     path('contact/', contact, name='contact'),
     # no-trailing-slash alias to avoid 404 on POST without slash
-    path('contact', contact, name='contact-noslash'),
+    path('contact/', contact, name='contact-noslash'),
     # JSON API for contact submissions
     path('api/contact/', contact_api, name='contact-api'),
     # Password reset endpoints (no auth/CSRF required)
