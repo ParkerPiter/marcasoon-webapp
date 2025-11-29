@@ -37,7 +37,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'marcasoon-webapp.onrender.com')
 
@@ -98,10 +98,14 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', default='postgresql://marcasoon_webapp_db_epno_user:WtOa1VxS5hKRRjgb29pI4c5uTr7iuT3H@dpg-d4bokie3jp1c73bt06t0-a.virginia-postgres.render.com/marcasoon_webapp_db_epno'),
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'marcasoon_db',
+        'USER': 'marcasoon_user',
+        'PASSWORD': 'WtOa1VxS5hKRRjgb29pI4c5uTr7iuT3H',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
 
@@ -179,6 +183,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://marcasoon-webapp.onrender.com",
     "https://marcasoon.netlify.app",
+    "http://72.60.115.239",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -220,6 +225,8 @@ REST_FRAMEWORK = {
 CSRF_TRUSTED_ORIGINS = [
     'https://marcasoon-webapp.onrender.com',
     'https://marcasoon.netlify.app',
+    'https://marcasoon.com',
+    'http://72.60.115.239',
 ]
 
 # Developer-friendly overrides for local HTTP testing
