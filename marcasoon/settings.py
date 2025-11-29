@@ -15,6 +15,23 @@ import dj_database_url
 import os
 from datetime import timedelta
 
+# Helper to read env vars (supports python-decouple if installed)
+try:
+    from decouple import config as _decouple_config
+    def _cfg(k, default=None, cast=None):
+        return _decouple_config(k, default=default, cast=cast)
+except Exception:
+    def _cfg(k, default=None, cast=None):
+        v = os.getenv(k, default)
+        if v is None:
+            return v
+        if cast:
+            try:
+                return cast(v)
+            except Exception:
+                return default
+        return v
+
 try:
     from corsheaders.defaults import default_headers
 except Exception:
@@ -31,15 +48,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-3eeby=m%(a0$s$4zck577%4d_z$k1%6+*)%5ah2+xw2h59=(jy')
+SECRET_KEY = _cfg('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
+DEBUG = _cfg('DJANGO_DEBUG', 'False', cast=bool)
 
 ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com']
 
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'marcasoon-webapp.onrender.com')
+RENDER_EXTERNAL_HOSTNAME = _cfg('RENDER_EXTERNAL_HOSTNAME', 'marcasoon-webapp.onrender.com')
 
 # Cookies/CSRF defaults (override below in DEBUG for local dev)
 CSRF_COOKIE_SECURE = True
@@ -100,11 +117,11 @@ WSGI_APPLICATION = 'marcasoon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'marcasoon_db',
-        'USER': 'marcasoon_user',
-        'PASSWORD': 'WtOa1VxS5hKRRjgb29pI4c5uTr7iuT3H',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': _cfg('DB_NAME', 'marcasoon_db'),
+        'USER': _cfg('DB_USER', 'marcasoon_user'),
+        'PASSWORD': _cfg('DB_PASSWORD'),
+        'HOST': _cfg('DB_HOST', 'localhost'),
+        'PORT': _cfg('DB_PORT', '5432'),
     }
 }
 
@@ -112,13 +129,13 @@ DATABASES = {
 # USPTO / api.data.gov configuration
 USPTO_TSDR__BASE = 'https://tsdr.uspto.gov'
 USPTO_API_BASE = 'https://api.uspto.gov'  # JSON (via api.data.gov)
-USPTO_API_KEY = 'QXgzhuXSPtgK8HtgExR75qmSQqhrpNWN'
+USPTO_API_KEY = _cfg('USPTO_API_KEY')
 # Optional specific endpoints (set them in your environment once you pick endpoints from docs)
 
 # Trademark Lookup (RapidAPI)
 TRADEMARK_LOOKUP_API_BASE = 'https://trademark-lookup-api.p.rapidapi.com'
 # Move this key to environment var in production: os.getenv('TRADEMARK_LOOKUP_API_KEY')
-TRADEMARK_LOOKUP_API_KEY = os.getenv('TRADEMARK_LOOKUP_API_KEY', 'd6fcdfa339msh1a194af78607448p1b4d40jsnbb363c803a05')
+TRADEMARK_LOOKUP_API_KEY = _cfg('TRADEMARK_LOOKUP_API_KEY')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -198,16 +215,16 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 # Stripe configuration
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51LGXhpAvrGiOE7p8U1MRotOcRQoX7c9KRqfUgom5kgqDig3gHRAdegeCciQtvgrZvEAqtsg5Hx7A37HjWYHUAUmp00eeX63ZYR')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51LGXhpAvrGiOE7p8aV2OsAxNyW30bMbmv3s1f5k9n0lp4zjzvXKmtgOhKLUyO7lhRhMDPBzcvGYDeUr41tbNutRu00IOFFL9Zx')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
-STRIPE_CURRENCY = os.getenv('STRIPE_CURRENCY', 'usd')
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+STRIPE_PUBLIC_KEY = _cfg('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = _cfg('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = _cfg('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_CURRENCY = _cfg('STRIPE_CURRENCY', 'usd')
+FRONTEND_URL = _cfg('FRONTEND_URL', 'http://localhost:3000')
 
 # Paypal configuration
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AXi6C8mC7E_dyjcvriZmThOT55qJtMfByNq4nhW4wtTNVluDt6f_3sbnbVW0qe1OPuBvVtb4gHbV0EmW')
-PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EA5qvmz3uHvFG7L1zahHp7z3oyFran3UA2vXMW0TT2YjuowfzZL8wGb0m0VulCw6ezEaZvEpByL-zV0Z')
-PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'live' en producción
+PAYPAL_CLIENT_ID = _cfg('PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET = _cfg('PAYPAL_CLIENT_SECRET')
+PAYPAL_MODE = _cfg('PAYPAL_MODE', 'sandbox')  # 'live' en producción
 
 
 REST_FRAMEWORK = {
@@ -259,31 +276,15 @@ SIMPLE_JWT = {
 
 
 # Email configuration (use python-decouple if available; otherwise fallback to env vars)
-try:
-    from decouple import config as _decouple_config
-    def _cfg(k, default=None, cast=None):
-        return _decouple_config(k, default=default, cast=cast)
-except Exception:
-    def _cfg(k, default=None, cast=None):
-        v = os.getenv(k, default)
-        if v is None:
-            return v
-        if cast:
-            try:
-                return cast(v)
-            except Exception:
-                return default
-        return v
-
 EMAIL_BACKEND = 'core.email_backend.IPv4EmailBackend'
 EMAIL_HOST = _cfg('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(_cfg('EMAIL_PORT', 465))
-EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER', 'marcasoon@gmail.com')
-EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD', 'dunojkhqsvjpegji')
+EMAIL_HOST_USER = _cfg('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = _cfg('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 # Use the authenticated account as default sender if not explicitly configured
-DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'marcasoon@gmail.com')
+DEFAULT_FROM_EMAIL = _cfg('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 # Where contact form emails should be delivered (defaults to EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
 CONTACT_RECEIVER_EMAIL = _cfg('CONTACT_RECEIVER_EMAIL', EMAIL_HOST_USER or DEFAULT_FROM_EMAIL)
 
