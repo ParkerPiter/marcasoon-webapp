@@ -232,7 +232,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "marcasoon-webapp.onrender.com"]
+    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com']
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
