@@ -38,7 +38,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com', 'http://marcasoon.onhostinger.cloud',cast=Csv())
 
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='marcasoon-webapp.onrender.com')
 
@@ -185,6 +185,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://marcasoon-webapp.onrender.com",
     "https://marcasoon.netlify.app",
     "http://72.60.115.239",
+    "http://marcasoon.onhostinger.cloud",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -228,12 +229,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://marcasoon.netlify.app',
     'https://marcasoon.com',
     'http://72.60.115.239',
+    'http://marcasoon.onhostinger.cloud',
 ]
 
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com']
+    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com', 'http://marcasoon.onhostinger.cloud']
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -247,7 +249,9 @@ if DEBUG:
         'http://localhost:3000',
         'http://127.0.0.1:3000',
         'https://marcasoon-webapp.onrender.com',
-        'https://marcasoon.netlify.app'
+        'https://marcasoon.netlify.app',
+        'http://marcasoon.onhostinger.cloud'
+        
     ]
 
 SIMPLE_JWT = {
