@@ -43,10 +43,12 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,l
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='marcasoon-webapp.onrender.com')
 
 # Cookies/CSRF defaults (override below in DEBUG for local dev)
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
+# CAMBIO TEMPORAL: False/Lax para permitir login via HTTP (IP o dominio sin SSL)
+# Cuando tengas HTTPS (Certbot), cambia SECURE a True y SAMESITE a 'None'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
 # Application definition
 
 INSTALLED_APPS = [
@@ -185,7 +187,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://marcasoon-webapp.onrender.com",
     "https://marcasoon.netlify.app",
     "http://72.60.115.239",
-    "http://marcasoon.onhostinger.cloud",
+    "http://marcasoon.onhostinger.cloud.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -230,6 +232,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://marcasoon.com',
     'http://72.60.115.239',
     'http://marcasoon.onhostinger.cloud',
+    'http://marcasoon.onhostinger.cloud.com'
 ]
 
 # Developer-friendly overrides for local HTTP testing
@@ -248,9 +251,13 @@ if DEBUG:
         'http://127.0.0.1:8000',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'http://72.60.115.239',
+        'http://72.60.115.239:8000',
+        'http://marcasoon.com',
+        'http://marcasoon.onhostinger.cloud'
         'https://marcasoon-webapp.onrender.com',
         'https://marcasoon.netlify.app',
-        'http://marcasoon.onhostinger.cloud'
+        'http://marcasoon.onhostinger.cloud.com'
         
     ]
 
