@@ -260,7 +260,8 @@ if DEBUG:
         'https://marcasoon-webapp.onrender.com',
         'https://marcasoon.netlify.app',
         'http://marcasoon.onhostinger.cloud.com',
-        'https://prueba-sub.marcasoon.com'
+        'https://prueba-sub.marcasoon.com',
+        'http://https://prueba-sub.marcasoon.com'
         
         
     ]

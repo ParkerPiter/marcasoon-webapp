@@ -312,14 +312,6 @@ def trademark_availability(request):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def plans_list(request):
-    # If the client requests HTML (e.g., direct browser navigation), render the demo page
-    accept = request.META.get('HTTP_ACCEPT', '') or ''
-    if 'text/html' in accept:
-        # Template uses fetch('/api/plans/') to load JSON and buttons to hit Stripe/PayPal endpoints
-        return render(request, 'plans/test.html', {
-            'paypal_client_id': getattr(settings, 'PAYPAL_CLIENT_ID', ''),
-            'stripe_public_key': getattr(settings, 'STRIPE_PUBLIC_KEY', ''),
-        })
     qs = Plan.objects.filter(is_active=True).order_by('price_cents')
     return Response(PlanSerializer(qs, many=True).data)
 
