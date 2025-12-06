@@ -38,7 +38,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com,marcasoon.onhostinger.cloud',cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com,marcasoon.onhostinger.cloud,prueba-sub.marcasoon.com',cast=Csv())
 
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='marcasoon-webapp.onrender.com')
 
@@ -188,6 +188,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://marcasoon.netlify.app",
     "http://72.60.115.239",
     "http://marcasoon.onhostinger.cloud.com",
+    "https://prueba-sub.marcasoon.com"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -232,13 +233,14 @@ CSRF_TRUSTED_ORIGINS = [
     'https://marcasoon.com',
     'http://72.60.115.239',
     'http://marcasoon.onhostinger.cloud',
-    'http://marcasoon.onhostinger.cloud.com'
+    'http://marcasoon.onhostinger.cloud.com',
+    'https://prueba-sub.marcasoon.com'
 ]
 
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com', 'marcasoon.onhostinger.cloud']
+    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com', 'marcasoon.onhostinger.cloud', 'prueba-sub.marcasoon.com']
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -257,7 +259,9 @@ if DEBUG:
         'http://marcasoon.onhostinger.cloud'
         'https://marcasoon-webapp.onrender.com',
         'https://marcasoon.netlify.app',
-        'http://marcasoon.onhostinger.cloud.com'
+        'http://marcasoon.onhostinger.cloud.com',
+        'https://prueba-sub.marcasoon.com'
+        
         
     ]
 
