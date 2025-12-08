@@ -38,7 +38,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # Parse DJANGO_DEBUG to a real boolean (defaults to False in production).
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com,marcasoon.onhostinger.cloud,prueba-sub.marcasoon.com',cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='marcasoon-webapp.onrender.com,localhost,127.0.0.1,72.60.115.239,marcasoon.com,api.marcasoon.com,marcasoon.onhostinger.cloud,prueba-sub.marcasoon.com,api.marcasoon.com' ,cast=Csv())
 
 RENDER_EXTERNAL_HOSTNAME = config('RENDER_EXTERNAL_HOSTNAME', default='marcasoon-webapp.onrender.com')
 
@@ -188,7 +188,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://marcasoon.netlify.app",
     "http://72.60.115.239",
     "http://marcasoon.onhostinger.cloud.com",
-    "https://prueba-sub.marcasoon.com"
+    "https://prueba-sub.marcasoon.com",
+    "https://api.marcasoon.com"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -231,6 +232,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://marcasoon-webapp.onrender.com',
     'https://marcasoon.netlify.app',
     'https://marcasoon.com',
+    'https://api.marcasoon.com',
     'http://72.60.115.239',
     'http://marcasoon.onhostinger.cloud',
     'http://marcasoon.onhostinger.cloud.com',
@@ -240,7 +242,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Developer-friendly overrides for local HTTP testing
 if DEBUG:
     # Allow local hosts
-    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com', 'marcasoon.onhostinger.cloud', 'prueba-sub.marcasoon.com']
+    ALLOWED_HOSTS = ['marcasoon-webapp.onrender.com', 'localhost', '127.0.0.1', '72.60.115.239', 'marcasoon.com', 'marcasoon.onhostinger.cloud', 'prueba-sub.marcasoon.com', 'api.marcasoon.com']
     # When testing over http://, secure cookies are not sent; relax for dev
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -261,9 +263,9 @@ if DEBUG:
         'https://marcasoon.netlify.app',
         'http://marcasoon.onhostinger.cloud.com',
         'https://prueba-sub.marcasoon.com',
-        'http://https://prueba-sub.marcasoon.com'
-        
-        
+        'http://prueba-sub.marcasoon.com',
+        'http://api.marcasoon.com',
+        'https://api.marcasoon.com',
     ]
 
 SIMPLE_JWT = {
