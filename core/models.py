@@ -132,6 +132,7 @@ class Testimonial(models.Model):
     trademark = models.ForeignKey('Trademark', on_delete=models.SET_NULL, null=True, blank=True, related_name='testimonials')
     client_name = models.CharField(max_length=150)
     brand_name = models.CharField(max_length=150)
+    country = models.CharField(max_length=100, blank=True)
     title = models.CharField(max_length=180, blank=True)
     content = models.TextField()
     rating = models.PositiveSmallIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])

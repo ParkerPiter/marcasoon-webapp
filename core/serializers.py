@@ -218,7 +218,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = (
-            'id', 'user', 'trademark', 'client_name', 'brand_name', 'title', 'content', 'rating', 'image', 'approved', 'created_at'
+            'id', 'user', 'trademark', 'client_name', 'brand_name', 'country', 'title', 'content', 'rating', 'image', 'approved', 'created_at'
         )
         read_only_fields = ('approved', 'created_at')
 
@@ -233,6 +233,11 @@ class TestimonialSerializer(serializers.ModelSerializer):
         if not validated_data.get('brand_name') and tm:
             # If you later store brand name in assets, adapt here
             validated_data['brand_name'] = getattr(user, 'username', '')
+        
+        # Auto-fill country from user profile if not provided
+        if not validated_data.get('country') and user:
+            validated_data['country'] = getattr(user, 'nationality', '') or ''
+            
         return super().create(validated_data)
 
 
@@ -247,15 +252,13 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
         country: string|null
       }
     """
-
     name = serializers.SerializerMethodField()
     quote = serializers.CharField(source='content')
     logo = serializers.SerializerMethodField()
-    country = serializers.SerializerMethodField()
 
     class Meta:
         model = Testimonial
-        fields = ('id', 'name', 'quote', 'logo', 'country')
+        fields = ('id', 'name', 'quote', 'logo', 'country', 'rating', 'created_at')
 
     def get_name(self, obj):
         # Prefer brand_name, then client_name, then user display
@@ -279,10 +282,6 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
                 return url
         except Exception:
             pass
-        return None
-
-    def get_country(self, obj):
-        # Country not stored yet; return None to keep shape stable
         return None
 
 
