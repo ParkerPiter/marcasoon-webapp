@@ -189,7 +189,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://72.60.115.239",
     "http://marcasoon.onhostinger.cloud.com",
     "https://prueba-sub.marcasoon.com",
-    "https://api.marcasoon.com"
+    "https://api.marcasoon.com",
+    "https://marcasoon.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
