@@ -12,9 +12,9 @@ admin.site.register(Plan)
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-	list_display = ("client_name", "brand_name", "rating", "approved", "created_at")
+	list_display = ("client_name", "brand_name", "country", "rating", "approved", "created_at")
 	list_filter = ("approved", "rating")
-	search_fields = ("client_name", "brand_name", "content", "title")
+	search_fields = ("client_name", "brand_name", "country", "content", "title")
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
