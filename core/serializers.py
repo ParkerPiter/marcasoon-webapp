@@ -33,6 +33,12 @@ UserSerializer.Meta.fields = tuple(list(UserSerializer.Meta.fields) + ['national
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
+    # Required fields for registration
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    phone = serializers.CharField(write_only=True, required=True)
+    email = serializers.EmailField(required=True)
+
     # Allow passing basic profile fields at registration
     full_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
     nationality = serializers.CharField(write_only=True, required=False, allow_blank=True)
@@ -49,7 +55,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code')
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code')
 
     def create(self, validated_data):
         # Extract possible asset fields
@@ -62,16 +68,28 @@ class RegisterSerializer(serializers.ModelSerializer):
         nationality = validated_data.pop('nationality', None)
         address = validated_data.pop('address', None)
         postal_code = validated_data.pop('postal_code', None)
+        
+        # Required fields
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+        phone = validated_data.pop('phone')
 
         # Create the user
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
-            password=validated_data['password']
+            password=validated_data['password'],
+            first_name=first_name,
+            last_name=last_name
         )
+        user.phone_number = phone
+        
         # Set optional profile fields if provided
         if full_name:
             user.full_name = full_name
+        else:
+            user.full_name = f"{first_name} {last_name}".strip()
+            
         if nationality:
             user.nationality = nationality
         if address:

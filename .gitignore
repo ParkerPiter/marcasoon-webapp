@@ -8,3 +8,4 @@ env
 .txt
 /frontend/node_modules/
 DEPLOY.md
+.env
