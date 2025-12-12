@@ -33,6 +33,7 @@ from .views import (
     password_reset_confirm,
     webinar_live_embed,
     trademark_intake,
+    WebinarViewSet,
 )
 from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
 from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
@@ -44,6 +45,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 router = routers.DefaultRouter()
+router.register(r'webinars', WebinarViewSet)
 
 
 urlpatterns = [

@@ -772,3 +772,16 @@ def trademark_intake(request):
         # Se podría añadir un sistema de reintentos o notificaciones de fallo aquí.
     
     return Response(payload, status=200)
+
+
+class WebinarViewSet(viewsets.ModelViewSet):
+    """
+    CRUD completo para Webinars.
+    Solo accesible para administradores (IsAdminUser).
+    """
+    from .models import Webinar
+    from .serializers import WebinarSerializer
+    
+    queryset = Webinar.objects.all().order_by('-created_at')
+    serializer_class = WebinarSerializer
+    permission_classes = [permissions.IsAdminUser]

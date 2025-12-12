@@ -475,3 +475,10 @@ class TrademarkIntakeSerializer(serializers.Serializer):
         if asset:
             payload['asset'] = TrademarkAssetSerializer(asset, context=self.context).data
         return payload
+
+
+class WebinarSerializer(serializers.ModelSerializer):
+    class Meta:
+        from .models import Webinar
+        model = Webinar
+        fields = '__all__'
