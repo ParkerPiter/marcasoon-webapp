@@ -228,3 +228,15 @@ class TrademarkVerificationCode(models.Model):
     def is_valid(self) -> bool:
         return (not self.used) and timezone.now() <= self.expires_at
 
+
+class Webinar(models.Model):
+    """Configuración de webinar en vivo."""
+    title = models.CharField(max_length=200, help_text="Título del webinar que se mostrará al usuario")
+    embed_url = models.URLField(help_text="URL del video o embed (ej. YouTube Live)")
+    is_active = models.BooleanField(default=True, help_text="Si está activo, se mostrará en la página de webinar")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({'Activo' if self.is_active else 'Inactivo'})"
+
+

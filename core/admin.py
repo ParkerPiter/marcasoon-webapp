@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Trademark, TrademarkAsset, User, Plan
 from .models import Testimonial
 from .models import BlogPost
+from .models import Webinar
 
 # Register your models here.
 
@@ -9,6 +10,7 @@ admin.site.register(Trademark)
 admin.site.register(TrademarkAsset)
 admin.site.register(User)
 admin.site.register(Plan)
+admin.site.register(Webinar)
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):

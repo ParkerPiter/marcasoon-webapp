@@ -668,20 +668,23 @@ def password_reset_confirm(request):
 def webinar_live_embed(request):
     """Public JSON endpoint exposing the configured live webinar embed URL.
 
-    Returns JSON: { "embed_url": "https://..." }
-    In DEBUG, allows override via ?url=... for quick testing.
+    Returns JSON: { "embed_url": "https://...", "title": "..." }
     """
-    embed_url = getattr(settings, 'WEBINAR_EMBED_URL', '') or ''
-    if settings.DEBUG:
-        override = (request.GET.get('url') or '').strip()
-        if override:
-            embed_url = override
-    if not embed_url:
-        return Response({'detail': 'Webinar no configurado', 'embed_url': ''}, status=503)
+    from .models import Webinar
+    # Get the latest active webinar
+    webinar = Webinar.objects.filter(is_active=True).order_by('-created_at').first()
+    
+    if not webinar:
+        return Response({'detail': 'Webinar no configurado', 'embed_url': '', 'title': ''}, status=503)
+        
+    embed_url = webinar.embed_url
+    title = webinar.title
+
     parsed = urlparse(embed_url)
     if parsed.scheme not in ('http', 'https'):
-        return Response({'detail': 'URL inválida', 'embed_url': embed_url}, status=400)
-    return Response({'embed_url': embed_url})
+        return Response({'detail': 'URL inválida', 'embed_url': embed_url, 'title': title}, status=400)
+        
+    return Response({'embed_url': embed_url, 'title': title})
 
 
 @api_view(['GET', 'POST'])
