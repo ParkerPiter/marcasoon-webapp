@@ -632,6 +632,8 @@ def password_reset_request(request):
         logger = logging.getLogger(__name__)
         logger.exception('Failed sending password reset code email')
         return Response({'detail': f'Failed to send email: {str(e)}'}, status=500)
+    
+    return Response({'detail': 'ok'}, status=200)
 
 
 @csrf_exempt
