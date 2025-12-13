@@ -41,8 +41,23 @@ class Trademark(models.Model):
     is_verified = models.BooleanField(default=False)
     verified_at = models.DateTimeField(null=True, blank=True)
 
+    class Status(models.TextChoices):
+        DRAFT = 'DRAFT', 'Borrador'
+        SENT = 'SENT', 'Enviada'
+        IN_PROCESS = 'IN_PROCESS', 'En proceso'
+        DENIED = 'DENIED', 'Denegada'
+        ACCEPTED = 'ACCEPTED', 'Aceptada'
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.DRAFT,
+        help_text="Estado de la solicitud de registro"
+    )
+
     def __str__(self):
-        return f"Trademark of {getattr(self.user, 'username', 'user')}"
+        return f"Trademark of {getattr(self.user, 'username', 'user')} ({self.get_status_display()})"
+
 
 
 class TrademarkAsset(models.Model):

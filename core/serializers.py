@@ -9,12 +9,22 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     # Allow updating password via this serializer (write-only)
     password = serializers.CharField(write_only=True, required=False, allow_blank=True, min_length=8)
+    trademark_status = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image'
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status'
         )
+
+    def get_trademark_status(self, obj):
+        try:
+            # Access the related trademark object (OneToOne)
+            if hasattr(obj, 'trademark'):
+                return obj.trademark.status
+            return None
+        except Exception:
+            return None
 
     def update(self, instance, validated_data):
         # Handle password correctly
@@ -175,7 +185,7 @@ class TrademarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trademark
-        fields = ('id', 'user', 'name', 'description', 'foreign_meaning', 'basis_for_registration', 'intention_of_use', 'current_use_description', 'first_use_date', 'foreign_application_number', 'foreign_application_translation', 'foreign_registration_number', 'foreign_registration_translation', 'disclaimer', 'assets', 'created_at', 'updated_at')
+        fields = ('id', 'user', 'name', 'status', 'description', 'foreign_meaning', 'basis_for_registration', 'intention_of_use', 'current_use_description', 'first_use_date', 'foreign_application_number', 'foreign_application_translation', 'foreign_registration_number', 'foreign_registration_translation', 'disclaimer', 'assets', 'created_at', 'updated_at')
 
     def create(self, validated_data):
         # Ensure user is set by view/context when creating

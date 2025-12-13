@@ -6,7 +6,12 @@ from .models import Webinar
 
 # Register your models here.
 
-admin.site.register(Trademark)
+@admin.register(Trademark)
+class TrademarkAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'status', 'created_at', 'is_verified')
+    list_filter = ('status', 'is_verified', 'created_at')
+    search_fields = ('user__username', 'user__email', 'name', 'status')
+
 admin.site.register(TrademarkAsset)
 admin.site.register(User)
 admin.site.register(Plan)

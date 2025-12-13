@@ -736,6 +736,19 @@ def trademark_intake(request):
     # Guardar en la base de datos
     payload = ser.save(user=request.user)
 
+    # Actualizar estado a ENVIADA si estaba en BORRADOR
+    try:
+        tm = request.user.trademark
+        # Importar Status si es necesario, o usar string literal si coincide
+        if tm.status == 'DRAFT': # Trademark.Status.DRAFT
+            tm.status = 'SENT'   # Trademark.Status.SENT
+            tm.save(update_fields=['status'])
+            # Actualizar el payload devuelto para reflejar el nuevo estado
+            if 'trademark' in payload:
+                payload['trademark']['status'] = tm.status
+    except Exception:
+        pass
+
     try:
         email_context = ser.validated_data.copy()
         email_context['full_name'] = request.user.get_full_name()
