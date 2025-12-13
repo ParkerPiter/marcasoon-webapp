@@ -10,11 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
     # Allow updating password via this serializer (write-only)
     password = serializers.CharField(write_only=True, required=False, allow_blank=True, min_length=8)
     trademark_status = serializers.SerializerMethodField()
+    trademark_status_label = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status'
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label'
         )
 
     def get_trademark_status(self, obj):
@@ -22,6 +23,15 @@ class UserSerializer(serializers.ModelSerializer):
             # Access the related trademark object (OneToOne)
             if hasattr(obj, 'trademark'):
                 return obj.trademark.status
+            return None
+        except Exception:
+            return None
+
+    def get_trademark_status_label(self, obj):
+        try:
+            # Access the related trademark object (OneToOne)
+            if hasattr(obj, 'trademark'):
+                return obj.trademark.get_status_display()
             return None
         except Exception:
             return None
