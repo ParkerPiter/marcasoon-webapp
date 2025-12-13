@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label', 'plan', 'registration_asset_type'
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label', 'plan', 'wants_name', 'wants_logo', 'wants_slogan', 'wants_sound'
         )
 
     def get_trademark_status(self, obj):
@@ -79,6 +79,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     address = serializers.CharField(write_only=True, required=False, allow_blank=True)
     postal_code = serializers.CharField(write_only=True, required=False, allow_blank=True)
     # Optional fields to create an initial Trademark and TrademarkAsset
+    wants_name = serializers.BooleanField(write_only=True, required=False, default=False)
+    wants_logo = serializers.BooleanField(write_only=True, required=False, default=False)
+    wants_slogan = serializers.BooleanField(write_only=True, required=False, default=False)
+    wants_sound = serializers.BooleanField(write_only=True, required=False, default=False)
+
     asset_kind = serializers.CharField(write_only=True, required=False, allow_blank=True)
     asset_text = serializers.CharField(write_only=True, required=False, allow_blank=True)
     asset_image = serializers.ImageField(write_only=True, required=False, allow_null=True)
@@ -89,10 +94,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code')
+        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code', 'wants_name', 'wants_logo', 'wants_slogan', 'wants_sound')
 
     def create(self, validated_data):
         # Extract possible asset fields
+        wants_name = validated_data.pop('wants_name', False)
+        wants_logo = validated_data.pop('wants_logo', False)
+        wants_slogan = validated_data.pop('wants_slogan', False)
+        wants_sound = validated_data.pop('wants_sound', False)
+
         asset_kind = validated_data.pop('asset_kind', None) or ''
         asset_text = validated_data.pop('asset_text', None)
         asset_image = validated_data.pop('asset_image', None)
@@ -131,8 +141,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         if postal_code:
             user.postal_code = postal_code
         
-        if asset_kind:
-            user.registration_asset_type = asset_kind
+        user.wants_name = wants_name
+        user.wants_logo = wants_logo
+        user.wants_slogan = wants_slogan
+        user.wants_sound = wants_sound
 
         user.save()
 
