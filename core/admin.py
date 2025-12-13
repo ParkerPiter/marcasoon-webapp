@@ -8,8 +8,8 @@ from .models import Webinar
 
 @admin.register(Trademark)
 class TrademarkAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'status', 'created_at', 'is_verified')
-    list_filter = ('status', 'is_verified', 'created_at')
+    list_display = ('user', 'name', 'status', 'plan', 'created_at', 'is_verified')
+    list_filter = ('status', 'plan', 'is_verified', 'created_at')
     search_fields = ('user__username', 'user__email', 'name', 'status')
 
 admin.site.register(TrademarkAsset)

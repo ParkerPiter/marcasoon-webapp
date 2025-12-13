@@ -54,6 +54,7 @@ class Trademark(models.Model):
         default=Status.DRAFT,
         help_text="Estado de la solicitud de registro"
     )
+    plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True, related_name='trademarks')
 
     def __str__(self):
         return f"Trademark of {getattr(self.user, 'username', 'user')} ({self.get_status_display()})"

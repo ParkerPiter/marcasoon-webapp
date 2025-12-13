@@ -11,11 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, allow_blank=True, min_length=8)
     trademark_status = serializers.SerializerMethodField()
     trademark_status_label = serializers.SerializerMethodField()
+    plan = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label'
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label', 'plan'
         )
 
     def get_trademark_status(self, obj):
@@ -32,6 +33,19 @@ class UserSerializer(serializers.ModelSerializer):
             # Access the related trademark object (OneToOne)
             if hasattr(obj, 'trademark'):
                 return obj.trademark.get_status_display()
+            return None
+        except Exception:
+            return None
+
+    def get_plan(self, obj):
+        try:
+            if hasattr(obj, 'trademark') and obj.trademark.plan:
+                return {
+                    'id': obj.trademark.plan.id,
+                    'title': obj.trademark.plan.title,
+                    'price_cents': obj.trademark.plan.total_cents,
+                    'currency': obj.trademark.plan.currency
+                }
             return None
         except Exception:
             return None
