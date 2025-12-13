@@ -15,6 +15,7 @@ class User(AbstractUser):
     address = models.TextField(blank=True)
     postal_code = models.CharField(max_length=20, blank=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    registration_asset_type = models.CharField(max_length=50, blank=True, help_text="Tipo de activo seleccionado al registro (Nombre, Logo, Slogan, Sonido)")
 
     def __str__(self):
         return self.username or self.full_name or super().__str__()

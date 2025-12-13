@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label', 'plan'
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'phone_number', 'password', 'profile_image', 'trademark_status', 'trademark_status_label', 'plan', 'registration_asset_type'
         )
 
     def get_trademark_status(self, obj):
@@ -130,6 +130,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.address = address
         if postal_code:
             user.postal_code = postal_code
+        
+        if asset_kind:
+            user.registration_asset_type = asset_kind
+
         user.save()
 
         # Create an empty Trademark for the user (placeholder "mi marca")
