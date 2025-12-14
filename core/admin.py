@@ -27,5 +27,5 @@ class TestimonialAdmin(admin.ModelAdmin):
 class BlogPostAdmin(admin.ModelAdmin):
 	list_display = ("id", "title", "author", "is_published", "created_at")
 	list_filter = ("is_published", "created_at")
-	search_fields = ("title", "body", "author__username", "author__full_name")
+	search_fields = ("title", "body", "author")
 	prepopulated_fields = {"slug": ("title",)}

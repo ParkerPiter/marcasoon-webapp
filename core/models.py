@@ -173,13 +173,13 @@ class Testimonial(models.Model):
 
 class BlogPost(models.Model):
     """Blog/foro: entradas creadas por usuarios.
-    - author: usuario creador
+    - author: nombre del autor (texto libre)
     - title, slug: título y slug único
     - body: contenido
     - is_published: visible públicamente si True
     - created_at/updated_at
     """
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
+    author = models.CharField(max_length=150)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     body = models.TextField()

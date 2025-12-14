@@ -416,15 +416,15 @@ def blog_post_detail(request, pk: int):
         return Response({'detail': 'Not found'}, status=404)
 
     if request.method == 'GET':
-        # Permitir ver borradores solo al autor o staff
-        if obj.is_published or (request.user.is_authenticated and (request.user.is_staff or request.user.id == obj.author_id)):
+        # Permitir ver borradores solo al staff
+        if obj.is_published or (request.user.is_authenticated and request.user.is_staff):
             return Response(BlogPostSerializer(obj, context={'request': request}).data)
         return Response({'detail': 'Forbidden'}, status=403)
 
-    # PATCH/DELETE requieren autenticación y ser autor (o staff)
+    # PATCH/DELETE requieren autenticación y ser staff
     if not request.user.is_authenticated:
         return Response({'detail': 'Authentication required'}, status=401)
-    if request.user.id != obj.author_id and not request.user.is_staff:
+    if not request.user.is_staff:
         return Response({'detail': 'Forbidden'}, status=403)
 
     if request.method == 'PATCH':

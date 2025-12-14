@@ -336,7 +336,7 @@ class TestimonialSimpleSerializer(serializers.ModelSerializer):
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.CharField(required=True)
 
     class Meta:
         model = BlogPost
@@ -345,11 +345,6 @@ class BlogPostSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('slug', 'created_at', 'updated_at')
 
-    def create(self, validated_data):
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
-        validated_data['author'] = user
-        return super().create(validated_data)
 
 
 class TrademarkEvidenceSerializer(serializers.ModelSerializer):
