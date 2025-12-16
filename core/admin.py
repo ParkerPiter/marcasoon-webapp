@@ -11,6 +11,7 @@ class TrademarkAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'status', 'plan', 'created_at', 'is_verified')
     list_filter = ('status', 'plan', 'is_verified', 'created_at')
     search_fields = ('user__username', 'user__email', 'name', 'status')
+    list_editable = ('status',)
 
 admin.site.register(TrademarkAsset)
 admin.site.register(User)

@@ -226,6 +226,7 @@ class TrademarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trademark
         fields = ('id', 'user', 'name', 'status', 'description', 'foreign_meaning', 'basis_for_registration', 'intention_of_use', 'current_use_description', 'first_use_date', 'foreign_application_number', 'foreign_application_translation', 'foreign_registration_number', 'foreign_registration_translation', 'disclaimer', 'assets', 'created_at', 'updated_at')
+        read_only_fields = ('status',)
 
     def create(self, validated_data):
         # Ensure user is set by view/context when creating

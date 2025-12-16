@@ -294,3 +294,6 @@ CONTACT_RECEIVER_EMAIL = config('CONTACT_RECEIVER_EMAIL', default=EMAIL_HOST_USE
 # Webinar embed configuration: public page will iframe this URL
 # Example: https://www.youtube.com/embed/<video_id>?autoplay=1 or a Vimeo/Zoom embed
 WEBINAR_EMBED_URL = config('WEBINAR_EMBED_URL', default='https://www.youtube.com/embed/sNSwSrASlrM?autoplay=1')
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+# Aumentar límite de archivos en memoria antes de pasar a disco (ej. 10MB)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
