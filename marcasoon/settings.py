@@ -209,7 +209,7 @@ STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
 STRIPE_CURRENCY = config('STRIPE_CURRENCY', default='usd')
-FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
+FRONTEND_URL = config('FRONTEND_URL', default='https://marcasoon.com')
 
 # Paypal configuration
 PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
