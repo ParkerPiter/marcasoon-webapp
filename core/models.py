@@ -48,16 +48,24 @@ class Trademark(models.Model):
     verified_at = models.DateTimeField(null=True, blank=True)
 
     class Status(models.TextChoices):
-        DRAFT = 'DRAFT', 'Borrador'
-        SENT = 'SENT', 'Enviada'
-        IN_PROCESS = 'IN_PROCESS', 'En proceso'
-        DENIED = 'DENIED', 'Denegada'
-        ACCEPTED = 'ACCEPTED', 'Aceptada'
+        REGISTERED = 'REGISTERED', 'Registered'
+        APPLICATION_FILED = 'APPLICATION_FILED', 'application Filed'
+        EXAMINER_ASSIGNED = 'EXAMINER_ASSIGNED', 'Examiner Assigned'
+        OA_POR_RESPONDER = 'OA_POR_RESPONDER', 'OA por responder'
+        PUBLISHED_FOR_OPPOSITION = 'PUBLISHED_FOR_OPPOSITION', 'Published for Opposition'
+        NOTICE_OF_ALLOWANCE = 'NOTICE_OF_ALLOWANCE', 'Notice of allowance'
+        OA_RESPONDIDA = 'OA_RESPONDIDA', 'OA respondida'
+        EXTENSION_SOU_SOLICITADA = 'EXTENSION_SOU_SOLICITADA', 'Extension Statement of Use Solicitada'
+        TO_BE_PUBLISHED = 'TO_BE_PUBLISHED', 'To be Published'
+        ASSIGNED = 'ASSIGNED', 'Assigned'
+        SOU_FILED = 'SOU_FILED', 'SOU filed'
+        ABANDONED = 'ABANDONED', 'Abandoned'
+        SUSPENDED = 'SUSPENDED', 'Suspended'
 
     status = models.CharField(
-        max_length=20,
+        max_length=50,
         choices=Status.choices,
-        default=Status.DRAFT,
+        default=Status.APPLICATION_FILED,
         help_text="Estado de la solicitud de registro"
     )
     plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True, related_name='trademarks')
