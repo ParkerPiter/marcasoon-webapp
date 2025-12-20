@@ -21,30 +21,32 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_trademark_status(self, obj):
         try:
-            # Access the related trademark object (OneToOne)
-            if hasattr(obj, 'trademark'):
-                return obj.trademark.status
+            # Return status of the most recent trademark
+            tm = obj.trademarks.last()
+            if tm:
+                return tm.status
             return None
         except Exception:
             return None
 
     def get_trademark_status_label(self, obj):
         try:
-            # Access the related trademark object (OneToOne)
-            if hasattr(obj, 'trademark'):
-                return obj.trademark.get_status_display()
+            # Return status label of the most recent trademark
+            tm = obj.trademarks.last()
+            if tm:
+                return tm.get_status_display()
             return None
         except Exception:
             return None
 
     def get_plan(self, obj):
         try:
-            if hasattr(obj, 'trademark') and obj.trademark.plan:
+            if obj.plan:
                 return {
-                    'id': obj.trademark.plan.id,
-                    'title': obj.trademark.plan.title,
-                    'price_cents': obj.trademark.plan.total_cents,
-                    'currency': obj.trademark.plan.currency
+                    'id': obj.plan.id,
+                    'title': obj.plan.title,
+                    'price_cents': obj.plan.total_cents,
+                    'currency': obj.plan.currency
                 }
             return None
         except Exception:

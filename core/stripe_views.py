@@ -164,7 +164,23 @@ def stripe_webhook(request):
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        # TODO: fulfill order, mark payment success
+        # Fulfill order: update user plan
+        metadata = session.get('metadata', {})
+        user_id = metadata.get('user_id')
+        plan_id = metadata.get('plan_id')
+        
+        if user_id and plan_id:
+            from django.contrib.auth import get_user_model
+            from .models import Plan
+            User = get_user_model()
+            try:
+                user = User.objects.get(pk=user_id)
+                plan = Plan.objects.get(pk=plan_id)
+                user.plan = plan
+                user.save()
+            except Exception as e:
+                print(f"Error updating user plan via webhook: {e}")
+
     elif event['type'] == 'payment_intent.succeeded':
         intent = event['data']['object']
         # TODO: mark payment as successful

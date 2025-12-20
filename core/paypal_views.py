@@ -45,7 +45,8 @@ def create_paypal_order(request):
                     "currency_code": currency,
                     "value": amount_value
                 },
-                "description": purchase_desc
+                "description": purchase_desc,
+                "custom_id": str(plan_id) if plan_id else None
             }]
         }
         if redirect_mode:
@@ -84,8 +85,32 @@ def capture_paypal_order(request):
             return JsonResponse({'detail': 'orderID is required'}, status=400)
         req = OrdersCaptureRequest(order_id)
         resp = client.execute(req)
+        
+        status = getattr(resp.result, 'status', 'UNKNOWN')
+        
+        # Update user plan if payment is completed
+        if status == 'COMPLETED':
+            plan_id = data.get('plan_id')
+            # If not provided in request, try to get from PayPal order custom_id
+            if not plan_id:
+                try:
+                    units = getattr(resp.result, 'purchase_units', [])
+                    if units:
+                        plan_id = getattr(units[0], 'custom_id', None)
+                except Exception:
+                    pass
+            
+            if plan_id:
+                from .models import Plan
+                try:
+                    plan = Plan.objects.get(pk=plan_id)
+                    request.user.plan = plan
+                    request.user.save()
+                except Exception:
+                    pass
+
         return JsonResponse({
-            'status': getattr(resp.result, 'status', 'UNKNOWN'),
+            'status': status,
             'id': getattr(resp.result, 'id', order_id)
         })
     except Exception as e:

@@ -22,12 +22,15 @@ class User(AbstractUser):
     wants_slogan = models.BooleanField(default=False, help_text="Interesado en registrar Slogan")
     wants_sound = models.BooleanField(default=False, help_text="Interesado en registrar Sonido")
 
+    # Plan is now linked to the User, applying to all their trademarks
+    plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
+
     def __str__(self):
         return self.username or self.full_name or super().__str__()
 
 
 class Trademark(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trademark')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trademarks')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # Fields added to capture intake form data
@@ -68,7 +71,7 @@ class Trademark(models.Model):
         default=Status.APPLICATION_FILED,
         help_text="Estado de la solicitud de registro"
     )
-    plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True, related_name='trademarks')
+    # plan field removed, now accessed via user.plan
 
     def __str__(self):
         return f"Trademark of {getattr(self.user, 'username', 'user')} ({self.get_status_display()})"
