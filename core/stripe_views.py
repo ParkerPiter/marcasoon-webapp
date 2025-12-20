@@ -41,9 +41,8 @@ def create_checkout_session(request):
             else:
                 success_url = request.build_absolute_uri(success_path) + '?session_id={CHECKOUT_SESSION_ID}'
         else:
-            # Default: usar las páginas del backend en lugar de FRONTEND_URL
-            backend_success = '/api/payments/success'
-            success_url = request.build_absolute_uri(backend_success) + '?session_id={CHECKOUT_SESSION_ID}'
+            # Default: redirect to frontend profile
+            success_url = f"{settings.FRONTEND_URL}/profile?session_id={{CHECKOUT_SESSION_ID}}"
 
         if cancel_path:
             if cancel_path.startswith('http://') or cancel_path.startswith('https://'):

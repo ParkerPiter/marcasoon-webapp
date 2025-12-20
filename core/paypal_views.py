@@ -2,6 +2,7 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import permissions
 from django.http import JsonResponse, HttpResponseRedirect
+from django.conf import settings
 from .paypal_service import get_paypal_client
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -127,7 +128,8 @@ def paypal_return(request):
         client = get_paypal_client()
         req = OrdersCaptureRequest(token)
         client.execute(req)
-        return HttpResponseRedirect(f'/api/payments/success?orderID={token}')
+        # Redirect to frontend profile
+        return HttpResponseRedirect(f"{settings.FRONTEND_URL}/profile?orderID={token}")
     except Exception:
         return HttpResponseRedirect('/api/payments/cancel')
 
