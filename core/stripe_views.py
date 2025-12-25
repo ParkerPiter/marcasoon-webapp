@@ -161,14 +161,50 @@ def stripe_webhook(request):
     s = init_stripe()
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+    
+    # Retrieve secrets from settings (can be a single string or a list/comma-separated string)
+    # We support STRIPE_WEBHOOK_SECRET (legacy/single) and STRIPE_WEBHOOK_SECRET_V2
+    secrets = []
+    if settings.STRIPE_WEBHOOK_SECRET:
+        secrets.append(settings.STRIPE_WEBHOOK_SECRET)
+    
+    # Check for additional secrets in settings if defined (e.g. for v2 events)
+    # You can add STRIPE_WEBHOOK_SECRET_V2 to your settings.py and .env
+    if hasattr(settings, 'STRIPE_WEBHOOK_SECRET_V2') and settings.STRIPE_WEBHOOK_SECRET_V2:
+        secrets.append(settings.STRIPE_WEBHOOK_SECRET_V2)
+    
+    # If user put comma separated secrets in STRIPE_WEBHOOK_SECRET
+    if ',' in settings.STRIPE_WEBHOOK_SECRET:
+        secrets = [secret.strip() for secret in settings.STRIPE_WEBHOOK_SECRET.split(',')]
 
-    try:
-        event = s.Webhook.construct_event(payload, sig_header, endpoint_secret)
-    except Exception as e:
-        logger.error(f"Webhook signature verification failed: {e}")
+    event = None
+    verification_exception = None
+
+    # Try to verify signature with each secret
+    for secret in secrets:
+        try:
+            event = s.Webhook.construct_event(payload, sig_header, secret)
+            verification_exception = None
+            break # Success
+        except Exception as e:
+            verification_exception = e
+            continue
+    
+    if event is None:
+        logger.error(f"Webhook signature verification failed for all secrets. Last error: {verification_exception}")
         return HttpResponse(status=400)
 
+    # Handle Stripe v2 Events (Thin Events)
+    if event.get('object') == 'v2.core.event':
+        event_type = event.get('type')
+        logger.info(f"Received Stripe v2 event: {event_type}")
+        # Example: v1.billing.meter.error_report_triggered
+        if event_type == 'v1.billing.meter.error_report_triggered':
+            related_object = event.get('related_object')
+            logger.info(f"Billing meter error: {related_object}")
+        return HttpResponse(status=200)
+
+    # Handle Stripe v1 Events
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         # Fulfill order: update user plan

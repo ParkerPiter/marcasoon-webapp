@@ -208,6 +208,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
+STRIPE_WEBHOOK_SECRET_V2 = config('STRIPE_WEBHOOK_SECRET_V2', default='')
 STRIPE_CURRENCY = config('STRIPE_CURRENCY', default='usd')
 FRONTEND_URL = config('FRONTEND_URL', default='https://marcasoon.com')
 
