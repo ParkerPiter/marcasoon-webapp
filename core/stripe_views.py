@@ -155,6 +155,9 @@ def create_payment_intent(request):
 
 @csrf_exempt
 def stripe_webhook(request):
+    import logging
+    logger = logging.getLogger(__name__)
+    
     s = init_stripe()
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
@@ -162,7 +165,8 @@ def stripe_webhook(request):
 
     try:
         event = s.Webhook.construct_event(payload, sig_header, endpoint_secret)
-    except Exception:
+    except Exception as e:
+        logger.error(f"Webhook signature verification failed: {e}")
         return HttpResponse(status=400)
 
     if event['type'] == 'checkout.session.completed':
@@ -172,6 +176,8 @@ def stripe_webhook(request):
         user_id = metadata.get('user_id')
         plan_id = metadata.get('plan_id')
         
+        logger.info(f"Webhook checkout.session.completed. User: {user_id}, Plan: {plan_id}")
+
         if user_id and plan_id:
             from django.contrib.auth import get_user_model
             from .models import Plan
@@ -181,8 +187,9 @@ def stripe_webhook(request):
                 plan = Plan.objects.get(pk=plan_id)
                 user.plan = plan
                 user.save()
+                logger.info(f"Webhook updated plan for user {user.username}")
             except Exception as e:
-                print(f"Error updating user plan via webhook: {e}")
+                logger.error(f"Error updating user plan via webhook: {e}")
 
     elif event['type'] == 'payment_intent.succeeded':
         intent = event['data']['object']
@@ -195,6 +202,9 @@ def stripe_webhook(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def verify_checkout_session(request):
+    import logging
+    logger = logging.getLogger(__name__)
+    
     session_id = request.data.get('session_id')
     if not session_id:
         return Response({'detail': 'session_id required'}, status=400)
@@ -203,6 +213,7 @@ def verify_checkout_session(request):
     try:
         session = s.checkout.Session.retrieve(session_id)
     except Exception as e:
+        logger.error(f"Verify session error: {e}")
         return Response({'detail': str(e)}, status=400)
 
     if session.payment_status == 'paid':
@@ -212,6 +223,7 @@ def verify_checkout_session(request):
         
         # Verify user matches
         if str(user_id) != str(request.user.id):
+             logger.warning(f"User mismatch in verify. Session user: {user_id}, Request user: {request.user.id}")
              return Response({'detail': 'User mismatch'}, status=403)
 
         if plan_id:
@@ -221,6 +233,7 @@ def verify_checkout_session(request):
                 plan = Plan.objects.get(pk=plan_id)
                 request.user.plan = plan
                 request.user.save()
+                logger.info(f"Verify endpoint updated plan for user {request.user.username}")
                 return Response(UserSerializer(request.user).data)
             except Plan.DoesNotExist:
                 return Response({'detail': 'Plan not found'}, status=404)
@@ -235,20 +248,29 @@ def stripe_payment_success(request):
     Callback URL for Stripe Checkout success.
     Updates the user plan synchronously and then redirects to frontend.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
     session_id = request.GET.get('session_id')
     target_url = f"{settings.FRONTEND_URL}/profile"
+    
+    logger.info(f"Stripe payment success callback triggered. Session ID: {session_id}")
+
     if session_id:
         target_url += f"?session_id={session_id}"
         
         try:
             s = init_stripe()
             session = s.checkout.Session.retrieve(session_id)
+            logger.info(f"Session retrieved. Status: {session.payment_status}")
             
             if session.payment_status == 'paid':
                 metadata = session.get('metadata', {})
                 user_id = metadata.get('user_id')
                 plan_id = metadata.get('plan_id')
                 
+                logger.info(f"Metadata - User ID: {user_id}, Plan ID: {plan_id}")
+
                 if user_id and plan_id:
                     from django.contrib.auth import get_user_model
                     from .models import Plan
@@ -258,9 +280,14 @@ def stripe_payment_success(request):
                         plan = Plan.objects.get(pk=plan_id)
                         user.plan = plan
                         user.save()
+                        logger.info(f"Successfully updated plan {plan.title} for user {user.username}")
                     except Exception as e:
-                        print(f"Error updating user plan in callback: {e}")
+                        logger.error(f"Error updating user plan in callback: {e}")
+                else:
+                    logger.warning("Missing user_id or plan_id in session metadata")
+            else:
+                logger.warning(f"Session not paid. Status: {session.payment_status}")
         except Exception as e:
-            print(f"Error retrieving session in callback: {e}")
+            logger.error(f"Error retrieving session in callback: {e}")
 
     return redirect(target_url)
