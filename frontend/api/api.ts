@@ -215,6 +215,9 @@ export async function fetchCurrentUser(
     method: "GET",
     headers: {
       Accept: "application/json",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
       ...(access ? { Authorization: `Bearer ${access}` } : {}),
     },
     credentials: "include",
