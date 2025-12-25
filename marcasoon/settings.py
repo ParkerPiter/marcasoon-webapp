@@ -215,7 +215,7 @@ FRONTEND_URL = config('FRONTEND_URL', default='https://marcasoon.com')
 # Paypal configuration
 PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = config('PAYPAL_CLIENT_SECRET')
-PAYPAL_MODE = config('PAYPAL_MODE', default='sandbox')  # 'live' en producción
+PAYPAL_MODE = config('PAYPAL_MODE', default='live')  # 'live' en producción
 
 
 REST_FRAMEWORK = {

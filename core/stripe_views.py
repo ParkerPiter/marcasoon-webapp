@@ -285,6 +285,7 @@ def stripe_payment_success(request):
     Updates the user plan synchronously and then redirects to frontend.
     """
     import logging
+    import urllib.parse
     logger = logging.getLogger(__name__)
     
     session_id = request.GET.get('session_id')
@@ -293,7 +294,9 @@ def stripe_payment_success(request):
     logger.info(f"Stripe payment success callback triggered. Session ID: {session_id}")
 
     if session_id:
-        target_url += f"?session_id={session_id}"
+        # Use & if ? exists, else ? (though target_url doesn't have ? yet)
+        separator = '&' if '?' in target_url else '?'
+        target_url += f"{separator}session_id={session_id}"
         
         try:
             s = init_stripe()
@@ -317,13 +320,23 @@ def stripe_payment_success(request):
                         user.plan = plan
                         user.save()
                         logger.info(f"Successfully updated plan {plan.title} for user {user.username}")
+                    except User.DoesNotExist:
+                        logger.error(f"User {user_id} not found")
+                        target_url += f"&error=UserNotFound"
+                    except Plan.DoesNotExist:
+                        logger.error(f"Plan {plan_id} not found")
+                        target_url += f"&error=PlanNotFound"
                     except Exception as e:
                         logger.error(f"Error updating user plan in callback: {e}")
+                        target_url += f"&error=UpdateFailed:{urllib.parse.quote(str(e))}"
                 else:
                     logger.warning("Missing user_id or plan_id in session metadata")
+                    target_url += "&error=MissingMetadata"
             else:
                 logger.warning(f"Session not paid. Status: {session.payment_status}")
+                target_url += f"&error=NotPaid:{session.payment_status}"
         except Exception as e:
             logger.error(f"Error retrieving session in callback: {e}")
+            target_url += f"&error=SessionRetrieveFailed:{urllib.parse.quote(str(e))}"
 
     return redirect(target_url)
