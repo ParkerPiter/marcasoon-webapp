@@ -298,3 +298,29 @@ WEBINAR_EMBED_URL = config('WEBINAR_EMBED_URL', default='https://www.youtube.com
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 # Aumentar límite de archivos en memoria antes de pasar a disco (ej. 10MB)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'core': {  # Assuming your app is named 'core'
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

@@ -194,6 +194,9 @@ def stripe_webhook(request):
         logger.error(f"Webhook signature verification failed for all secrets. Last error: {verification_exception}")
         return HttpResponse(status=400)
 
+    # Log the event type for debugging
+    logger.info(f"Webhook received event type: {event.get('type')} | Object: {event.get('object')}")
+
     # Handle Stripe v2 Events (Thin Events)
     if event.get('object') == 'v2.core.event':
         event_type = event.get('type')
