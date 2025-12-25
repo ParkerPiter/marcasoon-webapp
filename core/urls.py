@@ -34,7 +34,7 @@ from .views import (
     webinar_live_embed,
     trademark_intake,
 )
-from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook
+from .stripe_views import stripe_config, create_checkout_session, create_payment_intent, stripe_webhook, verify_checkout_session, stripe_payment_success
 from .paypal_views import create_paypal_order, capture_paypal_order, paypal_success, paypal_cancel, paypal_return
 from django.views.generic import TemplateView
 from django.conf import settings
@@ -120,6 +120,8 @@ urlpatterns = [
     path('stripe/create-checkout-session/', create_checkout_session, name='stripe-create-checkout-session'),
     path('stripe/create-payment-intent/', create_payment_intent, name='stripe-create-payment-intent'),
     path('stripe/webhook/', stripe_webhook, name='stripe-webhook'),
+    path('stripe/verify-session/', verify_checkout_session, name='stripe-verify-session'),
+    path('stripe/payment-success/', stripe_payment_success, name='stripe-payment-success'),
     
     # Paypal endpoints
     path('paypal/create-order/', create_paypal_order, name='paypal-create-order'),

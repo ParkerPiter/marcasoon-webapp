@@ -98,6 +98,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code', 'wants_name', 'wants_logo', 'wants_slogan', 'wants_sound')
 
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
+
+    def validate_phone(self, value):
+        if User.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("A user with this phone number already exists.")
+        return value
+
     def create(self, validated_data):
         # Extract possible asset fields
         wants_name = validated_data.pop('wants_name', False)

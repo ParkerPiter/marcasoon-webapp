@@ -1,8 +1,11 @@
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import permissions
+from rest_framework.response import Response
 from .stripe_service import init_stripe
 import stripe
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -41,8 +44,9 @@ def create_checkout_session(request):
             else:
                 success_url = request.build_absolute_uri(success_path) + '?session_id={CHECKOUT_SESSION_ID}'
         else:
-            # Default: redirect to frontend profile
-            success_url = f"{settings.FRONTEND_URL}/profile?session_id={{CHECKOUT_SESSION_ID}}"
+            # Default: redirect to backend callback to ensure DB update before frontend load
+            callback_url = request.build_absolute_uri(reverse('stripe-payment-success'))
+            success_url = f"{callback_url}?session_id={{CHECKOUT_SESSION_ID}}"
 
         if cancel_path:
             if cancel_path.startswith('http://') or cancel_path.startswith('https://'):
@@ -185,3 +189,78 @@ def stripe_webhook(request):
         # TODO: mark payment as successful
 
     return HttpResponse(status=200)
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def verify_checkout_session(request):
+    session_id = request.data.get('session_id')
+    if not session_id:
+        return Response({'detail': 'session_id required'}, status=400)
+    
+    s = init_stripe()
+    try:
+        session = s.checkout.Session.retrieve(session_id)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=400)
+
+    if session.payment_status == 'paid':
+        metadata = session.get('metadata', {})
+        user_id = metadata.get('user_id')
+        plan_id = metadata.get('plan_id')
+        
+        # Verify user matches
+        if str(user_id) != str(request.user.id):
+             return Response({'detail': 'User mismatch'}, status=403)
+
+        if plan_id:
+            from .models import Plan
+            from .serializers import UserSerializer
+            try:
+                plan = Plan.objects.get(pk=plan_id)
+                request.user.plan = plan
+                request.user.save()
+                return Response(UserSerializer(request.user).data)
+            except Plan.DoesNotExist:
+                return Response({'detail': 'Plan not found'}, status=404)
+    
+    return Response({'detail': 'Session not paid or invalid'}, status=400)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def stripe_payment_success(request):
+    """
+    Callback URL for Stripe Checkout success.
+    Updates the user plan synchronously and then redirects to frontend.
+    """
+    session_id = request.GET.get('session_id')
+    target_url = f"{settings.FRONTEND_URL}/profile"
+    if session_id:
+        target_url += f"?session_id={session_id}"
+        
+        try:
+            s = init_stripe()
+            session = s.checkout.Session.retrieve(session_id)
+            
+            if session.payment_status == 'paid':
+                metadata = session.get('metadata', {})
+                user_id = metadata.get('user_id')
+                plan_id = metadata.get('plan_id')
+                
+                if user_id and plan_id:
+                    from django.contrib.auth import get_user_model
+                    from .models import Plan
+                    User = get_user_model()
+                    try:
+                        user = User.objects.get(pk=user_id)
+                        plan = Plan.objects.get(pk=plan_id)
+                        user.plan = plan
+                        user.save()
+                    except Exception as e:
+                        print(f"Error updating user plan in callback: {e}")
+        except Exception as e:
+            print(f"Error retrieving session in callback: {e}")
+
+    return redirect(target_url)
