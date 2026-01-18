@@ -227,6 +227,16 @@ def stripe_webhook(request):
                 user.plan = plan
                 user.save()
                 logger.info(f"Webhook updated plan for user {user.username}")
+                
+                # Send invoice email
+                try:
+                    currency = session.get('currency', 'usd')
+                    amount_total = session.get('amount_total', plan.total_cents)
+                    from .utils import send_invoice_email
+                    send_invoice_email(user, plan, amount_total, currency, 'Tarjeta (Stripe)')
+                except Exception as e_mail:
+                    logger.error(f"Error sending invoice email: {e_mail}")
+
             except Exception as e:
                 logger.error(f"Error updating user plan via webhook: {e}")
 

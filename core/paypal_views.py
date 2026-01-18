@@ -107,6 +107,25 @@ def capture_paypal_order(request):
                     plan = Plan.objects.get(pk=plan_id)
                     request.user.plan = plan
                     request.user.save()
+                    
+                    # Send invoice email
+                    try:
+                        amount_cents = 0
+                        currency = 'USD'
+                        units = getattr(resp.result, 'purchase_units', [])
+                        if units:
+                            amount_obj = getattr(units[0], 'amount', None)
+                            if amount_obj:
+                                val_str = getattr(amount_obj, 'value', '0')
+                                amount_cents = int(float(val_str) * 100)
+                                currency = getattr(amount_obj, 'currency_code', 'USD')
+                        
+                        from .utils import send_invoice_email
+                        send_invoice_email(request.user, plan, amount_cents, currency, 'PayPal')
+                    except Exception as e_mail:
+                        # Logging could be added here
+                        print(f"Error sending invoice email: {e_mail}")
+
                 except Exception:
                     pass
 
