@@ -63,6 +63,20 @@ def create_checkout_session(request):
                 plan = Plan.objects.get(pk=plan_id, is_active=True)
             except Plan.DoesNotExist:
                 return JsonResponse({'detail': 'Invalid plan_id'}, status=400)
+            
+            # --- VALIDACIÓN DE INTEGRIDAD Y ACTUALIZACIÓN ---
+            current_plan = request.user.plan
+            if current_plan:
+                if current_plan.id == plan.id:
+                    return JsonResponse({'detail': 'Ya tienes este plan activo.'}, status=400)
+                
+                # Validar Upgrade: Solo permitimos cambiar si el nuevo plan cuesta más
+                if plan.total_cents <= current_plan.total_cents:
+                     return JsonResponse({
+                         'detail': 'No puedes adquirir un plan de igual o menor valor al que ya tienes activo.'
+                     }, status=400)
+            
+            # USAR EXCLUSIVAMENTE PRECIO DE LA BD
             session = s.checkout.Session.create(
                 mode=mode,
                 line_items=[{
@@ -78,6 +92,13 @@ def create_checkout_session(request):
                 }],
                 metadata={
                     'plan_id': str(plan.id),
+                    'user_id': str(request.user.id),
+                    # Guardamos snapshot de precios por referencia
+                    'base_price_cents': str(plan.base_price_cents),
+                    'fee_cents': str(plan.fee_cents),
+                    'total_cents': str(plan.total_cents),
+                    'type': 'upgrade' if current_plan else 'new_subscription'
+                },
                     'user_id': str(request.user.id),
                     'base_price_cents': str(plan.base_price_cents),
                     'fee_cents': str(plan.fee_cents),

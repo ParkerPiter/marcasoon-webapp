@@ -99,13 +99,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'brand_name', 'asset_kind', 'asset_text', 'asset_image', 'trademark', 'initial_asset', 'full_name', 'nationality', 'address', 'postal_code', 'wants_name', 'wants_logo', 'wants_slogan', 'wants_sound')
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
+        # Verificar si existe el correo ignorando mayúsculas/minúsculas
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("Este correo electrónico ya está registrado.")
         return value
 
     def validate_phone(self, value):
         if User.objects.filter(phone_number=value).exists():
-            raise serializers.ValidationError("A user with this phone number already exists.")
+            raise serializers.ValidationError("Este número de teléfono ya está registrado.")
         return value
 
     def create(self, validated_data):

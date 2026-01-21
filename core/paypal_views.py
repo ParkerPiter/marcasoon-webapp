@@ -24,11 +24,26 @@ def create_paypal_order(request):
                 plan = Plan.objects.get(pk=plan_id, is_active=True)
             except Plan.DoesNotExist:
                 return JsonResponse({'detail': 'Invalid plan_id'}, status=400)
+            
+            # --- VALIDACIÓN DE INTEGRIDAD Y ACTUALIZACIÓN ---
+            current_plan = request.user.plan
+            if current_plan:
+                if current_plan.id == plan.id:
+                    return JsonResponse({'detail': 'Ya tienes este plan activo.'}, status=400)
+                
+                # Validar Upgrade
+                if plan.total_cents <= current_plan.total_cents:
+                     return JsonResponse({
+                         'detail': 'No puedes adquirir un plan de igual o menor valor al que ya tienes activo.'
+                     }, status=400)
+            
+            # Fijar precio desde el backend
             amount = plan.total_cents / 100.0
             currency = plan.currency
-            purchase_desc = f"{plan.title} (Base: {plan.base_price_cents/100:.2f} + Fee: {plan.fee_cents/100:.2f})"
+            purchase_desc = f"{plan.title} (Oficial)"
         else:
             purchase_desc = 'Custom payment'
+            # Validar que amount exista para pagos custom
             if amount is None:
                 return JsonResponse({'detail': 'Amount is required'}, status=400)
         # Normaliza a 2 decimales por requisitos de PayPal

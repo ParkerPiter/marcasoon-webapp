@@ -604,36 +604,42 @@ def password_reset_request(request):
     if not ser.is_valid():
         return Response(ser.errors, status=400)
     email = ser.validated_data['email']
-    # Try to find the user; don't reveal whether it exists
-    try:
-        user = User.objects.get(email__iexact=email)
-    except User.DoesNotExist:
-        # DEBUG: Reveal user not found for QA
-        return Response({'detail': f'User with email {email} not found'}, status=404)
-        # Production: return Response({'detail': 'ok'}, status=200)
-    # Generate 6-digit code
-    code = f"{random.randint(0, 999999):06d}"
-    from .models import PasswordResetCode
-    expires_at = timezone.now() + timedelta(minutes=15)
-    PasswordResetCode.objects.create(user=user, code=code, expires_at=expires_at)
-    # Send email
-    html_message = render_to_string('emails/password_reset_code.html', {
-        'user': user,
-        'code': code,
-        'minutes': 15,
-        'site': request.get_host(),
-    })
-    plain_message = strip_tags(html_message)
-    subject = 'Código de recuperación de contraseña'
-    from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
-    try:
-        send_mail(subject, plain_message, from_email, [email], html_message=html_message, fail_silently=False)
-    except Exception as e:
-        logger = logging.getLogger(__name__)
-        logger.exception('Failed sending password reset code email')
-        return Response({'detail': f'Failed to send email: {str(e)}'}, status=500)
     
-    return Response({'detail': 'ok'}, status=200)
+    try:
+        # Solo procedemos si el usuario existe
+        user = User.objects.get(email__iexact=email)
+
+        # Generar código 6 dígitos
+        code = f"{random.randint(0, 999999):06d}"
+        from .models import PasswordResetCode
+        expires_at = timezone.now() + timedelta(minutes=15)
+        PasswordResetCode.objects.create(user=user, code=code, expires_at=expires_at)
+
+        # Enviar correo solo si existe el usuario
+        html_message = render_to_string('emails/password_reset_code.html', {
+            'user': user,
+            'code': code,
+            'minutes': 15,
+            'site': request.get_host(),
+        })
+        plain_message = strip_tags(html_message)
+        subject = 'Código de recuperación de contraseña'
+        from_email = getattr(settings, 'EMAIL_HOST_USER', None) or settings.DEFAULT_FROM_EMAIL
+        
+        try:
+            send_mail(subject, plain_message, from_email, [email], html_message=html_message, fail_silently=False)
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.exception('Failed sending password reset code email')
+            # Ocultamos el error específico al usuario para no dar pistas, o devolvemos 500 genérico
+            # return Response({'detail': 'Error sending email'}, status=500)
+            pass
+
+    except User.DoesNotExist:
+        # Requerimiento: Enviar error si el correo no existe
+        return Response({'detail': f'No existe ningún usuario registrado con el correo {email}.'}, status=404)
+    
+    return Response({'detail': 'Se ha enviado un código de recuperación a tu correo.'}, status=200)
 
 
 @csrf_exempt
