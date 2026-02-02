@@ -99,11 +99,6 @@ def create_checkout_session(request):
                     'total_cents': str(plan.total_cents),
                     'type': 'upgrade' if current_plan else 'new_subscription'
                 },
-                    'user_id': str(request.user.id),
-                    'base_price_cents': str(plan.base_price_cents),
-                    'fee_cents': str(plan.fee_cents),
-                    'total_cents': str(plan.total_cents),
-                },
                 success_url=success_url,
                 cancel_url=cancel_url,
                 customer_email=request.user.email or None,
